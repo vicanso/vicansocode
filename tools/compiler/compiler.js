@@ -8,6 +8,7 @@ var jsp = require("uglify-js").parser;
 var pro = require("uglify-js").uglify;
 var coffeeScript = require('coffee-script');
 var mkdirp = require('mkdirp');
+var argv = require('optimist').argv;
 
 /**
  * getWatchFiles 获取监听文件列表
@@ -146,6 +147,8 @@ var compileCoffeeScript = function(file, jsFile){
     fs.writeFile(jsFile, jsCode, 'utf8', function(err){
       if(err){
         logger.error(err);
+      }else{
+        logger.info('compress coffeescript files:' + jsFile + ' successful');
       }
     });
   });
@@ -154,15 +157,20 @@ var compileCoffeeScript = function(file, jsFile){
 /**
  * startWatchFiles 开始监听目录
  * @param  {[type]} watchConfig 一些关于监听的配置参数
+ * @param {[type]} immediatelyCompile 是否立即先编译一次该文件
  * @return {[type]}             [description]
  */
-var startWatchFiles = function(watchConfig){
+var startWatchFiles = function(watchConfig, immediatelyCompile){
   var resultFiles = [];
   var cbf = function(){
-    var compileFunc = _.debounce(function(file){
-      compileHandle(file, watchConfig);
-    }, watchConfig.delay);
+    logger.info(resultFiles);
     _.each(resultFiles, function(file){
+      var compileFunc = _.debounce(function(file){
+        compileHandle(file, watchConfig);
+      }, watchConfig.delay);
+      if(immediatelyCompile){
+        compileHandle(file, watchConfig);
+      }
       fs.watchFile(file, {persistent : true, interval : 2000},function(curr, prev){
         compileFunc(file);
       });
@@ -224,17 +232,48 @@ var compileHandle = function(file, watchConfig){
   }
 };
 
+/**
+ * compileStart 开始监听编译器
+ * @return {[type]} [description]
+ */
+var compileStart = function(){
+  var compileJson = argv.j || './compile.json';
+  var immediatelyCompile = false;
+  if(argv.c === 'all'){
+    immediatelyCompile = true;
+  }
+  fs.readFile(compileJson, 'utf8', function(err, data){
+    if(err){
+      logger.error(err);
+    }else{
+      try{
+        compileJson = JSON.parse(data);
+        if(_.isArray(compileJson)){
+          _.each(compileJson, function(compile){
+            startWatchFiles(compile, immediatelyCompile);
+          });
+        }else{
+          startWatchFiles(compileJson, immediatelyCompile);
+        }
+      }catch(err){
+        logger.error(err);
+      }
+    }
+  });
+};
+
 var HANDLE_FUNCTIONS = {
   less : compileLess,
   coffee : compileCoffeeScript,
   js : compressJavascript
 };
 
+compileStart();
 
-var jsfileWatchConfig = {
-  path : '/Users/vicanso/tmp',
-  targetPath : '/Users/vicanso/target',
-  ext : '.less',
-  delay : 1000
-};
-startWatchFiles(jsfileWatchConfig);
+// var jsfileWatchConfig = {
+//   path : '/Users/vicanso/tmp',
+//   targetPath : '/Users/vicanso/target',
+//   ext : '.less',
+//   delay : 1000
+// };
+// startWatchFiles(jsfileWatchConfig);

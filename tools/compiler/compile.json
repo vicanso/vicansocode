@@ -1,0 +1,20 @@
+[
+    {
+      "path" : "/Users/vicanso/tmp",
+      "targetPath" : "/Users/vicanso/target",
+      "ext" : ".less",
+      "delay" : 1000
+    },
+    {
+      "path" : "/Users/vicanso/tmp",
+      "targetPath" : "/Users/vicanso/target",
+      "ext" : ".coffee",
+      "delay" : 1000
+    },
+    {
+      "path" : "/Users/vicanso/tmp",
+      "targetPath" : "/Users/vicanso/target",
+      "ext" : ".js",
+      "delay" : 5000
+    }
+]
