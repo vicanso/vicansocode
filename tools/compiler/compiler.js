@@ -7,7 +7,7 @@ var less = require('less');
 var jsp = require("uglify-js").parser;
 var pro = require("uglify-js").uglify;
 var coffeeScript = require('coffee-script');
-
+var mkdirp = require('mkdirp');
 
 /**
  * getWatchFiles 获取监听文件列表
@@ -160,26 +160,7 @@ var startWatchFiles = function(watchConfig){
   var resultFiles = [];
   var cbf = function(){
     var compileFunc = _.debounce(function(file){
-      var ext = path.extname(file);
-      var saveFile, newExt;
-      switch(ext){
-        case '.less':
-          newExt = '.css';
-        break;
-        case '.js':
-          newExt = '.min.js';
-        break;
-        case '.coffee':
-          newExt = '.js';
-        break;
-      }
-      if(newExt){
-        saveFile = file.replace(ext, newExt);
-        var handleFunction = handleFunctions[ext.substring(1)];
-        if(handleFunction){
-          handleFunction(file, saveFile);
-        }
-      }
+      compileHandle(file, watchConfig);
     }, watchConfig.delay);
     _.each(resultFiles, function(file){
       fs.watchFile(file, {persistent : true, interval : 2000},function(curr, prev){
@@ -190,8 +171,60 @@ var startWatchFiles = function(watchConfig){
   getWatchFiles(watchConfig.path, watchConfig.ext, resultFiles, cbf);
 };
 
+/**
+ * compileHandle 根据不同的文件执行各自对应的编译方法
+ * @param  {[type]} file        [description]
+ * @param  {[type]} watchConfig [description]
+ * @return {[type]}             [description]
+ */
+var compileHandle = function(file, watchConfig){
+  var ext = path.extname(file);
+  var saveFile, newExt;
+  switch(ext){
+    case '.less':
+      newExt = '.css';
+    break;
+    case '.js':
+      newExt = '.min.js';
+    break;
+    case '.coffee':
+      newExt = '.js';
+    break;
+  }
+  if(newExt){
+    saveFile = file.replace(ext, newExt);
+    if(watchConfig.targetPath){
+      saveFile = saveFile.replace(watchConfig.path, watchConfig.targetPath);
+    }
+    var handleFunction = HANDLE_FUNCTIONS[ext.substring(1)];
+    if(handleFunction){
+      var savePath = path.dirname(saveFile);
+      async.waterfall([
+        function(cbf){
+          fs.exists(savePath, function(exists){
+            cbf(null, exists);
+          });
+        },
+        function(exists, cbf){
+          if(exists){
+            handleFunction(file, saveFile);
+          }else{
+            mkdirp(savePath, function(err){
+              if(err){
+                logger.error(err);
+              }else{
+                handleFunction(file, saveFile);
+              }
+            });
+          }
+        }
+      ]);
+      
+    }
+  }
+};
 
-var handleFunctions = {
+var HANDLE_FUNCTIONS = {
   less : compileLess,
   coffee : compileCoffeeScript,
   js : compressJavascript
@@ -199,7 +232,8 @@ var handleFunctions = {
 
 
 var jsfileWatchConfig = {
-  path : '/Users/vicanso/workspace/onepiece/public',
+  path : '/Users/vicanso/tmp',
+  targetPath : '/Users/vicanso/target',
   ext : '.less',
   delay : 1000
 };
