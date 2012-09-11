@@ -1,0 +1,24 @@
+{
+    "name": "my_node_modules"
+  , "version": "0.0.1"
+  , "private": true
+  , "dependencies": {
+      "async": "latest"
+    , "coffee-script": "latest"
+    , "colors": "latest"
+    , "connect-redis": "latest"
+    , "express" : "latest"
+    , "gzippo" : "latest"
+    , "iconv-lite" : "latest"
+    , "jade" : "latest"
+    , "less" : "latest"
+    , "log4js" : "latest"
+    , "mkdirp"   : "latest"
+    , "mongoose" : "latest"
+    , "native-dns" : "latest"
+    , "optimist" : "latest"
+    , "redis" : "latest"
+    , "request" : "latest"
+    , "underscore" : "latest"
+  }
+}
