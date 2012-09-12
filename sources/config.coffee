@@ -4,7 +4,7 @@ APP_PATH = __dirname
 RUNNING_MODE = process.env.NODE_ENV is 'production'
 STATIC_PREFIX = '/static'
 LISTEN_PORT = 10000
-
+IS_MASTER = false
 
 config = 
   ###*
@@ -34,5 +34,18 @@ config =
   ###
   getStaticPrefix : () ->
     return STATIC_PREFIX
+
+  ###*
+   * [setMaster 设置其为master]
+  ###
+  setMaster : () ->
+    IS_MASTER = true
+
+  ###*
+   * [isMaster 是否master]
+   * @return {Boolean} [description]
+  ###
+  isMaster : () ->
+    return IS_MASTER
 
 module.exports = config

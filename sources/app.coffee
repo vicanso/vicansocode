@@ -5,7 +5,8 @@ cluster = require 'cluster'
 domain = require 'domain'
 
 config = require './config'
-
+appPath = config.getAppPath()
+fileMerger = require "#{appPath}/helpers/filemerger"
 numCPUs = require('os').cpus().length
 
 ###*
@@ -14,6 +15,10 @@ numCPUs = require('os').cpus().length
 ###
 initApp = () ->
   if cluster.isMaster
+    config.setMaster()
+    #合并文件处理（将部分js,css文件合并）
+    fileMerger.mergeFiles true
+
     while numCPUs
       cluster.fork()
       numCPUs--
@@ -27,12 +32,12 @@ initApp = () ->
   else
     domain = domain.create()
     domain.on 'error', (err) ->
-      console.error err
+      console.error "uncaughtException #{err}"
     domain.run () ->
-      appPath = config.getAppPath()
-
+      fileMerger.mergeFiles()
       app = express()
       app.set 'views', "#{appPath}/views"
+      app.set 'view engine', 'jade'
       app.engine 'jade', require('jade').__express
 
       app.use gzippo.staticGzip "#{appPath}/static", {

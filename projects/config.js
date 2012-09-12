@@ -1,5 +1,5 @@
 (function() {
-  var APP_PATH, LISTEN_PORT, RUNNING_MODE, STATIC_PREFIX, config, path;
+  var APP_PATH, IS_MASTER, LISTEN_PORT, RUNNING_MODE, STATIC_PREFIX, config, path;
 
   path = require('path');
 
@@ -10,6 +10,8 @@
   STATIC_PREFIX = '/static';
 
   LISTEN_PORT = 10000;
+
+  IS_MASTER = false;
 
   config = {
     /**
@@ -43,6 +45,21 @@
 
     getStaticPrefix: function() {
       return STATIC_PREFIX;
+    },
+    /**
+     * [setMaster 设置其为master]
+    */
+
+    setMaster: function() {
+      return IS_MASTER = true;
+    },
+    /**
+     * [isMaster 是否master]
+     * @return {Boolean} [description]
+    */
+
+    isMaster: function() {
+      return IS_MASTER;
     }
   };
 

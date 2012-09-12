@@ -1,5 +1,5 @@
 (function() {
-  var cluster, config, domain, express, gzippo, initApp, numCPUs, _;
+  var appPath, cluster, config, domain, express, fileMerger, gzippo, initApp, numCPUs, _;
 
   _ = require('underscore');
 
@@ -13,6 +13,10 @@
 
   config = require('./config');
 
+  appPath = config.getAppPath();
+
+  fileMerger = require("" + appPath + "/helpers/filemerger");
+
   numCPUs = require('os').cpus().length;
 
   /**
@@ -23,6 +27,8 @@
 
   initApp = function() {
     if (cluster.isMaster) {
+      config.setMaster();
+      fileMerger.mergeFiles(true);
       while (numCPUs) {
         cluster.fork();
         numCPUs--;
@@ -38,13 +44,14 @@
     } else {
       domain = domain.create();
       domain.on('error', function(err) {
-        return console.error(err);
+        return console.error("uncaughtException " + err);
       });
       return domain.run(function() {
-        var app, appPath;
-        appPath = config.getAppPath();
+        var app;
+        fileMerger.mergeFiles();
         app = express();
         app.set('views', "" + appPath + "/views");
+        app.set('view engine', 'jade');
         app.engine('jade', require('jade').__express);
         app.use(gzippo.staticGzip("" + appPath + "/static", {
           clientMaxAge: 60 * 60 * 1000,
