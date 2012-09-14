@@ -60,6 +60,14 @@
 
     isMaster: function() {
       return IS_MASTER;
+    },
+    /**
+     * [getTempPath 获取临时目录，该目录存放css,js的合并文件]
+     * @return {[type]} [description]
+    */
+
+    getTempPath: function() {
+      return path.join(APP_PATH, 'static/temp');
     }
   };
 

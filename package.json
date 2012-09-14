@@ -18,6 +18,7 @@
     , "native-dns" : "latest"
     , "optimist" : "latest"
     , "redis" : "latest"
+    , "hiredis" : "latest"
     , "request" : "latest"
     , "underscore" : "latest"
   }

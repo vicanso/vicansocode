@@ -5,6 +5,7 @@ fs = require 'fs'
 config = require '../config'
 appPath = config.getAppPath()
 fileMerger = require "#{appPath}/helpers/filemerger"
+myUtil = require "#{appPath}/helpers/util"
 
 STATIC_PREFIX = config.getStaticPrefix()
 VERSION = new Date().getTime()
@@ -17,8 +18,9 @@ class FileImporter
    * @return {[type]}       [description]
   ###
   constructor : (debug) ->
-    @cssFIles = []
+    @cssFiles = []
     @jsFiles = []
+    @debug = debug || false
   ###*
    * [importCss description]
    * @param  {[type]} path     [css路径]
@@ -51,7 +53,7 @@ class FileImporter
     if _.isString path
       path = path.trim()
       if not self.debug
-        mergerFile = fileMerger.getMergerFile path, type
+        mergerFile = fileMerger.getMergeFile path, type
         if mergerFile
           path = mergerFile
       if type is 'css'
@@ -75,22 +77,29 @@ class FileImporter
    * [exportCss description]
    * @return {[type]} [description]
   ###
-  exportCss : () ->
+  exportCss : (merge) ->
     self = @
     cssFileList = []
+
+    mergeFiles = []
     _.each self.cssFiles, (cssFile) ->
       if cssFile.indexOf('http') isnt 0
-        cssFile = Path.join(staticPrefix, cssFile) + "?version=#{version}"
-      cssFileList.push '<link rel="stylesheet" href="' + cssFile + '" type="text/css" media="screen" />'
+        cssFile = path.join(STATIC_PREFIX, cssFile)
+        mergeFiles.push path.join appPath, cssFile
+      cssFileList.push '<link rel="stylesheet" href="' + cssFile + "?version=#{VERSION}" + '" type="text/css" media="screen" />'
+    saveFile = myUtil.sha1(mergeFiles.join('')) + '.css'
+    saveFile = path.join config.getTempPath(), saveFile
+    console.log saveFile
+    myUtil.mergeFiles mergeFiles, saveFile
     return cssFileList.join ''
-  exportJs : () ->
+  exportJs : (merge) ->
     self = @
     jsFileList = []
     _.each self.jsFiles, (jsFile) ->
       if self.debug
         jsFile = ('' + jsFile).replace '.min.js', '.js'
       if jsFile.indexOf('http') isnt 0
-        jsFile = Path.join(staticPrefix, jsFile) + "?version=#{version}"
+        jsFile = path.join(STATIC_PREFIX, jsFile) + "?version=#{VERSION}"
       jsFileList.push '<script type="text/javascript" src="' + jsFile + '"></script>'
     return jsFileList.join ''
 

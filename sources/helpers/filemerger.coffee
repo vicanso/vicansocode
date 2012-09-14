@@ -7,7 +7,7 @@ mkdirp = require 'mkdirp'
 Merger = 
   getMergeFile : (file, type) ->
     self = @
-    mergerFile = ''
+    mergeFile = ''
     if type is 'css'
       searchFiles = self.cssList
     else
@@ -51,6 +51,8 @@ Merger =
               if i isnt 0
                 content +=  fs.readFileSync path.join filePath, file
             mkdirp path.dirname(saveFile), (err) ->
+              if err
+                logger.error err
               fs.writeFileSync saveFile, content
         self["#{mergerType}List"] = mergeList
     delete self.js

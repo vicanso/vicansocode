@@ -1,5 +1,5 @@
 (function() {
-  var FileImporter, STATIC_PREFIX, VERSION, appPath, config, fileMerger, fs, path, _;
+  var FileImporter, STATIC_PREFIX, VERSION, appPath, config, fileMerger, fs, myUtil, path, _;
 
   _ = require('underscore');
 
@@ -13,6 +13,8 @@
 
   fileMerger = require("" + appPath + "/helpers/filemerger");
 
+  myUtil = require("" + appPath + "/helpers/util");
+
   STATIC_PREFIX = config.getStaticPrefix();
 
   VERSION = new Date().getTime();
@@ -25,8 +27,9 @@
     */
 
     function FileImporter(debug) {
-      this.cssFIles = [];
+      this.cssFiles = [];
       this.jsFiles = [];
+      this.debug = debug || false;
     }
 
     /**
@@ -74,7 +77,7 @@
       if (_.isString(path)) {
         path = path.trim();
         if (!self.debug) {
-          mergerFile = fileMerger.getMergerFile(path, type);
+          mergerFile = fileMerger.getMergeFile(path, type);
           if (mergerFile) {
             path = mergerFile;
           }
@@ -111,20 +114,26 @@
     */
 
 
-    FileImporter.prototype.exportCss = function() {
-      var cssFileList, self;
+    FileImporter.prototype.exportCss = function(merge) {
+      var cssFileList, mergeFiles, saveFile, self;
       self = this;
       cssFileList = [];
+      mergeFiles = [];
       _.each(self.cssFiles, function(cssFile) {
         if (cssFile.indexOf('http') !== 0) {
-          cssFile = Path.join(staticPrefix, cssFile) + ("?version=" + version);
+          cssFile = path.join(STATIC_PREFIX, cssFile);
+          mergeFiles.push(path.join(appPath, cssFile));
         }
-        return cssFileList.push('<link rel="stylesheet" href="' + cssFile + '" type="text/css" media="screen" />');
+        return cssFileList.push('<link rel="stylesheet" href="' + cssFile + ("?version=" + VERSION) + '" type="text/css" media="screen" />');
       });
+      saveFile = myUtil.sha1(mergeFiles.join('')) + '.css';
+      saveFile = path.join(config.getTempPath(), saveFile);
+      console.log(saveFile);
+      myUtil.mergeFiles(mergeFiles, saveFile);
       return cssFileList.join('');
     };
 
-    FileImporter.prototype.exportJs = function() {
+    FileImporter.prototype.exportJs = function(merge) {
       var jsFileList, self;
       self = this;
       jsFileList = [];
@@ -133,7 +142,7 @@
           jsFile = ('' + jsFile).replace('.min.js', '.js');
         }
         if (jsFile.indexOf('http') !== 0) {
-          jsFile = Path.join(staticPrefix, jsFile) + ("?version=" + version);
+          jsFile = path.join(STATIC_PREFIX, jsFile) + ("?version=" + VERSION);
         }
         return jsFileList.push('<script type="text/javascript" src="' + jsFile + '"></script>');
       });

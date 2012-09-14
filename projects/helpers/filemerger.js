@@ -11,16 +11,15 @@
 
   Merger = {
     getMergeFile: function(file, type) {
-      var mergerFile, searchFiles, self;
+      var mergeFile, searchFiles, self;
       self = this;
-      mergerFile = '';
+      mergeFile = '';
       if (type === 'css') {
         searchFiles = self.cssList;
       } else {
         searchFiles = self.jsList;
       }
       _.each(searchFiles, function(files) {
-        var mergeFile;
         if (!mergeFile && (_.indexOf(files, file)) !== -1) {
           return mergeFile = files[0];
         }
@@ -74,6 +73,9 @@
                 }
               });
               return mkdirp(path.dirname(saveFile), function(err) {
+                if (err) {
+                  logger.error(err);
+                }
                 return fs.writeFileSync(saveFile, content);
               });
             });
