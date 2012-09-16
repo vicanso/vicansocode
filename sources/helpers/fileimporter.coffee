@@ -4,6 +4,7 @@ fs = require 'fs'
 
 config = require '../config'
 appPath = config.getAppPath()
+tempPath = config.getTempPath()
 fileMerger = require "#{appPath}/helpers/filemerger"
 myUtil = require "#{appPath}/helpers/util"
 
@@ -75,7 +76,8 @@ class FileImporter
     return self
   ###*
    * [exportCss description]
-   * @return {[type]} [description]
+   * @param  {[type]} merge [description]
+   * @return {[type]}       [description]
   ###
   exportCss : (merge) ->
     self = @
@@ -87,11 +89,16 @@ class FileImporter
         cssFile = path.join(STATIC_PREFIX, cssFile)
         mergeFiles.push path.join appPath, cssFile
       cssFileList.push '<link rel="stylesheet" href="' + cssFile + "?version=#{VERSION}" + '" type="text/css" media="screen" />'
-    saveFile = myUtil.sha1(mergeFiles.join('')) + '.css'
-    saveFile = path.join config.getTempPath(), saveFile
-    console.log saveFile
-    myUtil.mergeFiles mergeFiles, saveFile
-    return cssFileList.join ''
+    if !merge
+      return cssFileList.join ''
+    linkFileName = myUtil.sha1(mergeFiles.join('')) + '.css'
+    saveFile = path.join tempPath, linkFileName
+    if fs.existsSync saveFile
+      linkFileName = path.join config.getTempStaticPrefix(), linkFileName
+      return '<link rel="stylesheet" href="' + linkFileName + "?version=#{VERSION}" + '" type="text/css" media="screen" />'
+    else
+      myUtil.mergeFiles mergeFiles, saveFile
+      return cssFileList.join ''
   exportJs : (merge) ->
     self = @
     jsFileList = []

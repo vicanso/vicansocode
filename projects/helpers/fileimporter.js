@@ -1,5 +1,5 @@
 (function() {
-  var FileImporter, STATIC_PREFIX, VERSION, appPath, config, fileMerger, fs, myUtil, path, _;
+  var FileImporter, STATIC_PREFIX, VERSION, appPath, config, fileMerger, fs, myUtil, path, tempPath, _;
 
   _ = require('underscore');
 
@@ -10,6 +10,8 @@
   config = require('../config');
 
   appPath = config.getAppPath();
+
+  tempPath = config.getTempPath();
 
   fileMerger = require("" + appPath + "/helpers/filemerger");
 
@@ -110,12 +112,13 @@
 
     /**
      * [exportCss description]
-     * @return {[type]} [description]
+     * @param  {[type]} merge [description]
+     * @return {[type]}       [description]
     */
 
 
     FileImporter.prototype.exportCss = function(merge) {
-      var cssFileList, mergeFiles, saveFile, self;
+      var cssFileList, linkFileName, mergeFiles, saveFile, self;
       self = this;
       cssFileList = [];
       mergeFiles = [];
@@ -126,11 +129,18 @@
         }
         return cssFileList.push('<link rel="stylesheet" href="' + cssFile + ("?version=" + VERSION) + '" type="text/css" media="screen" />');
       });
-      saveFile = myUtil.sha1(mergeFiles.join('')) + '.css';
-      saveFile = path.join(config.getTempPath(), saveFile);
-      console.log(saveFile);
-      myUtil.mergeFiles(mergeFiles, saveFile);
-      return cssFileList.join('');
+      if (!merge) {
+        return cssFileList.join('');
+      }
+      linkFileName = myUtil.sha1(mergeFiles.join('')) + '.css';
+      saveFile = path.join(tempPath, linkFileName);
+      if (fs.existsSync(saveFile)) {
+        linkFileName = path.join(config.getTempStaticPrefix(), linkFileName);
+        return '<link rel="stylesheet" href="' + linkFileName + ("?version=" + VERSION) + '" type="text/css" media="screen" />';
+      } else {
+        myUtil.mergeFiles(mergeFiles, saveFile);
+        return cssFileList.join('');
+      }
     };
 
     FileImporter.prototype.exportJs = function(merge) {

@@ -3,6 +3,7 @@ path = require 'path'
 APP_PATH = __dirname
 RUNNING_MODE = process.env.NODE_ENV is 'production'
 STATIC_PREFIX = '/static'
+TEMP_STATIC_PREFIX = STATIC_PREFIX + '/temp'
 LISTEN_PORT = 10000
 IS_MASTER = false
 
@@ -35,6 +36,8 @@ config =
   getStaticPrefix : () ->
     return STATIC_PREFIX
 
+  getTempStaticPrefix : () ->
+    return TEMP_STATIC_PREFIX
   ###*
    * [setMaster 设置其为master]
   ###
@@ -53,6 +56,6 @@ config =
    * @return {[type]} [description]
   ###
   getTempPath : () ->
-    return path.join APP_PATH, 'static/temp'
+    return path.join APP_PATH, TEMP_STATIC_PREFIX
 
 module.exports = config

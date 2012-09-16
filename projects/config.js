@@ -1,5 +1,5 @@
 (function() {
-  var APP_PATH, IS_MASTER, LISTEN_PORT, RUNNING_MODE, STATIC_PREFIX, config, path;
+  var APP_PATH, IS_MASTER, LISTEN_PORT, RUNNING_MODE, STATIC_PREFIX, TEMP_STATIC_PREFIX, config, path;
 
   path = require('path');
 
@@ -8,6 +8,8 @@
   RUNNING_MODE = process.env.NODE_ENV === 'production';
 
   STATIC_PREFIX = '/static';
+
+  TEMP_STATIC_PREFIX = STATIC_PREFIX + '/temp';
 
   LISTEN_PORT = 10000;
 
@@ -46,6 +48,9 @@
     getStaticPrefix: function() {
       return STATIC_PREFIX;
     },
+    getTempStaticPrefix: function() {
+      return TEMP_STATIC_PREFIX;
+    },
     /**
      * [setMaster 设置其为master]
     */
@@ -67,7 +72,7 @@
     */
 
     getTempPath: function() {
-      return path.join(APP_PATH, 'static/temp');
+      return path.join(APP_PATH, TEMP_STATIC_PREFIX);
     }
   };
 
