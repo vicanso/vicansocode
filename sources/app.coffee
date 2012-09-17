@@ -10,6 +10,8 @@ appPath = config.getAppPath()
 fileMerger = require "#{appPath}/helpers/filemerger"
 numCPUs = require('os').cpus().length
 
+
+
 initExpress = () ->
   staticPrefix = config.getStaticPrefix()
   staticHandle = gzippo.staticGzip "#{appPath}#{staticPrefix}", {
