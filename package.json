@@ -8,7 +8,6 @@
     , "colors": "latest"
     , "connect-redis": "latest"
     , "express" : "latest"
-    , "gzippo" : "latest"
     , "iconv-lite" : "latest"
     , "jade" : "latest"
     , "less" : "latest"

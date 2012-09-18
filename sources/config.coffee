@@ -3,10 +3,12 @@ path = require 'path'
 APP_PATH = __dirname
 RUNNING_MODE = process.env.NODE_ENV is 'production'
 STATIC_PREFIX = '/static'
+STATIC_PATH = path.join APP_PATH, STATIC_PREFIX
 TEMP_STATIC_PREFIX = STATIC_PREFIX + '/temp'
+TEMP_STATIC_PATH = path.join APP_PATH, TEMP_STATIC_PREFIX
 LISTEN_PORT = 10000
 IS_MASTER = false
-
+MERGE_FILES = require "#{APP_PATH}/mergefiles.json"
 config = 
   ###*
    * [getAppPath 返回APP的所在的目录]
@@ -51,11 +53,16 @@ config =
   isMaster : () ->
     return IS_MASTER
 
+  getStaticPath : () ->
+    return STATIC_PATH
   ###*
    * [getTempPath 获取临时目录，该目录存放css,js的合并文件]
    * @return {[type]} [description]
   ###
   getTempPath : () ->
     return path.join APP_PATH, TEMP_STATIC_PREFIX
+
+  getMergeFiles : () ->
+    return MERGE_FILES
 
 module.exports = config

@@ -1,29 +1,27 @@
 _ = require 'underscore'
 express = require 'express'
-gzippo = require 'gzippo'
 cluster = require 'cluster'
 domain = require 'domain'
-logger = require('log4js').getLogger()
 
 config = require './config'
 appPath = config.getAppPath()
+
+logger = require "#{appPath}/helpers/logger"
 fileMerger = require "#{appPath}/helpers/filemerger"
+staticHandler = require "#{appPath}/helpers/statichandler"
 numCPUs = require('os').cpus().length
 
 
-
 initExpress = () ->
-  staticPrefix = config.getStaticPrefix()
-  staticHandle = gzippo.staticGzip "#{appPath}#{staticPrefix}", {
-    clientMaxAge : 60 * 60 * 1000
-    prefix : "#{staticPrefix}/"
-  }
   app = express()
   app.set 'views', "#{appPath}/views"
   app.set 'view engine', 'jade'
   app.engine 'jade', require('jade').__express
+  
+  app.use express.responseTime()
+  app.use staticHandler.static()
 
-  app.use staticHandle
+  # app.use express.limit '1mb'
 
   if config.isProductionMode()
     app.use express.logger()
@@ -72,7 +70,7 @@ initApp = () ->
         initExpress()
     else
       #合并文件处理（将部分js,css文件合并）
-      fileMerger.mergeFiles true
+      fileMerger.mergeFilesBeforeRunning true
       initExpress()
 
 initApp()

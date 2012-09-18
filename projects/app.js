@@ -1,38 +1,34 @@
 (function() {
-  var appPath, cluster, config, domain, express, fileMerger, gzippo, initApp, initExpress, logger, numCPUs, _;
+  var appPath, cluster, config, domain, express, fileMerger, initApp, initExpress, logger, numCPUs, staticHandler, _;
 
   _ = require('underscore');
 
   express = require('express');
 
-  gzippo = require('gzippo');
-
   cluster = require('cluster');
 
   domain = require('domain');
-
-  logger = require('log4js').getLogger();
 
   config = require('./config');
 
   appPath = config.getAppPath();
 
+  logger = require("" + appPath + "/helpers/logger");
+
   fileMerger = require("" + appPath + "/helpers/filemerger");
+
+  staticHandler = require("" + appPath + "/helpers/statichandler");
 
   numCPUs = require('os').cpus().length;
 
   initExpress = function() {
-    var app, staticHandle, staticPrefix;
-    staticPrefix = config.getStaticPrefix();
-    staticHandle = gzippo.staticGzip("" + appPath + staticPrefix, {
-      clientMaxAge: 60 * 60 * 1000,
-      prefix: "" + staticPrefix + "/"
-    });
+    var app;
     app = express();
     app.set('views', "" + appPath + "/views");
     app.set('view engine', 'jade');
     app.engine('jade', require('jade').__express);
-    app.use(staticHandle);
+    app.use(express.responseTime());
+    app.use(staticHandler["static"]());
     if (config.isProductionMode()) {
       app.use(express.logger());
     }
@@ -79,7 +75,7 @@
           return initExpress();
         });
       } else {
-        fileMerger.mergeFiles(true);
+        fileMerger.mergeFilesBeforeRunning(true);
         return initExpress();
       }
     }

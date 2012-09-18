@@ -1,6 +1,6 @@
-logger = require('log4js').getLogger()
 config = require '../config'
 appPath = config.getAppPath()
+logger = require "#{appPath}/helpers/logger"
 
 httpHandler = 
   ###*
@@ -27,7 +27,7 @@ httpHandler =
  * @return {[type]}              [description]
 ###
 appendJsAndCss = (html, fileImporter) ->
-  html = html.replace '<!--CSS_FILES_CONTAINER-->', fileImporter.exportCss()
+  html = html.replace '<!--CSS_FILES_CONTAINER-->', fileImporter.exportCss true
   html = html.replace '<!--JS_FILES_CONTAINER-->', fileImporter.exportJs()
   return html
 

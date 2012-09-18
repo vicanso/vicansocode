@@ -1,0 +1,13 @@
+{
+  "js" : [
+    {
+      "name" : "/mergers/jquery.plugins.min.js",
+      "files" : ["/common/javascripts/jquery/jquery.cookies.min.js", 
+        "/common/javascripts/jquery/jquery.url.min.js", 
+        "/common/javascripts/jquery/jquery.mousewheel.min.js"
+      ]
+    }
+  ],
+  "css" : [
+  ]
+}

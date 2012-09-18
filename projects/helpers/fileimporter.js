@@ -1,5 +1,5 @@
 (function() {
-  var FileImporter, STATIC_PREFIX, VERSION, appPath, config, fileMerger, fs, myUtil, path, tempPath, _;
+  var FileImporter, STATIC_PREFIX, VERSION, appPath, config, fileMerger, fs, path, _;
 
   _ = require('underscore');
 
@@ -11,11 +11,7 @@
 
   appPath = config.getAppPath();
 
-  tempPath = config.getTempPath();
-
   fileMerger = require("" + appPath + "/helpers/filemerger");
-
-  myUtil = require("" + appPath + "/helpers/util");
 
   STATIC_PREFIX = config.getStaticPrefix();
 
@@ -35,7 +31,7 @@
     }
 
     /**
-     * [importCss description]
+     * [importCss 引入css文件]
      * @param  {[type]} path     [css路径]
      * @param  {[type]} prepend [是否插入到数组最前（在HTML中首先输出）]
      * @return {[type]}         [description]
@@ -50,7 +46,7 @@
     };
 
     /**
-     * [importJs description]
+     * [importJs 引入js文件]
      * @param  {[type]} path    [js路径]
      * @param  {[type]} prepend [是否插入到数组最前（在HTML中首先输出）]
      * @return {[type]}         [description]
@@ -118,7 +114,7 @@
 
 
     FileImporter.prototype.exportCss = function(merge) {
-      var cssFileList, linkFileName, mergeFiles, saveFile, self;
+      var cssFileList, linkFileName, mergeFiles, self;
       self = this;
       cssFileList = [];
       mergeFiles = [];
@@ -132,13 +128,11 @@
       if (!merge) {
         return cssFileList.join('');
       }
-      linkFileName = myUtil.sha1(mergeFiles.join('')) + '.css';
-      saveFile = path.join(tempPath, linkFileName);
-      if (fs.existsSync(saveFile)) {
+      linkFileName = fileMerger.mergeFilesToTemp(mergeFiles, 'css');
+      if (linkFileName) {
         linkFileName = path.join(config.getTempStaticPrefix(), linkFileName);
         return '<link rel="stylesheet" href="' + linkFileName + ("?version=" + VERSION) + '" type="text/css" media="screen" />';
       } else {
-        myUtil.mergeFiles(mergeFiles, saveFile);
         return cssFileList.join('');
       }
     };

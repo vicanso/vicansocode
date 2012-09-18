@@ -4,9 +4,7 @@ fs = require 'fs'
 
 config = require '../config'
 appPath = config.getAppPath()
-tempPath = config.getTempPath()
 fileMerger = require "#{appPath}/helpers/filemerger"
-myUtil = require "#{appPath}/helpers/util"
 
 STATIC_PREFIX = config.getStaticPrefix()
 VERSION = new Date().getTime()
@@ -23,7 +21,7 @@ class FileImporter
     @jsFiles = []
     @debug = debug || false
   ###*
-   * [importCss description]
+   * [importCss 引入css文件]
    * @param  {[type]} path     [css路径]
    * @param  {[type]} prepend [是否插入到数组最前（在HTML中首先输出）]
    * @return {[type]}         [description]
@@ -33,7 +31,7 @@ class FileImporter
     self.importFiles path, 'css', prepend
     return self
   ###*
-   * [importJs description]
+   * [importJs 引入js文件]
    * @param  {[type]} path    [js路径]
    * @param  {[type]} prepend [是否插入到数组最前（在HTML中首先输出）]
    * @return {[type]}         [description]
@@ -91,14 +89,20 @@ class FileImporter
       cssFileList.push '<link rel="stylesheet" href="' + cssFile + "?version=#{VERSION}" + '" type="text/css" media="screen" />'
     if !merge
       return cssFileList.join ''
-    linkFileName = myUtil.sha1(mergeFiles.join('')) + '.css'
-    saveFile = path.join tempPath, linkFileName
-    if fs.existsSync saveFile
+    linkFileName = fileMerger.mergeFilesToTemp mergeFiles, 'css'
+    if linkFileName
       linkFileName = path.join config.getTempStaticPrefix(), linkFileName
       return '<link rel="stylesheet" href="' + linkFileName + "?version=#{VERSION}" + '" type="text/css" media="screen" />'
     else
-      myUtil.mergeFiles mergeFiles, saveFile
       return cssFileList.join ''
+    # linkFileName = myUtil.sha1(mergeFiles.join('')) + '.css'
+    # saveFile = path.join tempPath, linkFileName
+    # if fs.existsSync saveFile
+    #   linkFileName = path.join config.getTempStaticPrefix(), linkFileName
+    #   return '<link rel="stylesheet" href="' + linkFileName + "?version=#{VERSION}" + '" type="text/css" media="screen" />'
+    # else
+    #   myUtil.mergeFiles mergeFiles, saveFile
+    #   return cssFileList.join ''
   exportJs : (merge) ->
     self = @
     jsFileList = []

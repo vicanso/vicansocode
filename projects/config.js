@@ -1,5 +1,5 @@
 (function() {
-  var APP_PATH, IS_MASTER, LISTEN_PORT, RUNNING_MODE, STATIC_PREFIX, TEMP_STATIC_PREFIX, config, path;
+  var APP_PATH, IS_MASTER, LISTEN_PORT, MERGE_FILES, RUNNING_MODE, STATIC_PATH, STATIC_PREFIX, TEMP_STATIC_PATH, TEMP_STATIC_PREFIX, config, path;
 
   path = require('path');
 
@@ -9,11 +9,17 @@
 
   STATIC_PREFIX = '/static';
 
+  STATIC_PATH = path.join(APP_PATH, STATIC_PREFIX);
+
   TEMP_STATIC_PREFIX = STATIC_PREFIX + '/temp';
+
+  TEMP_STATIC_PATH = path.join(APP_PATH, TEMP_STATIC_PREFIX);
 
   LISTEN_PORT = 10000;
 
   IS_MASTER = false;
+
+  MERGE_FILES = require("" + APP_PATH + "/mergefiles.json");
 
   config = {
     /**
@@ -66,6 +72,9 @@
     isMaster: function() {
       return IS_MASTER;
     },
+    getStaticPath: function() {
+      return STATIC_PATH;
+    },
     /**
      * [getTempPath 获取临时目录，该目录存放css,js的合并文件]
      * @return {[type]} [description]
@@ -73,6 +82,9 @@
 
     getTempPath: function() {
       return path.join(APP_PATH, TEMP_STATIC_PREFIX);
+    },
+    getMergeFiles: function() {
+      return MERGE_FILES;
     }
   };
 
