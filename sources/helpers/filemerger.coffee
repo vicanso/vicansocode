@@ -11,7 +11,7 @@ myUtil = require "#{appPath}/helpers/util"
 
 tempFilesStatus = {}
 
-Merger = 
+fileMerger = 
   ###*
    * [getMergeFile 根据当前文件返回合并对应的文件名，若该文件未被合并，则返回空字符串]
    * @param  {[type]} file [当前文件]
@@ -43,16 +43,20 @@ Merger =
         mergeList = []
         _.each mergerInfo, (mergers) ->
           mergeList.push mergers
+
         if mergingFiles
           _.each mergeList, (mergers) ->
             saveFile = path.join staticPath, mergers.name
-            content = ''
+            content = []
             _.each mergers.files, (file, i) ->
-              content +=  fs.readFileSync path.join staticPath, file
+              content .push fs.readFileSync path.join(staticPath, file), 'utf8'
             mkdirp path.dirname(saveFile), (err) ->
               if err
                 logger.error err
-              fs.writeFileSync saveFile, content
+              fileSplit = ''
+              if mergerType == 'js'
+                fileSplit = ';'
+              fs.writeFileSync saveFile, content.join fileSplit
             mergers.files.sort()
         self["#{mergerType}List"] = mergeList
 
@@ -63,6 +67,9 @@ Merger =
    * @return {[type]}            [合并后的文件名]
   ###
   mergeFilesToTemp : (mergeFiles, type) ->
+    #已提前作合并的文件不再作合并
+    mergeFiles = _.filter mergeFiles, (file) ->
+      return fileMerger.getMergeFile(file, type) == ''
     linkFileHash = myUtil.sha1 mergeFiles.join ''
     linkFileName = "#{linkFileHash}.#{type}" 
     saveFile = path.join tempPath, linkFileName
@@ -77,9 +84,11 @@ Merger =
           data = data.replace /..\/images/g, imagesPath 
           return data
         ,(err) ->
-          if !err
+          if err
+            logger.error err
+          else
             tempFilesStatus[linkFileHash] = 'complete'
       return ''
 
 
-module.exports = Merger
+module.exports = fileMerger

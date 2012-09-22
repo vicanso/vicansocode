@@ -6,10 +6,10 @@ domain = require 'domain'
 config = require './config'
 appPath = config.getAppPath()
 
-logger = require "#{appPath}/helpers/logger"
+logger = require("#{appPath}/helpers/logger") __filename
 fileMerger = require "#{appPath}/helpers/filemerger"
 staticHandler = require "#{appPath}/helpers/statichandler"
-numCPUs = require('os').cpus().length
+slaveTotal = config.getSlaveTotal()
 
 
 initExpress = () ->
@@ -23,8 +23,8 @@ initExpress = () ->
 
   # app.use express.limit '1mb'
 
-  if config.isProductionMode()
-    app.use express.logger()
+  # if config.isProductionMode()
+    # app.use express.logger()
 
   app.use express.bodyParser()
   app.use express.methodOverride()
@@ -42,6 +42,8 @@ initExpress = () ->
 
   app.listen config.getListenPort()
 
+  logger.info "listen port #{config.getListenPort()}"
+
 ###*
  * [initApp 初始化APP]
  * @return {[type]} [description]
@@ -50,16 +52,17 @@ initApp = () ->
   if config.isProductionMode() && cluster.isMaster
     config.setMaster()
 
-    while numCPUs
+    while slaveTotal
       cluster.fork()
-      numCPUs--
+      slaveTotal--
 
     #worker的事件输出，当其中一个worker退出时，启动另外一个worker
-    _.each 'fork listen listening online disconnect exit'.split(' '), (event) ->
+    _.each 'fork listening online'.split(' '), (event) ->
       cluster.on event, (worker) ->
-        logger.error "worker #{worker.process.pid} #{event}"
-        if event is 'exit'
-          cluster.fork()
+        logger.info "worker #{worker.process.pid} #{event}"
+    cluster.on 'exit', (worker) ->
+      logger.error "worker #{worker.process.pid} #{event}"
+      cluster.fork()
   else
 
     if config.isProductionMode()

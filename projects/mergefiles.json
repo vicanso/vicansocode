@@ -1,10 +1,11 @@
 {
   "js" : [
     {
-      "name" : "/mergers/jquery.plugins.min.js",
+      "name" : "/mergers/util.min.js",
       "files" : ["/common/javascripts/jquery/jquery.cookies.min.js", 
         "/common/javascripts/jquery/jquery.url.min.js", 
-        "/common/javascripts/jquery/jquery.mousewheel.min.js"
+        "/common/javascripts/jquery/jquery.mousewheel.min.js",
+        "/common/javascripts/util/underscore.min.js"
       ]
     }
   ],

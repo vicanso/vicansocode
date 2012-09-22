@@ -106,7 +106,7 @@ var compressJavascript = function(file, minJsFile){
         mangle : true
       });
       ast = pro.ast_squeeze(ast, {
-        dead_code : false
+        dead_code : true
       });
       finalCode = pro.gen_code(ast, {
         ascii_only : true

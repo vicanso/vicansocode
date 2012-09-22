@@ -6,7 +6,7 @@ path = require 'path'
 _ = require 'underscore'
 config = require '../config'
 appPath = config.getAppPath()
-logger = require "#{appPath}/helpers/logger"
+logger = require("#{appPath}/helpers/logger") __filename
 
 noop = () ->
 

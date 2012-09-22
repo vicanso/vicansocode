@@ -2,17 +2,22 @@
   .navContainer{
     height: 30px;
     line-height: 30px;
+    width:770px;
+    margin:auto;
     .nav{
-      color:#f0f0f0;
+      color:#808080;
+      border-right: 1px solid #e0e0e0;
       display: inline-block;
-      margin:0 10px;
+      padding:0 30px;
+      &.lastNav{
+        border-right: none;
+      }
+      &:hover, &.selected{
+        color:#f0f0f0;
+      }
     }
     .nav{
       *display:inline;
     }
   }
-}
-.favicon{
-  height:32px;
-  background: url(../images/task_btn.gif);
 }

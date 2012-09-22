@@ -1,5 +1,5 @@
 (function() {
-  var Merger, appPath, config, fs, mkdirp, myUtil, path, staticPath, tempFilesStatus, tempPath, _;
+  var appPath, config, fileMerger, fs, mkdirp, myUtil, path, staticPath, tempFilesStatus, tempPath, _;
 
   _ = require('underscore');
 
@@ -21,7 +21,7 @@
 
   tempFilesStatus = {};
 
-  Merger = {
+  fileMerger = {
     /**
      * [getMergeFile 根据当前文件返回合并对应的文件名，若该文件未被合并，则返回空字符串]
      * @param  {[type]} file [当前文件]
@@ -68,15 +68,20 @@
             _.each(mergeList, function(mergers) {
               var content, saveFile;
               saveFile = path.join(staticPath, mergers.name);
-              content = '';
+              content = [];
               _.each(mergers.files, function(file, i) {
-                return content += fs.readFileSync(path.join(staticPath, file));
+                return content.push(fs.readFileSync(path.join(staticPath, file), 'utf8'));
               });
               mkdirp(path.dirname(saveFile), function(err) {
+                var fileSplit;
                 if (err) {
                   logger.error(err);
                 }
-                return fs.writeFileSync(saveFile, content);
+                fileSplit = '';
+                if (mergerType === 'js') {
+                  fileSplit = ';';
+                }
+                return fs.writeFileSync(saveFile, content.join(fileSplit));
               });
               return mergers.files.sort();
             });
@@ -94,6 +99,9 @@
 
     mergeFilesToTemp: function(mergeFiles, type) {
       var linkFileHash, linkFileName, saveFile;
+      mergeFiles = _.filter(mergeFiles, function(file) {
+        return fileMerger.getMergeFile(file, type) === '';
+      });
       linkFileHash = myUtil.sha1(mergeFiles.join(''));
       linkFileName = "" + linkFileHash + "." + type;
       saveFile = path.join(tempPath, linkFileName);
@@ -109,7 +117,9 @@
             data = data.replace(/..\/images/g, imagesPath);
             return data;
           }, function(err) {
-            if (!err) {
+            if (err) {
+              return logger.error(err);
+            } else {
               return tempFilesStatus[linkFileHash] = 'complete';
             }
           });
@@ -119,6 +129,6 @@
     }
   };
 
-  module.exports = Merger;
+  module.exports = fileMerger;
 
 }).call(this);

@@ -7,7 +7,9 @@ STATIC_PATH = path.join APP_PATH, STATIC_PREFIX
 TEMP_STATIC_PREFIX = STATIC_PREFIX + '/temp'
 TEMP_STATIC_PATH = path.join APP_PATH, TEMP_STATIC_PREFIX
 LISTEN_PORT = 10000
+REDIS_PORT = 10010
 IS_MASTER = false
+SLAVE_TOTAL = require('os').cpus().length
 MERGE_FILES = require "#{APP_PATH}/mergefiles.json"
 config = 
   ###*
@@ -61,8 +63,23 @@ config =
   ###
   getTempPath : () ->
     return path.join APP_PATH, TEMP_STATIC_PREFIX
-
+  ###*
+   * [getMergeFiles 返回合并文件列表]
+   * @return {[type]} [description]
+  ###
   getMergeFiles : () ->
     return MERGE_FILES
+  ###*
+   * [getRedisPort 返回redis监听的端口]
+   * @return {[type]} [description]
+  ###
+  getRedisPort : () ->
+    return REDIS_PORT
+  ###*
+   * [getSlaveTotal 返回从进程的总数]
+   * @return {[type]} [description]
+  ###
+  getSlaveTotal : () ->
+    return SLAVE_TOTAL
 
 module.exports = config

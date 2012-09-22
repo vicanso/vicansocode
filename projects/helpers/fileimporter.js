@@ -125,7 +125,7 @@
         }
         return cssFileList.push('<link rel="stylesheet" href="' + cssFile + ("?version=" + VERSION) + '" type="text/css" media="screen" />');
       });
-      if (!merge) {
+      if (!merge || self.debug) {
         return cssFileList.join('');
       }
       linkFileName = fileMerger.mergeFilesToTemp(mergeFiles, 'css');
@@ -138,19 +138,30 @@
     };
 
     FileImporter.prototype.exportJs = function(merge) {
-      var jsFileList, self;
+      var jsFileList, linkFileName, mergeFiles, self;
       self = this;
       jsFileList = [];
+      mergeFiles = [];
       _.each(self.jsFiles, function(jsFile) {
         if (self.debug) {
           jsFile = ('' + jsFile).replace('.min.js', '.js');
         }
         if (jsFile.indexOf('http') !== 0) {
           jsFile = path.join(STATIC_PREFIX, jsFile) + ("?version=" + VERSION);
+          mergeFiles.push(path.join(appPath, jsFile));
         }
         return jsFileList.push('<script type="text/javascript" src="' + jsFile + '"></script>');
       });
-      return jsFileList.join('');
+      if (!merge || self.debug) {
+        return jsFileList.join('');
+      }
+      linkFileName = fileMerger.mergeFilesToTemp(mergeFiles, 'js');
+      if (linkFileName) {
+        linkFileName = path.join(config.getTempStaticPrefix(), linkFileName);
+        return '<script type="text/javascript" src="' + linkFileName + ("?version=" + VERSION) + '"></script>';
+      } else {
+        return jsFileList.join('');
+      }
     };
 
     return FileImporter;

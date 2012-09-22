@@ -80,14 +80,13 @@ class FileImporter
   exportCss : (merge) ->
     self = @
     cssFileList = []
-
     mergeFiles = []
     _.each self.cssFiles, (cssFile) ->
       if cssFile.indexOf('http') isnt 0
         cssFile = path.join(STATIC_PREFIX, cssFile)
         mergeFiles.push path.join appPath, cssFile
       cssFileList.push '<link rel="stylesheet" href="' + cssFile + "?version=#{VERSION}" + '" type="text/css" media="screen" />'
-    if !merge
+    if !merge || self.debug
       return cssFileList.join ''
     linkFileName = fileMerger.mergeFilesToTemp mergeFiles, 'css'
     if linkFileName
@@ -95,23 +94,24 @@ class FileImporter
       return '<link rel="stylesheet" href="' + linkFileName + "?version=#{VERSION}" + '" type="text/css" media="screen" />'
     else
       return cssFileList.join ''
-    # linkFileName = myUtil.sha1(mergeFiles.join('')) + '.css'
-    # saveFile = path.join tempPath, linkFileName
-    # if fs.existsSync saveFile
-    #   linkFileName = path.join config.getTempStaticPrefix(), linkFileName
-    #   return '<link rel="stylesheet" href="' + linkFileName + "?version=#{VERSION}" + '" type="text/css" media="screen" />'
-    # else
-    #   myUtil.mergeFiles mergeFiles, saveFile
-    #   return cssFileList.join ''
   exportJs : (merge) ->
     self = @
     jsFileList = []
+    mergeFiles = []
     _.each self.jsFiles, (jsFile) ->
       if self.debug
         jsFile = ('' + jsFile).replace '.min.js', '.js'
       if jsFile.indexOf('http') isnt 0
         jsFile = path.join(STATIC_PREFIX, jsFile) + "?version=#{VERSION}"
+        mergeFiles.push path.join appPath, jsFile
       jsFileList.push '<script type="text/javascript" src="' + jsFile + '"></script>'
-    return jsFileList.join ''
+    if !merge || self.debug
+      return jsFileList.join ''
+    linkFileName = fileMerger.mergeFilesToTemp mergeFiles, 'js'
+    if linkFileName
+      linkFileName = path.join config.getTempStaticPrefix(), linkFileName
+      return '<script type="text/javascript" src="' + linkFileName + "?version=#{VERSION}" + '"></script>'
+    else
+      return jsFileList.join ''
 
 module.exports = FileImporter

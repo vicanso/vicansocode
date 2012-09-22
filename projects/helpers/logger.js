@@ -1,8 +1,17 @@
 (function() {
-  var logger;
+  var appPath, config, getLogger, _;
 
-  logger = require('log4js').getLogger();
+  _ = require('underscore');
 
-  module.exports = logger;
+  config = require('../config');
+
+  appPath = config.getAppPath();
+
+  getLogger = function(runningFile) {
+    var logger;
+    return logger = require('log4js').getLogger(runningFile.replace(appPath, ''));
+  };
+
+  module.exports = getLogger;
 
 }).call(this);

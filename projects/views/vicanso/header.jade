@@ -1,5 +1,7 @@
 - fileImporter.importCss('/vicanso/stylesheets/header.css');
 - var headerInfo = viewContent.header;
+- var navData = headerInfo.nav;
+- var navTotal = navData.length;
 //- - var userInfo = userInfo;
 //- #loginContainer
 //-   if !userInfo
@@ -14,8 +16,10 @@
 if headerInfo
   header#header.uiBlackGradientBG
     nav.navContainer
-      each item, i in headerInfo.nav
+      each item, i in navData
         - var navClass = 'nav';
         if i === headerInfo.selectedIndex
-          - navClass += ' selected';
+          - navClass += ' selected uiRedGradientBG';
+        if i === navTotal - 1
+          - navClass += ' lastNav';
         a(class='#{navClass}', herf='#{item.href}') #{item.name}

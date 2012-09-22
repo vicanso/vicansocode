@@ -18,6 +18,10 @@ webConfig =
           href : '#'
         }
         {
+          name : '我的NODE'
+          href : '#'
+        }
+        {
           name : '文章分享'
           href : '#'
         }

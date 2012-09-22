@@ -8,13 +8,13 @@ html(lang='zh-CN')
     meta(name='author',content='vicanso 腻味')
     title= title
     link(rel='icon', href='/vicanso/images/favicon.png', type='image/x-icon')
-    - fileImporter.importCss(['/common/stylesheets/global.css', 'common/base/jquery.base.css'])
+    link(rel='stylesheet', href='/static/common/base/jquery.base.css', type='text/css')
+    - fileImporter.importCss('/common/stylesheets/global.css');
     //CSS_FILES_CONTAINER
     //if lt IE 9
       script(src='/static/common/javascripts/util/html5shiv.min.js', type='text/javascript')
-
   body
-    block contentContainer
+    block bodyContainer
   script(src='/static/common/javascripts/jquery/jquery-1.8.1.min.js', type='text/javascript')
+  - fileImporter.importJs(['/common/javascripts/jquery/jquery.cookies.min.js', '/common/javascripts/jquery/jquery.url.min.js', '/common/javascripts/jquery/jquery.mousewheel.min.js', '/common/javascripts/util/underscore.min.js']);
   //JS_FILES_CONTAINER
-  //- !{importObj.exportJs()}

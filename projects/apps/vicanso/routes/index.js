@@ -13,9 +13,10 @@
 
   module.exports = function(app) {
     return app.get('/', function(req, res) {
-      var fileImporter, jadeView, viewData;
+      var debug, fileImporter, jadeView, viewData;
       jadeView = 'vicanso/index';
-      fileImporter = new FileImporter();
+      debug = !config.isProductionMode();
+      fileImporter = new FileImporter(debug);
       viewData = viewContentHandler.index(fileImporter);
       return httpHandler.render(req, res, jadeView, viewData);
     });

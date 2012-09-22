@@ -1,5 +1,5 @@
 (function() {
-  var APP_PATH, IS_MASTER, LISTEN_PORT, MERGE_FILES, RUNNING_MODE, STATIC_PATH, STATIC_PREFIX, TEMP_STATIC_PATH, TEMP_STATIC_PREFIX, config, path;
+  var APP_PATH, IS_MASTER, LISTEN_PORT, MERGE_FILES, REDIS_PORT, RUNNING_MODE, SLAVE_TOTAL, STATIC_PATH, STATIC_PREFIX, TEMP_STATIC_PATH, TEMP_STATIC_PREFIX, config, path;
 
   path = require('path');
 
@@ -17,7 +17,11 @@
 
   LISTEN_PORT = 10000;
 
+  REDIS_PORT = 10010;
+
   IS_MASTER = false;
+
+  SLAVE_TOTAL = require('os').cpus().length;
 
   MERGE_FILES = require("" + APP_PATH + "/mergefiles.json");
 
@@ -83,8 +87,29 @@
     getTempPath: function() {
       return path.join(APP_PATH, TEMP_STATIC_PREFIX);
     },
+    /**
+     * [getMergeFiles 返回合并文件列表]
+     * @return {[type]} [description]
+    */
+
     getMergeFiles: function() {
       return MERGE_FILES;
+    },
+    /**
+     * [getRedisPort 返回redis监听的端口]
+     * @return {[type]} [description]
+    */
+
+    getRedisPort: function() {
+      return REDIS_PORT;
+    },
+    /**
+     * [getSlaveTotal 返回从进程的总数]
+     * @return {[type]} [description]
+    */
+
+    getSlaveTotal: function() {
+      return SLAVE_TOTAL;
     }
   };
 

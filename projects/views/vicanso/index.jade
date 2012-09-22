@@ -1,4 +1,10 @@
 extends ./layout
-block contentContainer
+block bodyContainer
   include ./header
-  p.favicon aaaa
+  - fileImporter.importCss('/vicanso/stylesheets/index.css');
+  #contentContainer
+    #rightContainer
+    #leftContainer
+      include mydiary
+      include articles
+      

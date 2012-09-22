@@ -5,7 +5,7 @@
 
   appPath = config.getAppPath();
 
-  logger = require("" + appPath + "/helpers/logger");
+  logger = require("" + appPath + "/helpers/logger")(__filename);
 
   httpHandler = {
     /**

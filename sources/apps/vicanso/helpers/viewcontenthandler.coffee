@@ -1,6 +1,7 @@
 config = require '../../../config'
 appPath = config.getAppPath()
 webConfig = require "#{appPath}/apps/vicanso/helpers/webconfig"
+baseConfig = require "#{appPath}/helpers/baseconfig"
 
 viewContentHandler = 
   index : (fileImporter) ->
@@ -9,6 +10,8 @@ viewContentHandler =
       fileImporter : fileImporter
       viewContent : 
         header : webConfig.getHeader 0
+      baseConfig :
+        baseDialog : baseConfig.getDialogConfig()
         
     return viewData
 
