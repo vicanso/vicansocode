@@ -3,11 +3,11 @@ html(lang='zh-CN')
   head
     meta(http-equiv='Content-Type', content='text/html; charset=UTF-8')
     meta(http-equiv='X-UA-Compatible', content='IE=edge,chrome=1')
-    meta(name='keywords', content='')
+    meta(name='keywords', content='javascript, node.js, WEB前端')
     meta(name='description', content='')
     meta(name='author',content='vicanso 腻味')
     title= title
-    link(rel='icon', href='/vicanso/images/favicon.png', type='image/x-icon')
+    link(rel='icon', href='/static/vicanso/images/favicon.png', type='image/x-icon')
     link(rel='stylesheet', href='/static/common/base/jquery.base.css', type='text/css')
     - fileImporter.importCss('/common/stylesheets/global.css');
     //CSS_FILES_CONTAINER
@@ -16,5 +16,5 @@ html(lang='zh-CN')
   body
     block bodyContainer
   script(src='/static/common/javascripts/jquery/jquery-1.8.1.min.js', type='text/javascript')
-  - fileImporter.importJs(['/common/javascripts/jquery/jquery.cookies.min.js', '/common/javascripts/jquery/jquery.url.min.js', '/common/javascripts/jquery/jquery.mousewheel.min.js', '/common/javascripts/util/underscore.min.js']);
+  - fileImporter.importJs(['/common/javascripts/util/underscore.min.js', '/common/javascripts/jquery/jquery.cookies.min.js', '/common/javascripts/jquery/jquery.url.min.js', '/common/javascripts/jquery/jquery.mousewheel.min.js']);
   //JS_FILES_CONTAINER

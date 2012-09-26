@@ -1,5 +1,5 @@
 (function() {
-  var FileImporter, STATIC_PREFIX, VERSION, appPath, config, fileMerger, fs, path, _;
+  var FileImporter, STATIC_PREFIX, VERSION, appPath, config, exportCssHTML, exportJsHTML, fileMerger, fs, getExportFilesHTML, getExportHTML, isFilter, path, _;
 
   _ = require('underscore');
 
@@ -107,66 +107,145 @@
     };
 
     /**
-     * [exportCss description]
+     * [exportCss 输出CSS标签]
      * @param  {[type]} merge [description]
      * @return {[type]}       [description]
     */
 
 
     FileImporter.prototype.exportCss = function(merge) {
-      var cssFileList, linkFileName, mergeFiles, self;
+      var self;
       self = this;
-      cssFileList = [];
-      mergeFiles = [];
-      _.each(self.cssFiles, function(cssFile) {
-        if (cssFile.indexOf('http') !== 0) {
-          cssFile = path.join(STATIC_PREFIX, cssFile);
-          mergeFiles.push(path.join(appPath, cssFile));
-        }
-        return cssFileList.push('<link rel="stylesheet" href="' + cssFile + ("?version=" + VERSION) + '" type="text/css" media="screen" />');
-      });
-      if (!merge || self.debug) {
-        return cssFileList.join('');
-      }
-      linkFileName = fileMerger.mergeFilesToTemp(mergeFiles, 'css');
-      if (linkFileName) {
-        linkFileName = path.join(config.getTempStaticPrefix(), linkFileName);
-        return '<link rel="stylesheet" href="' + linkFileName + ("?version=" + VERSION) + '" type="text/css" media="screen" />';
-      } else {
-        return cssFileList.join('');
-      }
+      return getExportFilesHTML(self.cssFiles, 'css', self.debug, merge);
     };
 
+    /**
+     * [exportJs 输出JS标签]
+     * @param  {[type]} merge [description]
+     * @return {[type]}       [description]
+    */
+
+
     FileImporter.prototype.exportJs = function(merge) {
-      var jsFileList, linkFileName, mergeFiles, self;
+      var self;
       self = this;
-      jsFileList = [];
-      mergeFiles = [];
-      _.each(self.jsFiles, function(jsFile) {
-        if (self.debug) {
-          jsFile = ('' + jsFile).replace('.min.js', '.js');
-        }
-        if (jsFile.indexOf('http') !== 0) {
-          jsFile = path.join(STATIC_PREFIX, jsFile) + ("?version=" + VERSION);
-          mergeFiles.push(path.join(appPath, jsFile));
-        }
-        return jsFileList.push('<script type="text/javascript" src="' + jsFile + '"></script>');
-      });
-      if (!merge || self.debug) {
-        return jsFileList.join('');
-      }
-      linkFileName = fileMerger.mergeFilesToTemp(mergeFiles, 'js');
-      if (linkFileName) {
-        linkFileName = path.join(config.getTempStaticPrefix(), linkFileName);
-        return '<script type="text/javascript" src="' + linkFileName + ("?version=" + VERSION) + '"></script>';
-      } else {
-        return jsFileList.join('');
-      }
+      return getExportFilesHTML(self.jsFiles, 'js', self.debug, merge);
     };
 
     return FileImporter;
 
   })();
+
+  /**
+   * [getExportFilesHTML 获取引入文件列表对应的HTML]
+   * @param  {[type]} files [引入文件列表]
+   * @param  {[type]} type  [引入文件类型，现支持css, js]
+   * @param  {[type]} debug [是否debug模式]
+   * @param  {[type]} merge [是否需要合并文件]
+   * @return {[type]}       [description]
+  */
+
+
+  getExportFilesHTML = function(files, type, debug, merge) {
+    var exportFilesHTML, linkFileName, mergeFiles;
+    exportFilesHTML = [];
+    mergeFiles = [];
+    _.each(files, function(file) {
+      var suffix;
+      suffix = true;
+      if (isFilter(file)) {
+        suffix = false;
+      } else {
+        if (debug && type === 'js') {
+          file = file.replace('.min.js', '.js');
+        }
+        if (!fileMerger.isMergeByOthers(file)) {
+          mergeFiles.push(path.join(appPath, STATIC_PREFIX, file));
+        }
+        file = path.join(STATIC_PREFIX, file);
+      }
+      return exportFilesHTML.push(getExportHTML(file, type, suffix));
+    });
+    if (!merge || debug || mergeFiles.length === 0) {
+      return exportFilesHTML.join('');
+    }
+    linkFileName = fileMerger.mergeFilesToTemp(mergeFiles, type);
+    if (linkFileName) {
+      linkFileName = path.join(config.getTempStaticPrefix(), linkFileName);
+      return getExportHTML(linkFileName, type, true);
+    } else {
+      return exportFilesHTML.join('');
+    }
+  };
+
+  /**
+   * [isFilter 判断该文件是否应该过滤的]
+   * @param  {[type]}  file [引入文件路径]
+   * @return {Boolean}      [description]
+  */
+
+
+  isFilter = function(file) {
+    var filterPrefix;
+    filterPrefix = 'http';
+    if (file.substring(0, filterPrefix.length) === filterPrefix) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  /**
+   * [getExportHTML 返回生成的HTML]
+   * @param  {[type]} file   [引入的文件]
+   * @param  {[type]} type   [文件类型]
+   * @param  {[type]} suffix [是否需要添加后缀（主要是为了增加版本好，用时间作区分）]
+   * @return {[type]}        [description]
+  */
+
+
+  getExportHTML = function(file, type, suffix) {
+    var html;
+    html = '';
+    switch (type) {
+      case 'js':
+        html = exportJsHTML(file, suffix);
+        break;
+      default:
+        html = exportCssHTML(file, suffix);
+    }
+    return html;
+  };
+
+  /**
+   * [exportJsHTML 返回引入JS的标签HTML]
+   * @param  {[type]} file   [文件名]
+   * @param  {[type]} suffix [是否需要文件后缀]
+   * @return {[type]}        [description]
+  */
+
+
+  exportJsHTML = function(file, suffix) {
+    if (suffix) {
+      file += "?version=" + VERSION;
+    }
+    return '<script type="text/javascript" src="' + file + '"></script>';
+  };
+
+  /**
+   * [exportCssHTML 返回引入CSS标签的HTML]
+   * @param  {[type]} file   [文件名]
+   * @param  {[type]} suffix [是否需要文件后缀]
+   * @return {[type]}        [description]
+  */
+
+
+  exportCssHTML = function(file, suffix) {
+    if (suffix) {
+      file += "?version=" + VERSION;
+    }
+    return '<link rel="stylesheet" href="' + file + '" type="text/css" media="screen" />';
+  };
 
   module.exports = FileImporter;
 

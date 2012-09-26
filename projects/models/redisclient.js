@@ -46,7 +46,7 @@
 
   client.on('ready', function(err) {
     if (err) {
-      logger.error("redis.js redis ready event: " + (JSON.stringify(err)));
+      logger.error(err);
       logRedisReady = true;
     }
     if (logRedisReady) {
@@ -57,7 +57,7 @@
 
   client.on('error', function(err) {
     if (err) {
-      logger.error("redis.js redis error event: " + (JSON.stringify(err)));
+      logger.error(err);
     }
     return logRedisReady = true;
   });

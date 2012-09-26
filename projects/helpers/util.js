@@ -1,5 +1,5 @@
 (function() {
-  var appPath, async, config, crypto, fs, logger, noop, path, util, _;
+  var appPath, async, config, crypto, fs, logger, mkdirp, noop, path, util, _;
 
   _ = require('underscore');
 
@@ -12,6 +12,8 @@
   path = require('path');
 
   _ = require('underscore');
+
+  mkdirp = require('mkdirp');
 
   config = require('../config');
 
@@ -51,9 +53,17 @@
       });
       return async.parallel(funcs, function(err, results) {
         if (err) {
-          return logger.error(err);
+          logger.error(err);
+          return cbf(err);
         } else {
-          return fs.writeFile(saveFile, results.join(''), cbf);
+          return mkdirp(path.dirname(saveFile), function(err) {
+            if (err) {
+              logger.error(err);
+              return cbf(err);
+            } else {
+              return fs.writeFile(saveFile, results.join(''), cbf);
+            }
+          });
         }
       });
     },

@@ -1,5 +1,5 @@
 (function() {
-  var appPath, config, fileMerger, fs, mkdirp, myUtil, path, staticPath, tempFilesStatus, tempPath, _;
+  var appPath, config, fileMerger, fs, logger, mkdirp, myUtil, path, staticPath, tempFilesStatus, tempPath, _;
 
   _ = require('underscore');
 
@@ -18,6 +18,8 @@
   staticPath = config.getStaticPath();
 
   myUtil = require("" + appPath + "/helpers/util");
+
+  logger = require("" + appPath + "/helpers/logger")(__filename);
 
   tempFilesStatus = {};
 
@@ -46,6 +48,18 @@
         }
       });
       return mergeFile;
+    },
+    /**
+     * [isMergeByOthers 该文件是否是由其它文件合并而来]
+     * @param  {[type]}  file [description]
+     * @return {Boolean}      [description]
+    */
+
+    isMergeByOthers: function(file) {
+      var files, self;
+      self = this;
+      files = _.pluck(self.cssList, 'name').concat(_.pluck(self.jsList, 'name'));
+      return _.indexOf(files, file) !== -1;
     },
     /**
      * [mergeFilesBeforeRunning 合并文件(在程序运行之前，主要是把一些公共的文件合并成一个，减少HTTP请求)]
@@ -105,7 +119,7 @@
       linkFileHash = myUtil.sha1(mergeFiles.join(''));
       linkFileName = "" + linkFileHash + "." + type;
       saveFile = path.join(tempPath, linkFileName);
-      if (tempFilesStatus[linkFileHash] === 'complete') {
+      if (tempFilesStatus[linkFileHash] === 'complete' || fs.existsSync(saveFile)) {
         return linkFileName;
       } else {
         if (!tempFilesStatus[linkFileHash]) {
@@ -118,6 +132,7 @@
             return data;
           }, function(err) {
             if (err) {
+              delete tempFilesStatus[linkFileHash];
               return logger.error(err);
             } else {
               return tempFilesStatus[linkFileHash] = 'complete';

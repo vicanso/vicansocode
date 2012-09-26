@@ -41,7 +41,7 @@
 
   appendJsAndCss = function(html, fileImporter) {
     html = html.replace('<!--CSS_FILES_CONTAINER-->', fileImporter.exportCss(true));
-    html = html.replace('<!--JS_FILES_CONTAINER-->', fileImporter.exportJs());
+    html = html.replace('<!--JS_FILES_CONTAINER-->', fileImporter.exportJs(true));
     return html;
   };
 

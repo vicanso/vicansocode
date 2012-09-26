@@ -4,6 +4,7 @@ fs = require 'fs'
 crypto = require 'crypto'
 path = require 'path'
 _ = require 'underscore'
+mkdirp = require 'mkdirp'
 config = require '../config'
 appPath = config.getAppPath()
 logger = require("#{appPath}/helpers/logger") __filename
@@ -37,8 +38,14 @@ util =
     async.parallel funcs, (err, results) ->
       if err
         logger.error err
+        cbf err
       else
-        fs.writeFile saveFile, results.join(''), cbf
+        mkdirp path.dirname(saveFile), (err) ->
+          if err
+            logger.error err
+            cbf err
+          else
+            fs.writeFile saveFile, results.join(''), cbf
   ###*
    * [md5 md5加密]
    * @param  {[type]} data       [加密的数据]

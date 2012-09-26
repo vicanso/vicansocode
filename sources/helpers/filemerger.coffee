@@ -8,6 +8,7 @@ appPath = config.getAppPath()
 tempPath = config.getTempPath()
 staticPath = config.getStaticPath()
 myUtil = require "#{appPath}/helpers/util"
+logger = require("#{appPath}/helpers/logger") __filename
 
 tempFilesStatus = {}
 
@@ -27,9 +28,18 @@ fileMerger =
       searchFiles = self.jsList
     _.each searchFiles, (searchInfo) ->
       files = searchInfo.files
-      if not mergeFile && (_.indexOf files, file, true) isnt -1
+      if not mergeFile && (_.indexOf files, file, true) != -1
         mergeFile = searchInfo.name
     return mergeFile
+  ###*
+   * [isMergeByOthers 该文件是否是由其它文件合并而来]
+   * @param  {[type]}  file [description]
+   * @return {Boolean}      [description]
+  ###
+  isMergeByOthers : (file) ->
+    self = @
+    files = _.pluck(self.cssList, 'name').concat _.pluck self.jsList, 'name'
+    return _.indexOf(files, file) != -1
   ###*
    * [mergeFilesBeforeRunning 合并文件(在程序运行之前，主要是把一些公共的文件合并成一个，减少HTTP请求)]
    * @param  {[type]} mergingFiles [是否真实作读取文件合并的操作（由于有可能有多个worker进程，因此只需要主进程作真正的读取，合并扣件，其它的只需要整理合并列表）]
@@ -72,10 +82,13 @@ fileMerger =
       return fileMerger.getMergeFile(file, type) == ''
     linkFileHash = myUtil.sha1 mergeFiles.join ''
     linkFileName = "#{linkFileHash}.#{type}" 
+
     saveFile = path.join tempPath, linkFileName
-    if tempFilesStatus[linkFileHash] == 'complete'
+    # 判断该文件是否已成生成好，若生成好，HTML直接加载该文件
+    if tempFilesStatus[linkFileHash] == 'complete' || fs.existsSync saveFile
       return linkFileName
     else
+      # 判断是否该文件正在合并中，若正在合并，则直接返回空字符串。若不是，则调用合并，并在状态记录中标记为merging
       if !tempFilesStatus[linkFileHash]
         tempFilesStatus[linkFileHash] = 'merging'
         myUtil.mergeFiles mergeFiles, saveFile, (data, file, saveFile) ->
@@ -85,6 +98,7 @@ fileMerger =
           return data
         ,(err) ->
           if err
+            delete tempFilesStatus[linkFileHash]
             logger.error err
           else
             tempFilesStatus[linkFileHash] = 'complete'

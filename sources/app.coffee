@@ -7,9 +7,13 @@ config = require './config'
 appPath = config.getAppPath()
 
 logger = require("#{appPath}/helpers/logger") __filename
-fileMerger = require "#{appPath}/helpers/filemerger"
+beforeRunningHandler = require "#{appPath}/helpers/beforerunninghandler"
 staticHandler = require "#{appPath}/helpers/statichandler"
 slaveTotal = config.getSlaveTotal()
+
+
+# console.log express.response
+# exports.response
 
 
 initExpress = () ->
@@ -23,8 +27,8 @@ initExpress = () ->
 
   # app.use express.limit '1mb'
 
-  # if config.isProductionMode()
-    # app.use express.logger()
+  if config.isProductionMode()
+    app.use express.logger()
 
   app.use express.bodyParser()
   app.use express.methodOverride()
@@ -51,7 +55,8 @@ initExpress = () ->
 initApp = () ->
   if config.isProductionMode() && cluster.isMaster
     config.setMaster()
-
+    
+    beforeRunningHandler.run()
     while slaveTotal
       cluster.fork()
       slaveTotal--
@@ -64,16 +69,14 @@ initApp = () ->
       logger.error "worker #{worker.process.pid} #{event}"
       cluster.fork()
   else
-
+    beforeRunningHandler.run()
     if config.isProductionMode()
       domain = domain.create()
       domain.on 'error', (err) ->
-        logger.error "uncaughtException #{err}"
+        logger.error err
       domain.run () ->
         initExpress()
     else
-      #合并文件处理（将部分js,css文件合并）
-      fileMerger.mergeFilesBeforeRunning true
       initExpress()
 
 initApp()

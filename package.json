@@ -19,6 +19,7 @@
     , "redis" : "latest"
     , "hiredis" : "latest"
     , "request" : "latest"
+    , "uglify-js" : "latest"
     , "underscore" : "latest"
   }
 }

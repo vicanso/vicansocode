@@ -73,45 +73,99 @@ class FileImporter
         self.importFiles item, type, prepend
     return self
   ###*
-   * [exportCss description]
+   * [exportCss 输出CSS标签]
    * @param  {[type]} merge [description]
    * @return {[type]}       [description]
   ###
   exportCss : (merge) ->
     self = @
-    cssFileList = []
-    mergeFiles = []
-    _.each self.cssFiles, (cssFile) ->
-      if cssFile.indexOf('http') isnt 0
-        cssFile = path.join(STATIC_PREFIX, cssFile)
-        mergeFiles.push path.join appPath, cssFile
-      cssFileList.push '<link rel="stylesheet" href="' + cssFile + "?version=#{VERSION}" + '" type="text/css" media="screen" />'
-    if !merge || self.debug
-      return cssFileList.join ''
-    linkFileName = fileMerger.mergeFilesToTemp mergeFiles, 'css'
-    if linkFileName
-      linkFileName = path.join config.getTempStaticPrefix(), linkFileName
-      return '<link rel="stylesheet" href="' + linkFileName + "?version=#{VERSION}" + '" type="text/css" media="screen" />'
-    else
-      return cssFileList.join ''
+    return getExportFilesHTML self.cssFiles, 'css', self.debug, merge
+  ###*
+   * [exportJs 输出JS标签]
+   * @param  {[type]} merge [description]
+   * @return {[type]}       [description]
+  ###
   exportJs : (merge) ->
     self = @
-    jsFileList = []
-    mergeFiles = []
-    _.each self.jsFiles, (jsFile) ->
-      if self.debug
-        jsFile = ('' + jsFile).replace '.min.js', '.js'
-      if jsFile.indexOf('http') isnt 0
-        jsFile = path.join(STATIC_PREFIX, jsFile) + "?version=#{VERSION}"
-        mergeFiles.push path.join appPath, jsFile
-      jsFileList.push '<script type="text/javascript" src="' + jsFile + '"></script>'
-    if !merge || self.debug
-      return jsFileList.join ''
-    linkFileName = fileMerger.mergeFilesToTemp mergeFiles, 'js'
-    if linkFileName
-      linkFileName = path.join config.getTempStaticPrefix(), linkFileName
-      return '<script type="text/javascript" src="' + linkFileName + "?version=#{VERSION}" + '"></script>'
+    return getExportFilesHTML self.jsFiles, 'js', self.debug, merge
+
+###*
+ * [getExportFilesHTML 获取引入文件列表对应的HTML]
+ * @param  {[type]} files [引入文件列表]
+ * @param  {[type]} type  [引入文件类型，现支持css, js]
+ * @param  {[type]} debug [是否debug模式]
+ * @param  {[type]} merge [是否需要合并文件]
+ * @return {[type]}       [description]
+###
+getExportFilesHTML = (files, type, debug, merge) ->
+  exportFilesHTML = []
+  mergeFiles = []
+  _.each files, (file) ->
+    suffix = true
+    if isFilter file
+      suffix = false
     else
-      return jsFileList.join ''
+      if debug && type == 'js'
+        file = file.replace '.min.js', '.js'
+      if !fileMerger.isMergeByOthers file
+        mergeFiles.push path.join appPath, STATIC_PREFIX, file
+      file = path.join STATIC_PREFIX, file
+    exportFilesHTML.push getExportHTML file, type, suffix
+  if !merge || debug || mergeFiles.length == 0
+    return exportFilesHTML.join ''
+  linkFileName = fileMerger.mergeFilesToTemp mergeFiles, type
+  if linkFileName
+    linkFileName = path.join config.getTempStaticPrefix(), linkFileName
+    return getExportHTML linkFileName, type, true
+  else
+    return exportFilesHTML.join ''
+
+###*
+ * [isFilter 判断该文件是否应该过滤的]
+ * @param  {[type]}  file [引入文件路径]
+ * @return {Boolean}      [description]
+###
+isFilter = (file) ->
+  filterPrefix = 'http'
+  if file.substring(0, filterPrefix.length) == filterPrefix
+    return true
+  else
+    return false
+
+###*
+ * [getExportHTML 返回生成的HTML]
+ * @param  {[type]} file   [引入的文件]
+ * @param  {[type]} type   [文件类型]
+ * @param  {[type]} suffix [是否需要添加后缀（主要是为了增加版本好，用时间作区分）]
+ * @return {[type]}        [description]
+###
+getExportHTML = (file, type, suffix) ->
+  html = ''
+  switch type
+    when 'js' then html = exportJsHTML file, suffix
+    else html = exportCssHTML file, suffix
+  return html
+
+###*
+ * [exportJsHTML 返回引入JS的标签HTML]
+ * @param  {[type]} file   [文件名]
+ * @param  {[type]} suffix [是否需要文件后缀]
+ * @return {[type]}        [description]
+###
+exportJsHTML = (file, suffix) ->
+  if suffix
+    file += "?version=#{VERSION}"
+  return '<script type="text/javascript" src="' + file + '"></script>'
+
+###*
+ * [exportCssHTML 返回引入CSS标签的HTML]
+ * @param  {[type]} file   [文件名]
+ * @param  {[type]} suffix [是否需要文件后缀]
+ * @return {[type]}        [description]
+###
+exportCssHTML = (file, suffix) ->
+  if suffix
+    file += "?version=#{VERSION}"
+  return '<link rel="stylesheet" href="' + file + '" type="text/css" media="screen" />'
 
 module.exports = FileImporter

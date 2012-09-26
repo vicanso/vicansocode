@@ -1,5 +1,5 @@
 (function() {
-  var appPath, cluster, config, domain, express, fileMerger, initApp, initExpress, logger, slaveTotal, staticHandler, _;
+  var appPath, beforeRunningHandler, cluster, config, domain, express, initApp, initExpress, logger, slaveTotal, staticHandler, _;
 
   _ = require('underscore');
 
@@ -15,7 +15,7 @@
 
   logger = require("" + appPath + "/helpers/logger")(__filename);
 
-  fileMerger = require("" + appPath + "/helpers/filemerger");
+  beforeRunningHandler = require("" + appPath + "/helpers/beforerunninghandler");
 
   staticHandler = require("" + appPath + "/helpers/statichandler");
 
@@ -29,6 +29,9 @@
     app.engine('jade', require('jade').__express);
     app.use(express.responseTime());
     app.use(staticHandler["static"]());
+    if (config.isProductionMode()) {
+      app.use(express.logger());
+    }
     app.use(express.bodyParser());
     app.use(express.methodOverride());
     app.use(express.cookieParser());
@@ -51,6 +54,7 @@
   initApp = function() {
     if (config.isProductionMode() && cluster.isMaster) {
       config.setMaster();
+      beforeRunningHandler.run();
       while (slaveTotal) {
         cluster.fork();
         slaveTotal--;
@@ -65,16 +69,16 @@
         return cluster.fork();
       });
     } else {
+      beforeRunningHandler.run();
       if (config.isProductionMode()) {
         domain = domain.create();
         domain.on('error', function(err) {
-          return logger.error("uncaughtException " + err);
+          return logger.error(err);
         });
         return domain.run(function() {
           return initExpress();
         });
       } else {
-        fileMerger.mergeFilesBeforeRunning(true);
         return initExpress();
       }
     }

@@ -28,14 +28,14 @@ initRedisClient = (redisClient, client) ->
 logRedisReady = true
 client.on 'ready', (err) ->
   if err
-    logger.error "redis.js redis ready event: #{JSON.stringify(err)}"
+    logger.error err
     logRedisReady = true
   if logRedisReady
     logger.info 'redis ready'
     logRedisReady = false
 client.on 'error', (err) ->
   if err
-    logger.error "redis.js redis error event: #{JSON.stringify(err)}"
+    logger.error err
   logRedisReady = true
 
 redisClient = {}

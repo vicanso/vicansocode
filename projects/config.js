@@ -1,5 +1,5 @@
 (function() {
-  var APP_PATH, IS_MASTER, LISTEN_PORT, MERGE_FILES, REDIS_PORT, RUNNING_MODE, SLAVE_TOTAL, STATIC_PATH, STATIC_PREFIX, TEMP_STATIC_PATH, TEMP_STATIC_PREFIX, config, path;
+  var APP_PATH, IS_MASTER, LISTEN_PORT, MERGE_FILES, MONGO_PORT, REDIS_INFO, RUNNING_MODE, SLAVE_TOTAL, STATIC_PATH, STATIC_PREFIX, TEMP_STATIC_PATH, TEMP_STATIC_PREFIX, config, path;
 
   path = require('path');
 
@@ -17,7 +17,12 @@
 
   LISTEN_PORT = 10000;
 
-  REDIS_PORT = 10010;
+  REDIS_INFO = {
+    port: 10010,
+    host: '127.0.0.1'
+  };
+
+  MONGO_PORT = 10020;
 
   IS_MASTER = false;
 
@@ -69,7 +74,7 @@
       return IS_MASTER = true;
     },
     /**
-     * [isMaster 是否master]
+     * [isMaster 是否master，在程序运行之后才去设置，因此不要在require config之后就直接调用]
      * @return {Boolean} [description]
     */
 
@@ -96,12 +101,20 @@
       return MERGE_FILES;
     },
     /**
-     * [getRedisPort 返回redis监听的端口]
+     * [getRedisPort 返回redis的一些配置信息]
      * @return {[type]} [description]
     */
 
-    getRedisPort: function() {
+    getRedisInfo: function() {
       return REDIS_PORT;
+    },
+    /**
+     * [getMongoPort 返回mongo监听的端口]
+     * @return {[type]} [description]
+    */
+
+    getMongoPort: function() {
+      return MONGO_PORT;
     },
     /**
      * [getSlaveTotal 返回从进程的总数]
