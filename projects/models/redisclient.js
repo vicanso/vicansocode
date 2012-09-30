@@ -1,5 +1,5 @@
 (function() {
-  var appPath, client, config, initRedisClient, logRedisReady, logger, redisClient, redisPort, _;
+  var appPath, client, config, initRedisClient, logRedisReady, logger, redisClient, redisInfo, _;
 
   config = require('../config');
 
@@ -7,9 +7,9 @@
 
   appPath = config.getAppPath();
 
-  redisPort = config.getRedisPort();
+  redisInfo = config.getRedisInfo();
 
-  client = require('redis').createClient(redisPort);
+  client = require('redis').createClient(redisInfo.port, redisInfo.host);
 
   logger = require("" + appPath + "/helpers/logger")(__filename);
 

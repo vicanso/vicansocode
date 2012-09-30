@@ -1,19 +1,33 @@
 path = require 'path'
 
+# APP路径
 APP_PATH = __dirname
-RUNNING_MODE = process.env.NODE_ENV is 'production'
+# 运行的模式是否为production
+IS_PRODUCTION_MODE = process.env.NODE_ENV is 'production'
+# 静态文件的HTTP请求前缀
 STATIC_PREFIX = '/static'
+# 静态文件目录
 STATIC_PATH = path.join APP_PATH, STATIC_PREFIX
+# 临时文件（根据网页合并的css,js文件）HTTP请求前缀
 TEMP_STATIC_PREFIX = STATIC_PREFIX + '/temp'
+# 临时文件目录
 TEMP_STATIC_PATH = path.join APP_PATH, TEMP_STATIC_PREFIX
+# 监听的目录
 LISTEN_PORT = 10000
+# redis的配置信息
 REDIS_INFO = 
   port : 10010
   host : '127.0.0.1'
-# REDIS_PORT = 10010
-MONGO_PORT = 10020
+# mongo的配置信息
+MONGO_INFO =
+  port :10020
+  host : '127.0.0.1'
+  poolsize : 16
+# 是否master
 IS_MASTER = false
+# slave的总数
 SLAVE_TOTAL = require('os').cpus().length
+# 合并文件信息的json配置
 MERGE_FILES = require "#{APP_PATH}/mergefiles.json"
 config = 
   ###*
@@ -28,7 +42,7 @@ config =
    * @return {Boolean} [description]
   ###
   isProductionMode : () ->
-    return RUNNING_MODE
+    return IS_PRODUCTION_MODE
     
   ###*
    * [getListenPort 返回APP的监听端口]
@@ -78,13 +92,13 @@ config =
    * @return {[type]} [description]
   ###
   getRedisInfo : () ->
-    return REDIS_PORT
+    return REDIS_INFO
   ###*
-   * [getMongoPort 返回mongo监听的端口]
+   * [getMongoInfo 返回mongo一些配置信息]
    * @return {[type]} [description]
   ###
-  getMongoPort : () ->
-    return MONGO_PORT
+  getMongoInfo : () ->
+    return MONGO_INFO
   ###*
    * [getSlaveTotal 返回从进程的总数]
    * @return {[type]} [description]

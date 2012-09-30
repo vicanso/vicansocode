@@ -3,6 +3,8 @@ appPath = config.getAppPath()
 viewContentHandler = require "#{appPath}/apps/vicanso/helpers/viewcontenthandler"
 FileImporter = require "#{appPath}/helpers/fileimporter"
 httpHandler = require "#{appPath}/helpers/httphandler"
+mongoClient = require "#{appPath}/apps/vicanso/models/mongoclient"
+
 
 module.exports = (app) ->
   app.get '/', (req, res) ->

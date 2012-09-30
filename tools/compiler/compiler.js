@@ -76,7 +76,7 @@ var compileLess = function(file, cssFile){
           if(err){
             logger.error(err);
           }else{
-            logger.info('complie css file:' + cssFile + ' successful');
+            logger.info('complie less to file:' + cssFile + ' successful');
           }
         });
       });
@@ -118,7 +118,7 @@ var compressJavascript = function(file, minJsFile){
       if(err){
         logger.error(err);
       }else{
-        logger.info('compress js files:' + minJsFile + ' successful');
+        logger.info('compress js to file:' + minJsFile + ' successful');
       }
     });
   });
@@ -148,7 +148,7 @@ var compileCoffeeScript = function(file, jsFile){
       if(err){
         logger.error(err);
       }else{
-        logger.info('compress coffeescript files:' + jsFile + ' successful');
+        logger.info('compile coffeescript to file:' + jsFile + ' successful');
       }
     });
   });

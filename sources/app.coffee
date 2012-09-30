@@ -12,9 +12,6 @@ staticHandler = require "#{appPath}/helpers/statichandler"
 slaveTotal = config.getSlaveTotal()
 
 
-# console.log express.response
-# exports.response
-
 
 initExpress = () ->
   app = express()
@@ -22,6 +19,11 @@ initExpress = () ->
   app.set 'view engine', 'jade'
   app.engine 'jade', require('jade').__express
   
+  ##log each http request
+  # app.use (req, res, next) ->
+  #   logger.info req.url
+  #   next()
+
   app.use express.responseTime()
   app.use staticHandler.static()
 

@@ -1,11 +1,11 @@
 (function() {
-  var APP_PATH, IS_MASTER, LISTEN_PORT, MERGE_FILES, MONGO_PORT, REDIS_INFO, RUNNING_MODE, SLAVE_TOTAL, STATIC_PATH, STATIC_PREFIX, TEMP_STATIC_PATH, TEMP_STATIC_PREFIX, config, path;
+  var APP_PATH, IS_MASTER, IS_PRODUCTION_MODE, LISTEN_PORT, MERGE_FILES, MONGO_INFO, REDIS_INFO, SLAVE_TOTAL, STATIC_PATH, STATIC_PREFIX, TEMP_STATIC_PATH, TEMP_STATIC_PREFIX, config, path;
 
   path = require('path');
 
   APP_PATH = __dirname;
 
-  RUNNING_MODE = process.env.NODE_ENV === 'production';
+  IS_PRODUCTION_MODE = process.env.NODE_ENV === 'production';
 
   STATIC_PREFIX = '/static';
 
@@ -22,7 +22,11 @@
     host: '127.0.0.1'
   };
 
-  MONGO_PORT = 10020;
+  MONGO_INFO = {
+    port: 10020,
+    host: '127.0.0.1',
+    poolsize: 16
+  };
 
   IS_MASTER = false;
 
@@ -45,7 +49,7 @@
     */
 
     isProductionMode: function() {
-      return RUNNING_MODE;
+      return IS_PRODUCTION_MODE;
     },
     /**
      * [getListenPort 返回APP的监听端口]
@@ -106,15 +110,15 @@
     */
 
     getRedisInfo: function() {
-      return REDIS_PORT;
+      return REDIS_INFO;
     },
     /**
-     * [getMongoPort 返回mongo监听的端口]
+     * [getMongoInfo 返回mongo一些配置信息]
      * @return {[type]} [description]
     */
 
-    getMongoPort: function() {
-      return MONGO_PORT;
+    getMongoInfo: function() {
+      return MONGO_INFO;
     },
     /**
      * [getSlaveTotal 返回从进程的总数]

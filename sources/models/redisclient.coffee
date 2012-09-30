@@ -1,8 +1,9 @@
 config = require '../config'
 _ = require 'underscore'
 appPath = config.getAppPath()
-redisPort = config.getRedisPort()
-client = require('redis').createClient redisPort
+redisInfo = config.getRedisInfo()
+# redisPort = config.getRedisPort()
+client = require('redis').createClient redisInfo.port, redisInfo.host
 logger = require("#{appPath}/helpers/logger") __filename
 
 ###*

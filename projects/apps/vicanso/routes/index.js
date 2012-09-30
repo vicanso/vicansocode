@@ -1,5 +1,5 @@
 (function() {
-  var FileImporter, appPath, config, httpHandler, viewContentHandler;
+  var FileImporter, appPath, config, httpHandler, mongoClient, viewContentHandler;
 
   config = require('../../../config');
 
@@ -10,6 +10,8 @@
   FileImporter = require("" + appPath + "/helpers/fileimporter");
 
   httpHandler = require("" + appPath + "/helpers/httphandler");
+
+  mongoClient = require("" + appPath + "/apps/vicanso/models/mongoclient");
 
   module.exports = function(app) {
     return app.get('/', function(req, res) {
