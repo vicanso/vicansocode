@@ -22,8 +22,9 @@
       var fileImporter;
       fileImporter = data.fileImporter;
       return res.render(view, data, function(err, html) {
-        if (err) {
+        if (err || !html) {
           logger.error(err);
+          return;
         }
         html = appendJsAndCss(html, fileImporter);
         return res.send(html);

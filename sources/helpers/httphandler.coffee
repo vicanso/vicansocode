@@ -15,8 +15,9 @@ httpHandler =
   render : (req, res, view, data, ttl) ->
     fileImporter = data.fileImporter
     res.render view, data, (err, html) ->
-      if err
+      if err || !html
         logger.error err
+        return 
       html = appendJsAndCss html, fileImporter
       res.send html
 

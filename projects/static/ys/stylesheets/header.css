@@ -1,0 +1,4 @@
+#header{height:30px;}#header .navContainer{width:730px;margin:auto;}#header .navContainer .nav{line-height:30px;font-size:14px;color:white;font-weight:bold;display:inline-block;text-align:center;width:120px;border-right:1px solid #fca4c1;border-left:1px solid #f06090;}
+#header .navContainer .nav.lastNav{border-right:none;}
+#header .navContainer .nav.firstNav{border-left:none;}
+#header .navContainer .nav{*display:inline;}

@@ -73,6 +73,24 @@ util =
     digestType ?= 'hex'
     cryptoData = crypto.createHash(type).update(data).digest digestType
     return cryptoData
+  cutStringByViewSize : (str, viewSize) ->
+    strLength = str.length
+    viewSize *= 2
+    currentViewSize = 0
+    index = 0
+    while index isnt strLength
+      charCode = str.charCodeAt index
+      if charCode < 0xff
+        currentViewSize++
+      else
+        currentViewSize += 2
+      index++
+      if currentViewSize > viewSize
+        break
+    if index is strLength
+      return str
+    else
+      return str.substring(0, index) + '...'
 
 
 module.exports = util

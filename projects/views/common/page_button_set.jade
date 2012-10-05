@@ -1,0 +1,16 @@
+- var pageButtonSetConfig = viewContent.pageButtonSetConfig;
+if pageButtonSetConfig
+
+  - var total = pageButtonSetConfig.total;
+  - var start = pageButtonSetConfig.start - Math.floor(total / 2);
+  - var end = pageButtonSetConfig.end;
+  - start = start < 1 ? 1 : start;
+  if end - start < total
+    - total = end - start;
+  .uiButtonSet.uiWidget.uiNoSelectText.uiBlackBoxShadow.uiCornerAll.uiBlackBorder
+    - for(var i = 0; i < total; i++){
+      - var buttonClass = 'uiButton uiPinkyGradientBG';
+      div(class='#{buttonClass}') #{i + start}
+    - }
+    .uiButton.uiPinkyGradientBG ...
+    .uiButton.uiPinkyGradientBG #{end}

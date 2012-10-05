@@ -1,0 +1,97 @@
+.waterfallContainer{
+  float: left;
+  width: 238px;
+  margin:0 5px;
+  .elementContainer{
+    border: 1px solid #E0E0E0;
+    background: white;
+    margin-bottom: 10px;
+    -moz-box-shadow:2px 2px 3px #ddd;
+    -webkit-box-shadow:2px 2px 3px #ddd;
+    box-shadow: 2px 2px 3px #ddd;
+    .commodityContainer{
+      .commodityArchor{
+        display: block;
+        border-bottom:1px solid #ddd;
+        position: relative;
+        overflow: hidden;
+        img{
+          display: block;
+          width:100%;
+        }
+        .commodityTitle{
+          display: block;
+          position: absolute;
+          height:28px;
+          line-height: 28px;
+          padding-left:10px;
+          left:0;
+          bottom:-30px;
+          right:0;
+          color:white;
+          overflow: hidden;
+          background-color:rgba(0, 0, 0, 0.5);
+          background:  transparent\9;
+          filter: progid:dximagetransform.microsoft.gradient(enabled='true', startColorstr='#7f000000', endColorstr='#7f000000');
+        }
+      }
+    }
+    .commodityDesc{
+      padding:0 8px;
+      background-color: whitesmoke;
+      border-top:1px solid white;
+      padding-bottom: 5px;
+      color:#b3b3b3;
+    }
+  }
+  #commodityFilterContainer{
+    .pinkyBar{
+      border-top: 3px solid #ff6b9d;
+    }
+    .categorySearch{
+      line-height: 30px;
+      text-indent: 1em;
+    }
+    .filterList{
+      padding:0 10px;
+      .tagItem{
+        display: inline-block;
+        height: 20px;
+        line-height: 20px;
+        margin-bottom: 10px;
+        &.selected{
+          .tag{
+            color: white;
+            background: #FE73AB;
+            border: 1px solid #FCBFD4;
+            &:hover{
+              color:white;
+            }
+          }
+        }
+        .tag{
+          vtext-align: center;
+          border: 1px solid #CCC;
+          -webkit-border-radius: 12px;
+          -moz-border-radius: 12px;
+          border-radius: 12px;
+          float: left;
+          white-space: nowrap;
+          height: 20px;
+          line-height: 20px;
+          margin-right: 5px;
+          margin-bottom: 10px;
+          background: #eaeceb;
+          padding: 0 8px;
+          &:hover{
+            color:#f69;
+          }
+        }
+      }
+      .tagItem{
+        *display: inline;
+      }
+    }
+  }
+}
+

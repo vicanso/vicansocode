@@ -102,6 +102,30 @@
       }
       cryptoData = crypto.createHash(type).update(data).digest(digestType);
       return cryptoData;
+    },
+    cutStringByViewSize: function(str, viewSize) {
+      var charCode, currentViewSize, index, strLength;
+      strLength = str.length;
+      viewSize *= 2;
+      currentViewSize = 0;
+      index = 0;
+      while (index !== strLength) {
+        charCode = str.charCodeAt(index);
+        if (charCode < 0xff) {
+          currentViewSize++;
+        } else {
+          currentViewSize += 2;
+        }
+        index++;
+        if (currentViewSize > viewSize) {
+          break;
+        }
+      }
+      if (index === strLength) {
+        return str;
+      } else {
+        return str.substring(0, index) + '...';
+      }
     }
   };
 

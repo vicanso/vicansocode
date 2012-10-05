@@ -1,0 +1,47 @@
+(function() {
+  var appPath, async, config, logger, mongoClient, viewDataHandler;
+
+  async = require('async');
+
+  config = require('../../../config');
+
+  appPath = config.getAppPath();
+
+  logger = require("" + appPath + "/helpers/logger")(__filename);
+
+  mongoClient = require("" + appPath + "/apps/ys/models/mongoclient");
+
+  viewDataHandler = {
+    home: function(query, options, cbf) {
+      var alias, fields;
+      fields = {
+        title: true
+      };
+      alias = 'Commodity';
+      return async.parallel({
+        total: function(cbf) {
+          return mongoClient.count(alias, query, cbf);
+        },
+        data: function(cbf) {
+          return mongoClient.find(alias, query, {}, options, cbf);
+        }
+      }, cbf);
+    },
+    commodity: function(id, cbf) {
+      var alias, query;
+      alias = 'Commodity';
+      query = {
+        _id: id
+      };
+      return mongoClient.findOne(alias, query, cbf);
+    },
+    save: function(id, data, cbf) {
+      var alias;
+      alias = 'Commodity';
+      return mongoClient.findByIdAndUpdate(alias, id, data, cbf);
+    }
+  };
+
+  module.exports = viewDataHandler;
+
+}).call(this);

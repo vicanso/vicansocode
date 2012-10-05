@@ -1,0 +1,14 @@
+- fileImporter.importCss('/ys/stylesheets/header.css');
+- var headerInfo = viewContent.header;
+- var navData = headerInfo.nav;
+- var navTotal = navData.length;
+if headerInfo
+  header#header.uiBlackGradientBG
+    nav.navContainer
+      each item, i in navData
+        - var navClass = 'nav';
+        if i === headerInfo.selectedIndex
+          - navClass += ' selected uiRedGradientBG';
+        if i === navTotal - 1
+          - navClass += ' lastNav';
+        a(class='#{navClass}', herf='#{item.href}') #{item.name}

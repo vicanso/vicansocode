@@ -46,6 +46,8 @@ initExpress = () ->
 
   require("#{appPath}/apps/vicanso/routes")(app)
 
+  require("#{appPath}/apps/ys/routes")(app)
+
   app.listen config.getListenPort()
 
   logger.info "listen port #{config.getListenPort()}"

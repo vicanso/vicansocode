@@ -1,0 +1,15 @@
+block baseList
+div(class='#{baseList.selfClass}', id='#{baseList.selfId || ''}')
+  div(class='#{baseList.titleBarClass}')
+    span #{baseList.title}
+  div(class='#{baseList.contentClass}')
+    - var dataList = baseList.data;
+    if dataList
+      each data, i in dataList
+        ul(base-index='#{i}')
+          each item in data
+            - var itemClass = baseList.listItemClass;
+            if item.index
+              - itemClass += ' uiListMore';
+            block listItemContent
+              li(class='#{itemClass}', base-index='#{item.index || ''}') #{item.data}

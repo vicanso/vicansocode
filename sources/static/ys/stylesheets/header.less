@@ -1,0 +1,30 @@
+#header{
+  height: 30px;
+  .navContainer{
+    width:730px;
+    margin:auto;
+    .nav{
+      line-height: 30px;
+      font-size:14px;
+      color: white;
+      font-weight: bold;
+      display: inline-block;
+      text-align: center;
+      width: 120px;
+      border-right:1px solid #fca4c1;
+      border-left:1px solid #f06090;
+      &:hover, &.selected{
+        // .gradientBG(#bd1c07, #800000, #f0f0f0);
+      }
+      &.lastNav{
+        border-right: none;
+      }
+      &.firstNav{
+        border-left:none;
+      }
+      &{
+        *display: inline;
+      }
+    }
+  }
+}

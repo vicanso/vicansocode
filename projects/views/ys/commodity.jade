@@ -1,0 +1,12 @@
+include header
+- fileImporter.importCss(['/ys/stylesheets/commodity.css']);
+- fileImporter.importJs(['/ys/javascripts/commodity.min.js']);
+- var commodity = viewContent.commodity;
+- var commodityUrl  = 'http://localhost:10000/ys/commodity'
+#contentContainer
+    #leftContainer
+      .commodityContainer
+        a.commodityArchor(target='_blank', href='#{commodityUrl + '/' + commodity._id}')
+          img(src='#{commodity.picUrl}')
+          span.commodityTitle #{commodity.title}
+        .commodityDesc #{commodity.desc}

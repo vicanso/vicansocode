@@ -1,0 +1,10 @@
+- var commodityUrl  = '/ys/commoditymodify';
+- var noImageSrc = '/static/ys/images/no_image.jpeg';
+.commodityContainer
+  a.commodityArchor(target='_blank', href='#{commodityUrl}/#{commodity._id}')
+    if commodity.picUrl && commodity.picUrl.indexOf('taobaocdn') !== -1
+      img(src='#{commodity.picUrl}_310x310.jpg', style='height:#{commodity.imageHeight}px;')
+    else
+      img(src='#{commodity.picUrl || noImageSrc}', style='height:#{commodity.imageHeight}px;')
+    span.commodityTitle #{commodity.title}
+  .commodityDesc #{commodity.cutDesc}

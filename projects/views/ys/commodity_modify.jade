@@ -1,0 +1,37 @@
+extends ./layout
+block bodyContainer
+    include ./header
+    - fileImporter.importCss(['/ys/stylesheets/commodity_modify.css']);
+    - fileImporter.importJs(['/ys/javascripts/commodity_modify.min.js']);
+    - var commodity = viewContent.commodity;
+    - var commodityUrl  = 'http://localhost:10000/ys/commodity'
+    - var allTags = viewContent.allTags;
+    - var modityTags = commodity.tags;
+    script(type='text/javascript')
+      var COMMODITY = !{JSON.stringify(commodity)};
+    #contentContainer
+        #leftContainer
+          .commodityContainer
+            a.commodityArchor
+              img(src='#{commodity.picUrl}')
+              label 图片地址：
+              input.imgSrc
+              lable 商品URL：
+              input.commodityUrl(value='#{commodity.url}')
+              br
+              label 商品标题：
+              input.commodityTitle(value='#{commodity.title}')
+            label 商品规格：
+            p #{commodity.specification}
+            label 商品描述：
+            textarea.commodityDesc #{commodity.desc}
+        #rightContainer
+          ul.modityTags
+            each tag in allTags
+              - var tagClass = 'tag';
+              if modityTags.indexOf(tag.name) !== -1
+                - tagClass += ' selected';
+              li(class='#{tagClass}')
+                a(href='javascript:;') #{tag.name}
+
+          a#saveModify(href='javascript:;') 保存

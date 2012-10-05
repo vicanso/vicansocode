@@ -1,0 +1,12 @@
+if commodityFilter
+  #commodityFilterContainer
+    div.pinkyBar
+    h3.categorySearch 分类搜索
+    ul.filterList
+      - var selectedTag = commodityFilter.selectedTag;
+      each tag in commodityFilter.tags
+        - var liClass = 'tagItem';
+        if tag.name === selectedTag
+          - liClass += ' selected';
+        li(class='#{liClass}')
+          a.tag(href='javascript:;') #{tag.name}

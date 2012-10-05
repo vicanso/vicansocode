@@ -1,0 +1,14 @@
+- fileImporter.importCss('/ys/stylesheets/waterfalls.css');
+- var waterfallsConfig = viewContent.waterfallsConfig;
+if waterfallsConfig
+  each waterfall, i in waterfallsConfig.data
+    .waterfallContainer
+      each item in waterfall
+        .elementContainer.uiCornerAll
+          case item.type
+            when 'commodity'
+              - var commodity = item;
+              include ./waterfall_commodity
+            when 'commodityFilter'
+              - var commodityFilter = item;
+              include ./commodity_filter

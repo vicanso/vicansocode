@@ -1,0 +1,9 @@
+extends ./layout
+block bodyContainer
+    include ./header
+    - fileImporter.importCss(['/ys/stylesheets/home.css']);
+    - fileImporter.importJs(['/ys/javascripts/home.min.js']);
+    #contentContainer
+      .waterfallsContinaer
+        include ./waterfalls
+      include ../common/page_button_set

@@ -41,6 +41,7 @@
       showStack: true
     }));
     require("" + appPath + "/apps/vicanso/routes")(app);
+    require("" + appPath + "/apps/ys/routes")(app);
     app.listen(config.getListenPort());
     return logger.info("listen port " + (config.getListenPort()));
   };

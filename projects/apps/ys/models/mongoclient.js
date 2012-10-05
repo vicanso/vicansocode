@@ -11,9 +11,9 @@
 
   logger = require("" + appPath + "/helpers/logger")(__filename);
 
-  schemas = require("" + appPath + "/apps/vicanso/models/schemas");
+  schemas = require("" + appPath + "/apps/ys/models/schemas");
 
-  dbAlias = 'vicanso';
+  dbAlias = 'ys';
 
   init = function(client, dbAlias) {
     var mongoClient, uri;
@@ -30,7 +30,7 @@
         }
       };
     });
-    uri = "mongodb://vicanso:86545610@127.0.0.1:10020/vicanso";
+    uri = "mongodb://vicanso:86545610@127.0.0.1:10020/ys";
     mongoClient.createConnection(uri);
     _.each(schemas, function(model, name) {
       return mongoClient.model(name, model);
@@ -39,5 +39,7 @@
   };
 
   mongoClient = init(client, dbAlias);
+
+  module.exports = mongoClient;
 
 }).call(this);
