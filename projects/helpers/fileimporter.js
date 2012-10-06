@@ -147,12 +147,14 @@
 
 
   getExportFilesHTML = function(files, type, debug, merge) {
-    var exportFilesHTML, linkFileName, mergeFiles;
-    exportFilesHTML = [];
+    var exportAllFilesHTML, exportHTML, exportMergeFilesHTML, linkFileName, mergeFiles;
+    exportAllFilesHTML = [];
+    exportMergeFilesHTML = [];
     mergeFiles = [];
     _.each(files, function(file) {
-      var suffix;
+      var exportHTML, isMerge, suffix;
       suffix = true;
+      isMerge = false;
       if (isFilter(file)) {
         suffix = false;
       } else {
@@ -161,20 +163,27 @@
         }
         if (!fileMerger.isMergeByOthers(file)) {
           mergeFiles.push(path.join(appPath, STATIC_PREFIX, file));
+          isMerge = true;
         }
         file = path.join(STATIC_PREFIX, file);
       }
-      return exportFilesHTML.push(getExportHTML(file, type, suffix));
+      exportHTML = getExportHTML(file, type, suffix);
+      if (!isMerge) {
+        exportMergeFilesHTML.push(exportHTML);
+      }
+      return exportAllFilesHTML.push(exportHTML);
     });
     if (!merge || debug || mergeFiles.length === 0) {
-      return exportFilesHTML.join('');
+      return exportAllFilesHTML.join('');
     }
     linkFileName = fileMerger.mergeFilesToTemp(mergeFiles, type);
     if (linkFileName) {
       linkFileName = path.join(config.getTempStaticPrefix(), linkFileName);
-      return getExportHTML(linkFileName, type, true);
+      exportHTML = getExportHTML(linkFileName, type, true);
+      exportMergeFilesHTML.push(exportHTML);
+      return exportMergeFilesHTML.join('');
     } else {
-      return exportFilesHTML.join('');
+      return exportAllFilesHTML.join('');
     }
   };
 

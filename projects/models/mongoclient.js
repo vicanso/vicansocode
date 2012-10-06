@@ -21,7 +21,7 @@
       poolSize: mongoInfo.poolSize
     },
     db: {
-      native_parser: true
+      native_parser: false
     }
   };
 

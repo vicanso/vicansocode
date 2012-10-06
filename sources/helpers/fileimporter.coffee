@@ -98,10 +98,12 @@ class FileImporter
  * @return {[type]}       [description]
 ###
 getExportFilesHTML = (files, type, debug, merge) ->
-  exportFilesHTML = []
+  exportAllFilesHTML = []
+  exportMergeFilesHTML = []
   mergeFiles = []
   _.each files, (file) ->
     suffix = true
+    isMerge = false
     if isFilter file
       suffix = false
     else
@@ -109,16 +111,23 @@ getExportFilesHTML = (files, type, debug, merge) ->
         file = file.replace '.min.js', '.js'
       if !fileMerger.isMergeByOthers file
         mergeFiles.push path.join appPath, STATIC_PREFIX, file
+        isMerge = true
       file = path.join STATIC_PREFIX, file
-    exportFilesHTML.push getExportHTML file, type, suffix
+    exportHTML = getExportHTML file, type, suffix
+    if !isMerge
+      exportMergeFilesHTML.push exportHTML
+    exportAllFilesHTML.push exportHTML
+
   if !merge || debug || mergeFiles.length == 0
-    return exportFilesHTML.join ''
+    return exportAllFilesHTML.join ''
   linkFileName = fileMerger.mergeFilesToTemp mergeFiles, type
   if linkFileName
     linkFileName = path.join config.getTempStaticPrefix(), linkFileName
-    return getExportHTML linkFileName, type, true
+    exportHTML = getExportHTML linkFileName, type, true
+    exportMergeFilesHTML.push exportHTML
+    return exportMergeFilesHTML.join ''
   else
-    return exportFilesHTML.join ''
+    return exportAllFilesHTML.join ''
 
 ###*
  * [isFilter 判断该文件是否应该过滤的]
