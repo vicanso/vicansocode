@@ -26,6 +26,12 @@ module.exports = (app) ->
 
   app.post '/ys/action/savecommodity', saveCommodityHandler
 
+  app.get '/ys/initscore', initScore
+
+initScore = (req, res, next) ->
+  viewDataHandler.initScore (err, data) ->
+    logger.info 'success'
+
 saveCommodityHandler = (req, res, next) ->
   data = req.body
   id = data._id
@@ -69,7 +75,7 @@ home = (req, res, next) ->
   options = 
     # sort : 'modifiedTime'
     sort : 
-      modifiedTime : 'desc'
+      score : -1
     limit : eachPageTotal
     skip : eachPageTotal * (currentPage - 1)
   if tag

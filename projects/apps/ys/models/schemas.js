@@ -24,6 +24,10 @@
       desc: String,
       tags: Array,
       url: String,
+      score: {
+        type: Number,
+        "default": 0
+      },
       pics: [
         {
           url: String,

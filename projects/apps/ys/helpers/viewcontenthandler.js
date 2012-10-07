@@ -48,7 +48,8 @@
       return viewData;
     },
     commodityModify: function(fileImporter, commodity) {
-      var viewData;
+      var viewData, _ref, _ref1;
+      commodity.picUrl = ((_ref = commodity.pics) != null ? (_ref1 = _ref[0]) != null ? _ref1.url : void 0 : void 0) || '';
       viewData = {
         title: '每天浏览一下，关注更多的新产品！',
         fileImporter: fileImporter,

@@ -1,5 +1,5 @@
 (function() {
-  var FileImporter, appPath, commodityModify, config, home, httpHandler, logger, mongoClient, saveCommodityHandler, viewContentHandler, viewDataHandler;
+  var FileImporter, appPath, commodityModify, config, home, httpHandler, initScore, logger, mongoClient, saveCommodityHandler, viewContentHandler, viewDataHandler;
 
   config = require('../../../config');
 
@@ -35,7 +35,14 @@
     app.get('/ys/tag/:tag', home);
     app.get('/ys', home);
     app.get('/ys/commoditymodify/:id', commodityModify);
-    return app.post('/ys/action/savecommodity', saveCommodityHandler);
+    app.post('/ys/action/savecommodity', saveCommodityHandler);
+    return app.get('/ys/initscore', initScore);
+  };
+
+  initScore = function(req, res, next) {
+    return viewDataHandler.initScore(function(err, data) {
+      return logger.info('success');
+    });
   };
 
   saveCommodityHandler = function(req, res, next) {
@@ -91,7 +98,7 @@
     eachPageTotal = 30;
     options = {
       sort: {
-        modifiedTime: 'desc'
+        score: -1
       },
       limit: eachPageTotal,
       skip: eachPageTotal * (currentPage - 1)

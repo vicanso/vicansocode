@@ -1,5 +1,7 @@
 (function() {
-  var appPath, async, config, logger, mongoClient, viewDataHandler;
+  var appPath, async, config, logger, mongoClient, viewDataHandler, _;
+
+  _ = require('underscore');
 
   async = require('async');
 
@@ -39,6 +41,26 @@
       var alias;
       alias = 'Commodity';
       return mongoClient.findByIdAndUpdate(alias, id, data, cbf);
+    },
+    initScore: function(cbf) {
+      var alias;
+      alias = 'Commodity';
+      return mongoClient.find(alias, {}, function(err, data) {
+        return async.forEachLimit(data, 10, function(item, cbf) {
+          var id, _ref;
+          data = {
+            score: 1
+          };
+          if (((_ref = item.pics) != null ? _ref.length : void 0) !== 0) {
+            data.score = 5;
+          }
+          id = item._id;
+          return viewDataHandler.save(id, data, cbf);
+        }, function(err) {
+          logger.info('async success');
+          return cbf(null);
+        });
+      });
     }
   };
 

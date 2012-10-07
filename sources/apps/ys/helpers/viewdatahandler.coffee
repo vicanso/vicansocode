@@ -1,3 +1,4 @@
+_ =require 'underscore'
 async = require 'async'
 config = require '../../../config'
 appPath = config.getAppPath()
@@ -27,5 +28,18 @@ viewDataHandler =
   save : (id, data, cbf) ->
     alias = 'Commodity'
     mongoClient.findByIdAndUpdate alias, id, data, cbf
-    
+
+  initScore : (cbf) ->
+    alias = 'Commodity'
+    mongoClient.find alias, {}, (err, data) ->
+      async.forEachLimit data, 10, (item, cbf) ->
+        data = 
+          score : 1
+        if item.pics?.length != 0 
+          data.score = 5
+        id = item._id
+        viewDataHandler.save id, data, cbf
+      ,(err) ->
+        logger.info 'async success'
+        cbf null
 module.exports = viewDataHandler

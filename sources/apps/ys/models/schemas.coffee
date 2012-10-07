@@ -28,6 +28,9 @@ schemas =
     tags : Array
     # 商品URL
     url : String
+    score : 
+      type : Number
+      default : 0
     # 商品图片
     pics : [
       {

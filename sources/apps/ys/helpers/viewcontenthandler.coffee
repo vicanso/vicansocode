@@ -37,6 +37,7 @@ viewContentHandler =
     return viewData
 
   commodityModify : (fileImporter, commodity) ->
+    commodity.picUrl = commodity.pics?[0]?.url || ''
     viewData = 
       title : '每天浏览一下，关注更多的新产品！'
       fileImporter : fileImporter
