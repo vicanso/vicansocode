@@ -35,7 +35,7 @@ viewDataHandler =
       async.forEachLimit data, 10, (item, cbf) ->
         data = 
           score : 1
-        if item.pics?.length != 0 
+        if _.isArray(item.pics) && item.pics.length > 0 
           data.score = 5
         id = item._id
         viewDataHandler.save id, data, cbf

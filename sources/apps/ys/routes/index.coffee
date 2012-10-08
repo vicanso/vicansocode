@@ -30,7 +30,7 @@ module.exports = (app) ->
 
 initScore = (req, res, next) ->
   viewDataHandler.initScore (err, data) ->
-    logger.info 'success'
+    res.send 'success'
 
 saveCommodityHandler = (req, res, next) ->
   data = req.body
@@ -91,6 +91,7 @@ home = (req, res, next) ->
     query = {}
 
   viewDataHandler.home query, options, (err, result) ->
+    logger.info result.data
     if err
       res.render 'error', 504
     else

@@ -47,11 +47,11 @@
       alias = 'Commodity';
       return mongoClient.find(alias, {}, function(err, data) {
         return async.forEachLimit(data, 10, function(item, cbf) {
-          var id, _ref;
+          var id;
           data = {
             score: 1
           };
-          if (((_ref = item.pics) != null ? _ref.length : void 0) !== 0) {
+          if (_.isArray(item.pics) && item.pics.length > 0) {
             data.score = 5;
           }
           id = item._id;
