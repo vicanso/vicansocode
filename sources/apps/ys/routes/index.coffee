@@ -91,7 +91,6 @@ home = (req, res, next) ->
     query = {}
 
   viewDataHandler.home query, options, (err, result) ->
-    logger.info result.data
     if err
       res.render 'error', 504
     else

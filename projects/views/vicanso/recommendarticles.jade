@@ -1,0 +1,13 @@
+- var baseDialog = baseConfig.baseDialog;
+- var recommendArticles = viewContent.recommendArticles;
+if recommendArticles
+  #recommendArticleContainer(class='#{baseDialog.selfClass}')
+    div(class='#{baseDialog.titleBarClass}') 
+      .uiTitle 文章推荐
+    div(class='#{baseDialog.contentClass}')
+      ul
+        each recommendArticle in recommendArticles
+          li 
+            h3 #{recommendArticle.title}
+            p #{recommendArticle.desc}
+              a(href='#{recommendArticle.source}', target='_blank') 查看更多>>

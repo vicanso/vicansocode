@@ -10,7 +10,7 @@ logger = require("#{appPath}/helpers/logger") __filename
 beforeRunningHandler = require "#{appPath}/helpers/beforerunninghandler"
 staticHandler = require "#{appPath}/helpers/statichandler"
 slaveTotal = config.getSlaveTotal()
-
+# varnish = require "#{appPath}/helpers/varnish"
 
 
 initExpress = () ->
@@ -19,10 +19,13 @@ initExpress = () ->
   app.set 'view engine', 'jade'
   app.engine 'jade', require('jade').__express
   
-  ##log each http request
-  # app.use (req, res, next) ->
-  #   logger.info req.url
-  #   next()
+  ##request by varnish（check node is healthy） just response "success"
+  app.use (req, res, next) ->
+    userAgent = req.header 'User-Agent'
+    if !userAgent
+      res.send 'success'
+    else
+      next()
 
   app.use express.responseTime()
   app.use staticHandler.static()
@@ -57,9 +60,7 @@ initExpress = () ->
  * @return {[type]} [description]
 ###
 initApp = () ->
-  if config.isProductionMode() && cluster.isMaster
-    config.setMaster()
-    
+  if config.isProductionMode() && config.isMaster()
     beforeRunningHandler.run()
     while slaveTotal
       cluster.fork()
@@ -84,4 +85,5 @@ initApp = () ->
       initExpress()
 
 initApp()
+
 

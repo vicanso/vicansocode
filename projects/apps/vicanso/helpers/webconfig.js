@@ -15,7 +15,7 @@
         nav: [
           {
             name: '主页',
-            href: '#'
+            href: '/vicanso'
           }, {
             name: '我的前端',
             href: '#'

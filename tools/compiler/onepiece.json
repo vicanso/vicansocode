@@ -1,0 +1,17 @@
+[
+    {
+      "path" : "/Users/vicanso/workspace/onepiece/public",
+      "ext" : ".less",
+      "delay" : 1000
+    },
+    {
+      "path" : "/Users/vicanso/workspace/onepiece/public",
+      "ext" : ".coffee",
+      "delay" : 1000
+    },
+    {
+      "path" : "/Users/vicanso/workspace/onepiece/public",
+      "ext" : ".js",
+      "delay" : 5000
+    }
+]

@@ -22,7 +22,7 @@
         memLevel: 9
       });
       staticHandler = express["static"]("" + staticPath, {
-        maxAge: 60 * 60 * 1000,
+        maxAge: config.getStaticFileMaxAge() * 1000,
         redirect: false
       });
       return function(req, res, next) {

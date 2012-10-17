@@ -40,4 +40,6 @@
 
   mongoClient = init(client, dbAlias);
 
+  module.exports = mongoClient;
+
 }).call(this);

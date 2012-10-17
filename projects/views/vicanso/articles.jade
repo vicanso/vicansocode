@@ -1,5 +1,31 @@
 - var baseDialog = baseConfig.baseDialog;
-#articlesContainer(class='#{baseDialog.selfClass}')
-  div(class='#{baseDialog.titleBarClass}') 
-    .uiTitle 我的随心记
-  div(class='#{baseDialog.contentClass}')
+- var baseButtonSet = baseConfig.baseButtonSet;
+- var articles = viewContent.articles;
+if articles
+  #articlesContainer(class='#{baseDialog.selfClass}')
+    div(class='#{baseDialog.titleBarClass}') 
+      .uiTitle 我的随心记
+    div(class='#{baseDialog.contentClass}')
+      - var articlesTotal = articles.length;
+      each article, i in articles
+        - var articleClass = 'articleContainer'
+        if i === articlesTotal - 1
+          - articleClass += ' lastArticleContainer';
+        div(class='#{articleClass}')
+          h2 #{article.title}
+          each item in article.content
+            case item.tag
+              when 'title'
+                h3 #{item.data}
+              when 'code'
+                - var lineNumber = item.data.split('\n').length + 1;
+                .codeContainer(style='height:#{lineNumber * 13}px')
+                  textarea #{item.data}
+              default
+                p !{item.data}
+          div(class='#{baseButtonSet.selfClass} articleButtonSet')
+            a(href='javascript:;', class='#{baseButtonSet.buttonClass} recommend') 推荐
+            a(href='/vicanso/article/#{article._id}', target='_blank', class='#{baseButtonSet.buttonClass}  uiBorderLeft uiGreyBorder') 查看全文
+          p.omission ....................................
+            br
+            ....................................

@@ -3,6 +3,7 @@
 #contentContainer{
   width: @contentWidth;
   margin:20px auto;
+  margin-top: 50px;
   overflow: hidden;
 }
 #rightContainer{
@@ -13,8 +14,6 @@
 }
 #leftContainer{
     width:680px;
-    border:1px solid red;
-    height: 400px;
 }
 #myDiary{
   p{
@@ -23,4 +22,41 @@
 }
 #articlesContainer{
   margin-top:20px;
+  p{
+    text-indent: 2em;
+  }
+  .articleContainer{
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid black;
+    &.lastArticleContainer{
+      margin-bottom: 0;
+      border-bottom: none;
+    }
+    p.omission{
+      text-indent: 0;
+    }
+    .articleButtonSet{
+      float: right;
+      margin-top: 15px;
+      a:hover{
+        color:white;
+      }
+    }
+  }
+  .codeContainer{
+    textarea{
+      width: 100%;
+      height: 100%;
+    }
+  }
+  .CodeMirror-scroll{
+    height: 100%;
+  }
+}
+#recommendArticleContainer{
+  li{
+    list-style: circle inside;
+    margin-bottom: 10px;
+  }
 }

@@ -27,6 +27,15 @@
     app.set('views', "" + appPath + "/views");
     app.set('view engine', 'jade');
     app.engine('jade', require('jade').__express);
+    app.use(function(req, res, next) {
+      var userAgent;
+      userAgent = req.header('User-Agent');
+      if (!userAgent) {
+        return res.send('success');
+      } else {
+        return next();
+      }
+    });
     app.use(express.responseTime());
     app.use(staticHandler["static"]());
     if (config.isProductionMode()) {
@@ -53,8 +62,7 @@
 
 
   initApp = function() {
-    if (config.isProductionMode() && cluster.isMaster) {
-      config.setMaster();
+    if (config.isProductionMode() && config.isMaster()) {
       beforeRunningHandler.run();
       while (slaveTotal) {
         cluster.fork();

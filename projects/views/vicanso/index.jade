@@ -1,10 +1,13 @@
 extends ./layout
 block bodyContainer
   include ./header
+  - fileImporter.importCss(['/common/codemirror/codemirror.css', '/common/codemirror/monokai.css']);
+  - fileImporter.importJs(['/common/codemirror/codemirror.min.js', '/common/codemirror/javascript.min.js']);
   - fileImporter.importCss('/vicanso/stylesheets/index.css');
+  - fileImporter.importJs('/vicanso/javascripts/index.min.js');
   #contentContainer
     #rightContainer
+      include recommendarticles
     #leftContainer
       include mydiary
       include articles
-      

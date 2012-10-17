@@ -1,5 +1,5 @@
 (function() {
-  var appPath, async, config, crypto, fs, logger, mkdirp, noop, path, util, _;
+  var appPath, async, config, crypto, fs, logger, mkdirp, noop, path, util, zlib, _;
 
   _ = require('underscore');
 
@@ -10,6 +10,8 @@
   crypto = require('crypto');
 
   path = require('path');
+
+  zlib = require('zlib');
 
   _ = require('underscore');
 
@@ -103,6 +105,33 @@
       cryptoData = crypto.createHash(type).update(data).digest(digestType);
       return cryptoData;
     },
+    /**
+     * [gzip gzip压缩数据]
+     * @param  {[type]} data [description]
+     * @param  {[type]} cbf  [description]
+     * @return {[type]}      [description]
+    */
+
+    gzip: function(data, cbf) {
+      return zlib.gzip(data, cbf);
+    },
+    /**
+     * [deflate 以deflate的方式压缩数据]
+     * @param  {[type]} data [description]
+     * @param  {[type]} cbf  [description]
+     * @return {[type]}      [description]
+    */
+
+    deflate: function(data, cbf) {
+      return zlib.deflate(data, cbf);
+    },
+    /**
+     * [cutStringByViewSize 根据显示的尺寸截剪字符串]
+     * @param  {[type]} str      [字符串]
+     * @param  {[type]} viewSize [显示的长度（中文字符为2，英文字符为1）]
+     * @return {[type]}          [description]
+    */
+
     cutStringByViewSize: function(str, viewSize) {
       var charCode, currentViewSize, index, strLength;
       strLength = str.length;

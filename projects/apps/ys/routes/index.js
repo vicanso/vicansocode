@@ -118,7 +118,6 @@
     }
     return viewDataHandler.home(query, options, function(err, result) {
       var debug, fileImporter, jadeView, pageConfig, viewData;
-      logger.info(result.data);
       if (err) {
         return res.render('error', 504);
       } else {

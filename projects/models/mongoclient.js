@@ -1,5 +1,5 @@
 (function() {
-  var Schema, appPath, config, connectionOptions, dataBaseHandler, logger, modelFunctions, mongoClient, mongoInfo, mongoose, mongooseModel, transformDataToObject, wrapMongooseCallback, _,
+  var QueryInfo, Schema, appPath, config, connectionOptions, dataBaseHandler, isLoggerQueryInfo, logger, modelFunctions, mongoClient, mongoInfo, mongoose, mongooseModel, transformDataToObject, wrapMongooseCallback, _,
     __slice = [].slice;
 
   config = require('../config');
@@ -15,6 +15,8 @@
   mongoInfo = config.getMongoInfo();
 
   logger = require("" + appPath + "/helpers/logger")(__filename);
+
+  isLoggerQueryInfo = config.isLoggerQueryInfo();
 
   connectionOptions = {
     server: {
@@ -305,10 +307,20 @@
 
   _.each(modelFunctions.split(' '), function(func) {
     return dataBaseHandler[func] = function() {
-      var args, self;
+      var args, cbf, queryInfo, self;
       self = this;
       args = _.toArray(arguments);
       args.unshift(self, func);
+      if (isLoggerQueryInfo) {
+        cbf = args[args.length - 1];
+        queryInfo = new QueryInfo(args.slice(1));
+        args[args.length - 1] = function() {
+          queryInfo.complete();
+          logger.info(queryInfo.toString());
+          args = _.toArray(arguments);
+          return cbf.apply(null, args);
+        };
+      }
       return mongooseModel.apply(null, args);
     };
   });
@@ -364,6 +376,88 @@
       return func(err, data);
     };
   };
+
+  QueryInfo = (function() {
+
+    function QueryInfo(queryInfo) {
+      this.start = Date.now();
+      this.end = this.start;
+      this.queryInfo = queryInfo || null;
+    }
+
+    /**
+     * [start 设置开始时间]
+     * @return {[type]} [description]
+    */
+
+
+    QueryInfo.prototype.start = function() {
+      var self;
+      self = this;
+      self.start = Date.now();
+      return self;
+    };
+
+    /**
+     * [complete 设置结束时间]
+     * @return {[type]} [description]
+    */
+
+
+    QueryInfo.prototype.complete = function() {
+      var self;
+      self = this;
+      self.end = Date.now();
+      return self;
+    };
+
+    /**
+     * [queryInfo 设置或返回查询条件]
+     * @param  {[type]} queryInfo [查询条件（可选）]
+     * @return {[type]}           [description]
+    */
+
+
+    QueryInfo.prototype.queryInfo = function(queryInfo) {
+      var self;
+      self = this;
+      if (queryInfo) {
+        self.queryInfo = queryInfo;
+      }
+      return self.queryInfo;
+    };
+
+    /**
+     * [toString 将查询的一些相关信息转化为字符串]
+     * @return {[type]} [description]
+    */
+
+
+    QueryInfo.prototype.toString = function() {
+      var queryInfo, queryStr, self, usedTime;
+      self = this;
+      usedTime = self.end - self.start;
+      queryInfo = self.queryInfo;
+      queryStr = '';
+      if (_.isArray(queryInfo)) {
+        _.each(queryInfo, function(info) {
+          if (!_.isFunction(info)) {
+            if (_.isString(info)) {
+              return queryStr += "" + info + ", ";
+            } else {
+              return queryStr += "" + (JSON.stringify(info)) + ", ";
+            }
+          }
+        });
+      } else {
+        queryStr = queryInfo.toString();
+      }
+      return "" + queryStr + " used time: " + usedTime + "ms";
+    };
+
+    return QueryInfo;
+
+  })();
 
   module.exports = mongoClient;
 

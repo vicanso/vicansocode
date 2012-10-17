@@ -5,10 +5,20 @@
       "files" : ["/common/javascripts/jquery/jquery.cookies.min.js", 
         "/common/javascripts/jquery/jquery.url.min.js", 
         "/common/javascripts/jquery/jquery.mousewheel.min.js",
-        "/common/javascripts/util/underscore.min.js"
+        "/common/javascripts/util/underscore.min.js",
+        "/common/javascripts/util/localstorage.min.js"
       ]
+    },
+    {
+      "name" : "/mergers/codemirror.min.js",
+      "files" : ["/common/codemirror/codemirror.min.js",
+      "/common/codemirror/javascript.min.js"]
     }
   ],
   "css" : [
+    {
+      "name" : "/mergers/codemirror.css",
+      "files" : ["/common/codemirror/codemirror.css", "/common/codemirror/monokai.css"]
+    }
   ]
 }

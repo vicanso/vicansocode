@@ -1,5 +1,6 @@
 config = require '../config'
 appPath = config.getAppPath()
+myUtil = require "#{appPath}/helpers/util"
 logger = require("#{appPath}/helpers/logger") __filename
 
 httpHandler = 
@@ -13,13 +14,16 @@ httpHandler =
    * @return {[type]}      [description]
   ###
   render : (req, res, view, data, ttl) ->
-    fileImporter = data.fileImporter
-    res.render view, data, (err, html) ->
-      if err || !html
-        logger.error err
-        return 
-      html = appendJsAndCss html, fileImporter
-      res.send html
+    if data
+      fileImporter = data.fileImporter
+      res.render view, data, (err, html) ->
+        if err || !html
+          logger.error err
+          return 
+        html = appendJsAndCss html, fileImporter
+        response req, res, html
+    else
+      errorResponse res
 
 ###*
  * [appendJsAndCss 往HTML中插入js,css引入列表]
@@ -31,5 +35,38 @@ appendJsAndCss = (html, fileImporter) ->
   html = html.replace '<!--CSS_FILES_CONTAINER-->', fileImporter.exportCss true
   html = html.replace '<!--JS_FILES_CONTAINER-->', fileImporter.exportJs true
   return html
+
+###*
+ * [response 响应HTTP请求，若浏览器支持gzip，则将数据以gzip的形式返回]
+ * @param  {[type]} req  [description]
+ * @param  {[type]} res  [description]
+ * @param  {[type]} html [description]
+ * @return {[type]}      [description]
+###
+response = (req, res, html) ->
+  acceptEncoding = req.header 'accept-encoding'
+  res.header 'Content-Type', 'text/html'
+  res.header 'Cache-Control', 'public, max-age=300'
+  res.header 'Last-Modified', new Date()
+  if acceptEncoding
+    if acceptEncoding.indexOf 'gzip' != -1
+      zipFunc = 'gzip'
+    else if acceptEncoding.indexOf 'deflate' != -1
+      zipFunc = 'deflate'
+    if zipFunc
+      myUtil[zipFunc] html, (err, gzipData) ->
+        if err
+          logger.error err
+          res.send html
+        else
+          res.header 'Content-Encoding', zipFunc
+          res.send gzipData
+    else
+      res.send html
+  else
+    res.send html
+
+errorResponse = (res) ->
+  res.send 500, 'server error'
 
 module.exports = httpHandler

@@ -32,7 +32,9 @@ getBaseWidgetConfig = (type, options) ->
   else
     return null
 module.exports = 
-  getDialogConfig : (options) ->
+  getDialog : (options) ->
     return getBaseWidgetConfig 'dialog', options
-  getListConfig : (options) ->
+  getButtonSet : (options) ->
+    return getBaseWidgetConfig 'buttonSet', options
+  getList : (options) ->
     return getBaseWidgetConfig 'list', options

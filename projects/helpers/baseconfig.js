@@ -49,10 +49,13 @@
   };
 
   module.exports = {
-    getDialogConfig: function(options) {
+    getDialog: function(options) {
       return getBaseWidgetConfig('dialog', options);
     },
-    getListConfig: function(options) {
+    getButtonSet: function(options) {
+      return getBaseWidgetConfig('buttonSet', options);
+    },
+    getList: function(options) {
       return getBaseWidgetConfig('list', options);
     }
   };

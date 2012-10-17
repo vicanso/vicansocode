@@ -5,7 +5,7 @@ Schema = mongoose.Schema
 appPath = config.getAppPath()
 mongoInfo = config.getMongoInfo()
 logger = require("#{appPath}/helpers/logger") __filename
-
+isLoggerQueryInfo = config.isLoggerQueryInfo()
 connectionOptions =
   server : 
     poolSize : mongoInfo.poolSize
@@ -239,6 +239,15 @@ _.each modelFunctions.split(' '), (func) ->
     self = @
     args = _.toArray arguments
     args.unshift self, func
+    if isLoggerQueryInfo
+      cbf = args[args.length - 1]
+      queryInfo = new QueryInfo args.slice 1
+      args[args.length - 1] = () ->
+        queryInfo.complete()
+        logger.info queryInfo.toString()
+        args = _.toArray arguments
+        cbf.apply null, args
+
     return mongooseModel.apply null, args
 
 ###*
@@ -278,5 +287,55 @@ transformDataToObject = (func) ->
     func err, data
 
 
+class QueryInfo
+  constructor : (queryInfo) ->
+    @start = Date.now()
+    @end = @start
+    @queryInfo = queryInfo || null
+  ###*
+   * [start 设置开始时间]
+   * @return {[type]} [description]
+  ###
+  start : () ->
+    self = @
+    self.start = Date.now()
+    return self
+  ###*
+   * [complete 设置结束时间]
+   * @return {[type]} [description]
+  ###
+  complete : () ->
+    self = @
+    self.end = Date.now()
+    return self
+  ###*
+   * [queryInfo 设置或返回查询条件]
+   * @param  {[type]} queryInfo [查询条件（可选）]
+   * @return {[type]}           [description]
+  ###
+  queryInfo : (queryInfo) ->
+    self = @
+    if queryInfo
+      self.queryInfo = queryInfo
+    return self.queryInfo
+  ###*
+   * [toString 将查询的一些相关信息转化为字符串]
+   * @return {[type]} [description]
+  ###
+  toString : () ->
+    self = @
+    usedTime = self.end - self.start
+    queryInfo = self.queryInfo
+    queryStr = ''
+    if _.isArray queryInfo
+      _.each queryInfo, (info) ->
+        if !_.isFunction info
+          if _.isString info
+            queryStr += "#{info}, "
+          else
+            queryStr += "#{JSON.stringify(info)}, "
+    else
+      queryStr = queryInfo.toString()
+    return "#{queryStr} used time: #{usedTime}ms"
 
 module.exports = mongoClient
