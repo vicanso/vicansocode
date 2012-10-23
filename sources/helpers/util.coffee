@@ -17,7 +17,7 @@ util =
    * [mergeFiles 合并文件]
    * @param  {[type]} files       [需要合并的文件列表]
    * @param  {[type]} saveFile    [保存的文件]
-   * @param  {[type]} dataConvert [需要对数据作的转化，如果不需要转换，该参数作为完成时的call back]
+   * @param  {[type]} dataConvert [可选参数，需要对数据做的转化，如果不需要转换，该参数作为完成时的call back]
    * @param  {[type]} cbf         [完成时的call back]
    * @return {[type]}             [description]
   ###
@@ -28,9 +28,6 @@ util =
       dataConvert = null
     cbf = cbf || noop
     _.each files, (file) ->
-      # imagesPath = path.relative path.dirname(saveFile), path.dirname(file)
-      # imagesPath = path.join imagesPath, '../images'
-      # console.log imagesPath
       funcs.push (cbf) ->
         fs.readFile file, 'utf8', (err, data) ->
           if !err && dataConvert
@@ -70,8 +67,7 @@ util =
    * @param  {[type]} digestType [加密数据的返回类型，若不传该参数则以hex的形式返回]
    * @return {[type]}            [description]
   ###
-  crypto : (data, type, digestType) ->
-    digestType ?= 'hex'
+  crypto : (data, type, digestType = 'hex') ->
     cryptoData = crypto.createHash(type).update(data).digest digestType
     return cryptoData
   ###*

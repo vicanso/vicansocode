@@ -14,7 +14,7 @@ base =
     selfClass : 'uiButtonSet uiWidget uiNoSelectText uiBlackBoxShadow uiCornerAll uiBlackBorder'
     buttonClass : 'uiButton uiBlackGradientBG'
 ###*
- * [getBaseWidgetConfig description]
+ * [getBaseWidgetConfig 获取base UI中相关的一些配置信息]
  * @param  {[type]} type    [description]
  * @param  {[type]} options [description]
  * @return {[type]}         [description]

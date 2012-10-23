@@ -1,5 +1,5 @@
 (function() {
-  var appPath, beforeRunningHandler, cluster, config, domain, express, initApp, initExpress, logger, slaveTotal, staticHandler, _;
+  var appPath, beforeRunningHandler, cluster, config, domain, express, initApp, initExpress, logger, myUtil, slaveTotal, staticHandler, _;
 
   _ = require('underscore');
 
@@ -21,6 +21,8 @@
 
   slaveTotal = config.getSlaveTotal();
 
+  myUtil = require("" + appPath + "/helpers/util");
+
   initExpress = function() {
     var app;
     app = express();
@@ -36,9 +38,12 @@
         return next();
       }
     });
-    app.use(express.responseTime());
+    if (!config.isProductionMode()) {
+      app.use(express.responseTime());
+    }
     app.use(staticHandler["static"]());
     if (config.isProductionMode()) {
+      app.use(express.limit('1mb'));
       app.use(express.logger());
     }
     app.use(express.bodyParser());

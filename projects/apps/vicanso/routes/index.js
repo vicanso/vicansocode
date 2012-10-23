@@ -28,17 +28,22 @@
       route: '/vicanso/article/:id',
       jadeView: 'vicanso/article',
       handerFunc: 'article'
+    }, {
+      type: 'all',
+      route: '/vicanso/admin/addarticle',
+      jadeView: 'vicanso/admin/addarticle',
+      handerFunc: 'addArticle'
     }
   ];
 
   module.exports = function(app) {
     _.each(routeInfos, function(routeInfo) {
       return app[routeInfo.type](routeInfo.route, function(req, res) {
-        var debug, fileImporter;
+        var debug;
         debug = !config.isProductionMode();
-        fileImporter = new FileImporter(debug);
-        return viewContentHandler[routeInfo.handerFunc](req, fileImporter, function(viewData) {
+        return viewContentHandler[routeInfo.handerFunc](req, res, function(viewData) {
           if (viewData) {
+            viewData.fileImporter = new FileImporter(debug);
             return httpHandler.render(req, res, routeInfo.jadeView, viewData);
           } else {
             return errorPageHandler.response(500);

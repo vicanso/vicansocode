@@ -19,6 +19,12 @@
       this.init();
     }
 
+    /**
+     * [init 初始化瀑布流，在new对象时自动调用]
+     * @return {[type]} [description]
+    */
+
+
     Waterfalls.prototype.init = function() {
       var column, i, opts, self, waterfallsDataList, waterfallsHeightList, _i;
       self = this;
@@ -32,6 +38,14 @@
       }
       return self;
     };
+
+    /**
+     * [add 添加元素到瀑布流中]
+     * @param {[type]} item   [添加的元素（可以为一个元素或者一个数组）]
+     * @param {[type]} index  [添加的位置]
+     * @param {[type]} height [若是参数item一个元素时，元素的高度（若是参数item是数组时，里面保存的对象有该元素的高度）]
+    */
+
 
     Waterfalls.prototype.add = function(item, index, height) {
       var WaterfallsData, column, columnIndex, docs, opts, self, waterfallsDataList, waterfallsHeightList;
@@ -78,6 +92,13 @@
       return self;
     };
 
+    /**
+     * [getConfig 获取瀑布流的配置信息（包含宽度，数据等）]
+     * @param  {[type]} balance [是否平衡瀑布流]
+     * @return {[type]}         [description]
+    */
+
+
     Waterfalls.prototype.getConfig = function(balance) {
       var opts, self;
       self = this;
@@ -90,6 +111,12 @@
         data: opts.waterfallsDataList
       };
     };
+
+    /**
+     * [balanceColumnsHeight 平衡瀑布流的高度]
+     * @return {[type]} [description]
+    */
+
 
     Waterfalls.prototype.balanceColumnsHeight = function() {
       var column, itemHeight, maxColumnIndex, maxColumnItem, maxMinColumn, minColumnIndex, offsetHeight, opts, self, waterfallsDataList, waterfallsHeightList;
@@ -134,13 +161,31 @@
       return self;
     };
 
+    /**
+     * [getMinHeightColumn 获取最小高度的列]
+     * @return {[type]} [description]
+    */
+
+
     Waterfalls.prototype.getMinHeightColumn = function() {
       return this.getMaxMinColumn()['min'];
     };
 
+    /**
+     * [getMaxHeightColumn 获取最大高度的列]
+     * @return {[type]} [description]
+    */
+
+
     Waterfalls.prototype.getMaxHeightColumn = function() {
       return this.getMaxMinColumn()['max'];
     };
+
+    /**
+     * [getMaxMinColumn 获取最大最小高度列]
+     * @return {[type]} [description]
+    */
+
 
     Waterfalls.prototype.getMaxMinColumn = function() {
       var maxHeight, maxHeightColumnIndex, minHeight, minHeightColumnIndex, opts, self, waterfallsHeightList;

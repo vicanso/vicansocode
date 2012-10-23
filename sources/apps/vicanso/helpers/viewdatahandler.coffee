@@ -7,6 +7,7 @@ mongoClient = require "#{appPath}/apps/vicanso/models/mongoclient"
 logger = require("#{appPath}/helpers/logger") __filename
 
 
+
 viewDataHandler = 
   index : (cbf) ->
     async.parallel {
@@ -20,11 +21,36 @@ viewDataHandler =
         mongoClient.find 'RecommendArticle', {}, 'title createTime content source', {
           limit : 5
         }, cbf
+      nodeModules : (cbf) ->
+        mongoClient.find 'NodeModule', {}, 'name githubPage version', cbf
     }, cbf
   article : (id, cbf) ->
     mongoClient.findById 'Article', id, 'title createTime content', cbf
+  addArticle : (data, cbf) ->
+    mongoClient.save 'Article', data, cbf
   updateNodeModules : (cbf) ->
-    downloadNodeModulesPackage cbf
+    # downloadNodeModulesPackage cbf
+    mongoClient.find 'NodeModule', {}, 'name repository version package', (err, data) ->
+      async.forEachLimit data, 5, (nodeModule) ->
+        url = nodeModule.package
+        request url, (err, res, data) ->
+          if !err && res.statusCode == 200
+            data = JSON.parse data
+            if !_.isString data.repository
+              data.repository = data.repository?.url
+            logger.info "success download #{url}"
+            data = _.pick data, 'name', 'description', 'homepage', 'keywords', 'author', 'repository', 'main', 'version'
+            if data.version != nodeModule.version
+              data.package = nodeModule.package
+              mongoClient.findByIdAndUpdate 'NodeModule', nodeModule._id, data, (err) ->
+                if !err
+                  logger.info 'success'
+                else
+                  logger.info err
+          else
+            logger.error url
+            logger.error err
+      , cbf
 
 
 downloadNodeModulesPackage = (cbf) ->
@@ -48,6 +74,7 @@ downloadNodeModulesPackage = (cbf) ->
     'https://github.com/documentcloud/underscore'
   ]
   async.forEachLimit repositories, 10, (repository, cbf) ->
+    githubPage = repository
     repository = repository.replace 'github.com', 'raw.github.com'
     url = "#{repository}/master/package.json"
     request url, (err, res, data) ->
@@ -56,6 +83,8 @@ downloadNodeModulesPackage = (cbf) ->
         if !_.isString data.repository
           data.repository = data.repository?.url
         data = _.pick data, 'name', 'description', 'homepage', 'keywords', 'author', 'repository', 'main', 'version'
+        data.package = url
+        data.githubPage = githubPage
         mongoClient.save 'NodeModule', data, () ->
           logger.info 'save complete'
       else

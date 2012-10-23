@@ -1,5 +1,5 @@
 (function() {
-  var QueryInfo, Schema, appPath, config, connectionOptions, dataBaseHandler, isLoggerQueryInfo, logger, modelFunctions, mongoClient, mongoInfo, mongoose, mongooseModel, transformDataToObject, wrapMongooseCallback, _,
+  var QueryInfo, Schema, appPath, config, connectionOptions, dataBaseHandler, isLoggerQueryInfo, logger, modelFunctions, mongoClient, mongoInfo, mongoose, mongooseModel, queryCache, transformDataToObject, wrapMongooseCallback, _,
     __slice = [].slice;
 
   config = require('../config');
@@ -16,6 +16,8 @@
 
   logger = require("" + appPath + "/helpers/logger")(__filename);
 
+  queryCache = require("" + appPath + "/models/querycache");
+
   isLoggerQueryInfo = config.isLoggerQueryInfo();
 
   connectionOptions = {
@@ -29,17 +31,53 @@
 
   mongoClient = {
     /**
+     * [getClient 返回一个新的mongoclient对象，调用相应的方法时，不再输入传alias参数]
+     * @param  {[type]} alias   [数据库连接别名]
+     * @param  {[type]} uri     [数据库连接地址]
+     * @param  {[type]} schemas [schemas列表]
+     * @return {[type]}         [description]
+    */
+
+    getClient: function(alias, uri, schemas) {
+      var self;
+      self = this;
+      mongoClient = {};
+      _.each(_.functions(self), function(func) {
+        if (func !== 'getClient') {
+          return mongoClient[func] = function() {
+            var args;
+            if (!_.isFunction(self[func])) {
+              return logger.error("call mongoClient function: " + func + " is not defined");
+            } else {
+              args = _.toArray(arguments);
+              args.unshift(alias);
+              return self[func].apply(self, args);
+            }
+          };
+        }
+      });
+      mongoClient.createConnection(uri);
+      _.each(schemas, function(model, name) {
+        return mongoClient.model(name, model);
+      });
+      return mongoClient;
+    },
+    /**
      * [createConnection 创建mongo数据库连接]
      * @param  {[type]} alias [数据库连接别名（用于获取该连接）]
      * @param  {[type]} uri   [数据库连接字符串]
+     * @param  {[type]} options [数据库连接选项]
      * @return {[type]}       [description]
     */
 
-    createConnection: function(alias, uri) {
+    createConnection: function(alias, uri, options) {
       var conn;
+      if (options == null) {
+        options = connectionOptions;
+      }
       conn = dataBaseHandler.getConnection(alias);
       if (!conn) {
-        conn = mongoose.createConnection(uri, connectionOptions, function(err) {
+        conn = mongoose.createConnection(uri, options, function(err) {
           if (err) {
             return logger.error(err);
           } else {
@@ -51,8 +89,8 @@
           conn: conn,
           alias: alias
         });
-        return conn;
       }
+      return conn;
     },
     /**
      * [getConnection 返回数据库连接]
@@ -115,13 +153,13 @@
      * @param  {[type]} alias   [数据库连接别名]
      * @param  {[type]} name    [model名字]
      * @param  {[type]} id      [对象id]
-     * @param  {[type]} update  [更新的数据]
+     * @param  {[type]} data  [更新的数据]
      * @param  {[type]} options [一些更新配置信息]
      * @param  {[type]} cbf     [回调函数]
      * @return {[type]}         [description]
     */
 
-    findByIdAndUpdate: function(alias, name, id, update, options, cbf) {
+    findByIdAndUpdate: function(alias, name, id, data, options, cbf) {
       var args;
       args = _.toArray(arguments);
       return dataBaseHandler.findByIdAndUpdate.apply(dataBaseHandler, args);
@@ -307,23 +345,39 @@
 
   _.each(modelFunctions.split(' '), function(func) {
     return dataBaseHandler[func] = function() {
-      var args, cbf, queryInfo, self;
+      var args, cbf, key, self;
       self = this;
       args = _.toArray(arguments);
-      args.unshift(self, func);
-      if (isLoggerQueryInfo) {
-        cbf = args[args.length - 1];
-        queryInfo = new QueryInfo(args.slice(1));
-        args[args.length - 1] = function() {
-          queryInfo.complete();
-          logger.info(queryInfo.toString());
-          args = _.toArray(arguments);
-          return cbf.apply(null, args);
-        };
-      }
-      return mongooseModel.apply(null, args);
+      cbf = args.pop();
+      key = queryCache.key(args, func);
+      return queryCache.get(key, function(err, data) {
+        var queryInfo;
+        if (!err && data) {
+          return cbf(null, data);
+        } else {
+          args.push(cbf);
+          args.unshift(self, func);
+          if (isLoggerQueryInfo) {
+            queryInfo = new QueryInfo(args.slice(1));
+            args[args.length - 1] = function(err, data) {
+              if (!err && data) {
+                queryCache.set(key, data);
+              } else {
+                queryCache.next(key);
+              }
+              queryInfo.complete();
+              logger.info(queryInfo.toString());
+              args = _.toArray(arguments);
+              return cbf.apply(null, args);
+            };
+          }
+          return mongooseModel.apply(null, args);
+        }
+      });
     };
   });
+
+  queryCache.setCacheFunctions('findOne find findById');
 
   /**
    * [mongooseModel mongoose中model的一些方法]

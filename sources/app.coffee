@@ -10,6 +10,7 @@ logger = require("#{appPath}/helpers/logger") __filename
 beforeRunningHandler = require "#{appPath}/helpers/beforerunninghandler"
 staticHandler = require "#{appPath}/helpers/statichandler"
 slaveTotal = config.getSlaveTotal()
+myUtil = require "#{appPath}/helpers/util"
 # varnish = require "#{appPath}/helpers/varnish"
 
 
@@ -26,13 +27,14 @@ initExpress = () ->
       res.send 'success'
     else
       next()
-
-  app.use express.responseTime()
+  if !config.isProductionMode()
+    app.use express.responseTime()
+    
   app.use staticHandler.static()
 
-  # app.use express.limit '1mb'
 
   if config.isProductionMode()
+    app.use express.limit '1mb'
     app.use express.logger()
 
   app.use express.bodyParser()
@@ -54,6 +56,7 @@ initExpress = () ->
   app.listen config.getListenPort()
 
   logger.info "listen port #{config.getListenPort()}"
+
 
 ###*
  * [initApp 初始化APP]

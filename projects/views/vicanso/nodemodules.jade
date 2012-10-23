@@ -1,0 +1,12 @@
+- var baseDialog = baseConfig.baseDialog;
+- var nodeModules = viewContent.nodeModules;
+if nodeModules
+  #nodeModulesContainer(class='#{baseDialog.selfClass}')
+    div(class='#{baseDialog.titleBarClass}') 
+      .uiTitle node模块
+    div(class='#{baseDialog.contentClass}')
+      ul
+        each nodeModule in nodeModules
+          li #{nodeModule.name} 
+            span 版本:#{nodeModule.version}
+            a(href='#{nodeModule.githubPage}', target='_blank') 查看更多>>

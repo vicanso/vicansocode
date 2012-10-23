@@ -30,7 +30,7 @@
      * [mergeFiles 合并文件]
      * @param  {[type]} files       [需要合并的文件列表]
      * @param  {[type]} saveFile    [保存的文件]
-     * @param  {[type]} dataConvert [需要对数据作的转化，如果不需要转换，该参数作为完成时的call back]
+     * @param  {[type]} dataConvert [可选参数，需要对数据做的转化，如果不需要转换，该参数作为完成时的call back]
      * @param  {[type]} cbf         [完成时的call back]
      * @return {[type]}             [description]
     */

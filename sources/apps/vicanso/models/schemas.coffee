@@ -45,7 +45,9 @@ schemas =
     keywords : [String]
     author : String
     repository : String
+    package : String
     main : String
+    githubPage : String
     version : String
     createTime : 
       type : Date

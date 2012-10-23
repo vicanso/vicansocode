@@ -5,6 +5,7 @@ Schema = mongoose.Schema
 appPath = config.getAppPath()
 mongoInfo = config.getMongoInfo()
 logger = require("#{appPath}/helpers/logger") __filename
+queryCache = require "#{appPath}/models/querycache"
 isLoggerQueryInfo = config.isLoggerQueryInfo()
 connectionOptions =
   server : 
@@ -12,18 +13,43 @@ connectionOptions =
   db : 
     native_parser : false
 
+ 
 
 mongoClient =
+  ###*
+   * [getClient 返回一个新的mongoclient对象，调用相应的方法时，不再输入传alias参数]
+   * @param  {[type]} alias   [数据库连接别名]
+   * @param  {[type]} uri     [数据库连接地址]
+   * @param  {[type]} schemas [schemas列表]
+   * @return {[type]}         [description]
+  ###
+  getClient : (alias, uri, schemas) ->
+    self = @
+    mongoClient = {}
+    _.each _.functions(self), (func) ->
+      if func != 'getClient'
+        mongoClient[func] = () ->
+          if !_.isFunction self[func]
+            logger.error "call mongoClient function: #{func} is not defined"
+          else
+            args = _.toArray arguments
+            args.unshift alias  
+            self[func].apply self, args
+    mongoClient.createConnection uri
+    _.each schemas, (model, name) ->
+      mongoClient.model name, model
+    return mongoClient
   ###*
    * [createConnection 创建mongo数据库连接]
    * @param  {[type]} alias [数据库连接别名（用于获取该连接）]
    * @param  {[type]} uri   [数据库连接字符串]
+   * @param  {[type]} options [数据库连接选项]
    * @return {[type]}       [description]
   ###
-  createConnection : (alias, uri) ->
+  createConnection : (alias, uri, options = connectionOptions) ->
     conn = dataBaseHandler.getConnection alias
     if !conn
-      conn = mongoose.createConnection uri, connectionOptions, (err) ->
+      conn = mongoose.createConnection uri, options, (err) ->
         if err
           logger.error err
         else
@@ -33,7 +59,7 @@ mongoClient =
         conn : conn
         alias : alias
       }
-      return conn
+    return conn
   ###*
    * [getConnection 返回数据库连接]
    * @param  {[type]} alias [数据库连接别名]
@@ -84,12 +110,12 @@ mongoClient =
    * @param  {[type]} alias   [数据库连接别名]
    * @param  {[type]} name    [model名字]
    * @param  {[type]} id      [对象id]
-   * @param  {[type]} update  [更新的数据]
+   * @param  {[type]} data  [更新的数据]
    * @param  {[type]} options [一些更新配置信息]
    * @param  {[type]} cbf     [回调函数]
    * @return {[type]}         [description]
   ###
-  findByIdAndUpdate : (alias, name, id, update, options, cbf) ->
+  findByIdAndUpdate : (alias, name, id, data, options, cbf) ->
     args = _.toArray arguments
     return dataBaseHandler.findByIdAndUpdate.apply dataBaseHandler, args
   ###*
@@ -238,18 +264,28 @@ _.each modelFunctions.split(' '), (func) ->
   dataBaseHandler[func] = () ->
     self = @
     args = _.toArray arguments
-    args.unshift self, func
-    if isLoggerQueryInfo
-      cbf = args[args.length - 1]
-      queryInfo = new QueryInfo args.slice 1
-      args[args.length - 1] = () ->
-        queryInfo.complete()
-        logger.info queryInfo.toString()
-        args = _.toArray arguments
-        cbf.apply null, args
-
-    return mongooseModel.apply null, args
-
+    cbf = args.pop()
+    key = queryCache.key args, func
+    queryCache.get key, (err, data) ->
+      if !err && data
+        cbf null, data
+      else
+        args.push cbf
+        args.unshift self, func
+        if isLoggerQueryInfo
+          queryInfo = new QueryInfo args.slice 1
+          args[args.length - 1] = (err, data) ->
+            if !err && data
+              queryCache.set key, data
+            else
+              queryCache.next key
+            queryInfo.complete()
+            logger.info queryInfo.toString()
+            args = _.toArray arguments
+            cbf.apply null, args
+        mongooseModel.apply null, args
+# 设置可以缓存的查询
+queryCache.setCacheFunctions 'findOne find findById'
 ###*
  * [mongooseModel mongoose中model的一些方法]
  * @param  {[type]} dbHandler [description]

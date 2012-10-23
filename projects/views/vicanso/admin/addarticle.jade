@@ -1,0 +1,14 @@
+extends ../layout
+block bodyContainer
+  include ../header
+  - fileImporter.importCss(['/vicanso/stylesheets/addarticle.css']);
+  - fileImporter.importJs(['/vicanso/javascripts/addarticle.min.js']);
+  #editorControlerContainer
+    select.inputType
+      option 内容
+      option 代码
+      option 标题
+    button.add 添加
+    button.submit 提交
+  #editorContainer
+    input.title(type='text')

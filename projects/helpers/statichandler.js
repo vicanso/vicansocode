@@ -28,8 +28,9 @@
       return function(req, res, next) {
         if (req.url.substring(0, staticPrefixLength) === staticPrefix) {
           req.url = req.url.substring(staticPrefixLength);
-          staticCompressHandler(req, res, function() {});
-          return staticHandler(req, res, next);
+          return staticCompressHandler(req, res, function() {
+            return staticHandler(req, res, next);
+          });
         } else {
           return next();
         }

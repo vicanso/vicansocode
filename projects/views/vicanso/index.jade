@@ -1,6 +1,6 @@
-extends ./layout
+extends layout
 block bodyContainer
-  include ./header
+  include header
   - fileImporter.importCss(['/common/codemirror/codemirror.css', '/common/codemirror/monokai.css']);
   - fileImporter.importJs(['/common/codemirror/codemirror.min.js', '/common/codemirror/javascript.min.js']);
   - fileImporter.importCss('/vicanso/stylesheets/index.css');
@@ -8,6 +8,8 @@ block bodyContainer
   #contentContainer
     #rightContainer
       include recommendarticles
+      include nodemodules
     #leftContainer
       include mydiary
       include articles
+  include footer

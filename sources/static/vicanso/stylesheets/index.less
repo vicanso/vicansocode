@@ -2,15 +2,11 @@
 
 #contentContainer{
   width: @contentWidth;
-  margin:20px auto;
-  margin-top: 50px;
-  overflow: hidden;
+  margin:50px auto 20px auto;
 }
 #rightContainer{
     width: 300px;
     float: right;
-    border:1px solid red;
-    height: 400px;
 }
 #leftContainer{
     width:680px;
@@ -54,9 +50,21 @@
     height: 100%;
   }
 }
-#recommendArticleContainer{
+#recommendArticlesContainer, #nodeModulesContainer{
   li{
     list-style: circle inside;
     margin-bottom: 10px;
+  }
+}
+#nodeModulesContainer{
+  margin-top: 20px;
+  .uiContent{
+    margin:5px 8px;
+    li{
+      span{
+        color: #888;
+        padding: 0 5px;
+      }
+    }
   }
 }

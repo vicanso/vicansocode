@@ -7,6 +7,7 @@ httpHandler = require "#{appPath}/helpers/httphandler"
 mongoClient = require "#{appPath}/apps/vicanso/models/mongoclient"
 errorPageHandler = require "#{appPath}/apps/vicanso/helpers/errorpagehandler"
 
+# 路由信息表
 routeInfos = [
   {
     type : 'get'
@@ -20,18 +21,25 @@ routeInfos = [
     jadeView : 'vicanso/article'
     handerFunc : 'article'
   }
+  {
+    type : 'all'
+    route : '/vicanso/admin/addarticle'
+    jadeView : 'vicanso/admin/addarticle'
+    handerFunc : 'addArticle'
+  }
 ]
 
 module.exports = (app) ->
   _.each routeInfos, (routeInfo) ->
     app[routeInfo.type] routeInfo.route, (req, res) ->
       debug = !config.isProductionMode()
-      fileImporter = new FileImporter debug
-      viewContentHandler[routeInfo.handerFunc] req, fileImporter, (viewData) ->
+      viewContentHandler[routeInfo.handerFunc] req, res, (viewData) ->
         if viewData
+          viewData.fileImporter = new FileImporter debug
           httpHandler.render req, res, routeInfo.jadeView, viewData
         else
           errorPageHandler.response 500
+          
   app.get '/vicanso/ajax/*', (req, res) ->
     res.send 'success'
 

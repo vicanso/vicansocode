@@ -18,7 +18,7 @@
   myUtil = require("" + appPath + "/helpers/util");
 
   viewContentHandler = {
-    index: function(req, fileImporter, cbf) {
+    index: function(req, res, cbf) {
       return viewDataHandler.index(function(err, data) {
         var articles, recommendArticles, viewData;
         if (err) {
@@ -35,11 +35,11 @@
           });
           viewData = {
             title: '每天再往前一点！',
-            fileImporter: fileImporter,
             viewContent: {
               header: webConfig.getHeader(0),
               articles: articles,
               reflection: data.reflection,
+              nodeModules: data.nodeModules,
               recommendArticles: recommendArticles
             },
             baseConfig: {
@@ -51,7 +51,7 @@
         return cbf(viewData);
       });
     },
-    article: function(req, fileImporter, cbf) {
+    article: function(req, res, cbf) {
       var id;
       id = req.param('id');
       if (!id) {
@@ -62,7 +62,6 @@
           var viewData;
           viewData = {
             title: '每天再浏览多一点！',
-            fileImporter: fileImporter,
             viewContent: {
               header: webConfig.getHeader(-1),
               article: data
@@ -73,6 +72,26 @@
           };
           return cbf(viewData);
         });
+      }
+    },
+    addArticle: function(req, res, cbf) {
+      var viewData;
+      if (req.xhr) {
+        return viewDataHandler.addArticle(req.body, function(err) {
+          if (err) {
+            return res.send(err);
+          } else {
+            return res.send('success');
+          }
+        });
+      } else {
+        viewData = {
+          title: '添加新的文章',
+          viewContent: {
+            header: webConfig.getHeader(-1)
+          }
+        };
+        return cbf(viewData);
       }
     },
     updateNodeModules: function(res) {

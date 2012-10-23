@@ -20,10 +20,11 @@ staticHandler =
       redirect : false
     }
     return (req, res, next) ->
+      # 先判断该url是否静态文件的请求（请求的前缀固定），如果是则处理该请求（如果可以压缩的则压缩数据）
       if req.url.substring(0, staticPrefixLength) is staticPrefix
         req.url = req.url.substring staticPrefixLength
         staticCompressHandler req, res, () ->
-        staticHandler req, res, next
+          staticHandler req, res, next
       else
         next()
 
