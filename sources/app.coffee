@@ -8,9 +8,11 @@ appPath = config.getAppPath()
 
 logger = require("#{appPath}/helpers/logger") __filename
 beforeRunningHandler = require "#{appPath}/helpers/beforerunninghandler"
-staticHandler = require "#{appPath}/helpers/statichandler"
+staticHandler = require "#{appPath}/helpers/staticHandler"
 slaveTotal = config.getSlaveTotal()
 myUtil = require "#{appPath}/helpers/util"
+session = require "#{appPath}/helpers/session"
+appInfoParse = require "#{appPath}/helpers/appinfoparse"
 # varnish = require "#{appPath}/helpers/varnish"
 
 
@@ -19,6 +21,9 @@ initExpress = () ->
   app.set 'views', "#{appPath}/views"
   app.set 'view engine', 'jade'
   app.engine 'jade', require('jade').__express
+    
+  # 静态文件处理函数
+  app.use staticHandler.handler()
   
   ##request by varnish（check node is healthy） just response "success"
   app.use (req, res, next) ->
@@ -27,20 +32,36 @@ initExpress = () ->
       res.send 'success'
     else
       next()
+
   if !config.isProductionMode()
+    # 响应时间
     app.use express.responseTime()
-    
-  app.use staticHandler.static()
-
-
-  if config.isProductionMode()
+  else
     app.use express.limit '1mb'
     app.use express.logger()
 
+  app.use appInfoParse.handler()
+
+
   app.use express.bodyParser()
   app.use express.methodOverride()
-  app.use express.cookieParser()
+  # app.use express.cookieParser()
+  
+  app.use (req, res, next) ->
+    logger.info req.query
+    next()
 
+  app.use session.handler()
+
+  app.use (req, res, next) ->
+    logger.info '2:'
+    sess = req.session
+    logger.info sess
+    if sess.views
+      sess.views++
+    else
+      sess.views = 1
+    next()
 
   app.use app.router
   
@@ -49,9 +70,10 @@ initExpress = () ->
     showStack : true
   }
 
-  require("#{appPath}/apps/vicanso/routes")(app)
+  
 
-  require("#{appPath}/apps/ys/routes")(app)
+  require("#{appPath}/apps/vicanso/init") app
+  require("#{appPath}/apps/ys/init") app
 
   app.listen config.getListenPort()
 

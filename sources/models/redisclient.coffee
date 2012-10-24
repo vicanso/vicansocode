@@ -42,4 +42,4 @@ client.on 'error', (err) ->
 redisClient = {}
 initRedisClient redisClient, client
  
-module.exports = redisClient 
+module.exports = redisClient

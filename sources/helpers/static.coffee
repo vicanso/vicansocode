@@ -4,10 +4,10 @@ appPath = config.getAppPath()
 
 staticHandler =
   ###*
-   * [static 静态文件HTTP请求处理]
+   * [handler 静态文件HTTP请求处理]
    * @return {[type]} [description]
   ###
-  static : () ->
+  handler : () ->
     staticPath = config.getStaticPath()
     staticPrefix = config.getStaticPrefix()
     staticPrefixLength = staticPrefix.length
@@ -15,7 +15,7 @@ staticHandler =
     staticCompressHandler = express.compress {
       memLevel : 9
     }
-    staticHandler = express.static "#{staticPath}", {
+    handler = express.static "#{staticPath}", {
       maxAge : config.getStaticFileMaxAge() * 1000,
       redirect : false
     }
@@ -24,7 +24,7 @@ staticHandler =
       if req.url.substring(0, staticPrefixLength) is staticPrefix
         req.url = req.url.substring staticPrefixLength
         staticCompressHandler req, res, () ->
-          staticHandler req, res, next
+          handler req, res, next
       else
         next()
 

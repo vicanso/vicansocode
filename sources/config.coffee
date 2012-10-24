@@ -53,6 +53,8 @@ SLAVE_TOTAL = commander.slave || require('os').cpus().length
 MERGE_FILES = require "#{APP_PATH}/mergefiles.json"
 # 是否记录查询数据的一些信息
 LOGGER_QUERY_INFO = true
+# 是否缓存查询记录
+CACHE_QUERY_RESULT = true
 config = 
   ###*
    * [getAppPath 返回APP的所在的目录]
@@ -145,6 +147,12 @@ config =
   isLoggerQueryInfo : () ->
     return LOGGER_QUERY_INFO
   ###*
+   * [isCacheQueryResult 是否缓存query结果]
+   * @return {Boolean} [description]
+  ###
+  isCacheQueryResult : () ->
+    return CACHE_QUERY_RESULT
+  ###*
    * [getUID 获取node的uid(如果是master则返回0)]
    * @return {[type]} [description]
   ###
@@ -157,3 +165,4 @@ config =
 
 
 module.exports = config
+  

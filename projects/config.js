@@ -1,5 +1,5 @@
 (function() {
-  var APP_PATH, IS_MASTER, IS_PRODUCTION_MODE, LISTEN_PORT, LOGGER_QUERY_INFO, MERGE_FILES, MONGO_INFO, REDIS_INFO, SLAVE_TOTAL, STATIC_FILE_MAX_AGE, STATIC_PATH, STATIC_PREFIX, TEMP_STATIC_PATH, TEMP_STATIC_PREFIX, VARNISH_INFO, cluster, commander, config, initArguments, path;
+  var APP_PATH, CACHE_QUERY_RESULT, IS_MASTER, IS_PRODUCTION_MODE, LISTEN_PORT, LOGGER_QUERY_INFO, MERGE_FILES, MONGO_INFO, REDIS_INFO, SLAVE_TOTAL, STATIC_FILE_MAX_AGE, STATIC_PATH, STATIC_PREFIX, TEMP_STATIC_PATH, TEMP_STATIC_PREFIX, VARNISH_INFO, cluster, commander, config, initArguments, path;
 
   path = require('path');
 
@@ -59,6 +59,8 @@
   MERGE_FILES = require("" + APP_PATH + "/mergefiles.json");
 
   LOGGER_QUERY_INFO = true;
+
+  CACHE_QUERY_RESULT = true;
 
   config = {
     /**
@@ -180,6 +182,14 @@
 
     isLoggerQueryInfo: function() {
       return LOGGER_QUERY_INFO;
+    },
+    /**
+     * [isCacheQueryResult 是否缓存query结果]
+     * @return {Boolean} [description]
+    */
+
+    isCacheQueryResult: function() {
+      return CACHE_QUERY_RESULT;
     },
     /**
      * [getUID 获取node的uid(如果是master则返回0)]

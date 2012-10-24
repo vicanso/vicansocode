@@ -1,5 +1,5 @@
 (function() {
-  var appPath, beforeRunningHandler, cluster, config, domain, express, initApp, initExpress, logger, myUtil, slaveTotal, staticHandler, _;
+  var appInfoParse, appPath, beforeRunningHandler, cluster, config, domain, express, initApp, initExpress, logger, myUtil, session, slaveTotal, staticHandler, _;
 
   _ = require('underscore');
 
@@ -17,11 +17,15 @@
 
   beforeRunningHandler = require("" + appPath + "/helpers/beforerunninghandler");
 
-  staticHandler = require("" + appPath + "/helpers/statichandler");
+  staticHandler = require("" + appPath + "/helpers/staticHandler");
 
   slaveTotal = config.getSlaveTotal();
 
   myUtil = require("" + appPath + "/helpers/util");
+
+  session = require("" + appPath + "/helpers/session");
+
+  appInfoParse = require("" + appPath + "/helpers/appinfoparse");
 
   initExpress = function() {
     var app;
@@ -29,6 +33,7 @@
     app.set('views', "" + appPath + "/views");
     app.set('view engine', 'jade');
     app.engine('jade', require('jade').__express);
+    app.use(staticHandler.handler());
     app.use(function(req, res, next) {
       var userAgent;
       userAgent = req.header('User-Agent');
@@ -40,22 +45,37 @@
     });
     if (!config.isProductionMode()) {
       app.use(express.responseTime());
-    }
-    app.use(staticHandler["static"]());
-    if (config.isProductionMode()) {
+    } else {
       app.use(express.limit('1mb'));
       app.use(express.logger());
     }
+    app.use(appInfoParse.handler());
     app.use(express.bodyParser());
     app.use(express.methodOverride());
-    app.use(express.cookieParser());
+    app.use(function(req, res, next) {
+      logger.info(req.query);
+      return next();
+    });
+    app.use(session.handler());
+    app.use(function(req, res, next) {
+      var sess;
+      logger.info('2:');
+      sess = req.session;
+      logger.info(sess);
+      if (sess.views) {
+        sess.views++;
+      } else {
+        sess.views = 1;
+      }
+      return next();
+    });
     app.use(app.router);
     app.use(express.errorHandler({
       dumpExceptions: true,
       showStack: true
     }));
-    require("" + appPath + "/apps/vicanso/routes")(app);
-    require("" + appPath + "/apps/ys/routes")(app);
+    require("" + appPath + "/apps/vicanso/init")(app);
+    require("" + appPath + "/apps/ys/init")(app);
     app.listen(config.getListenPort());
     return logger.info("listen port " + (config.getListenPort()));
   };

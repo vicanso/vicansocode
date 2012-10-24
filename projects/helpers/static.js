@@ -14,14 +14,14 @@
     */
 
     handler: function() {
-      var staticCompressHandler, staticPath, staticPrefix, staticPrefixLength;
+      var handler, staticCompressHandler, staticPath, staticPrefix, staticPrefixLength;
       staticPath = config.getStaticPath();
       staticPrefix = config.getStaticPrefix();
       staticPrefixLength = staticPrefix.length;
       staticCompressHandler = express.compress({
         memLevel: 9
       });
-      staticHandler = express["static"]("" + staticPath, {
+      handler = express["static"]("" + staticPath, {
         maxAge: config.getStaticFileMaxAge() * 1000,
         redirect: false
       });
@@ -29,7 +29,7 @@
         if (req.url.substring(0, staticPrefixLength) === staticPrefix) {
           req.url = req.url.substring(staticPrefixLength);
           return staticCompressHandler(req, res, function() {
-            return staticHandler(req, res, next);
+            return handler(req, res, next);
           });
         } else {
           return next();

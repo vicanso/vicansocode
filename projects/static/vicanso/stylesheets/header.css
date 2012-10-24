@@ -1,3 +1,4 @@
-#header{position:fixed;top:0;left:0;right:0;z-index:99;}#header .navContainer{height:30px;line-height:30px;width:770px;margin:auto;}#header .navContainer .nav{color:#808080;border-right:1px solid #e0e0e0;display:inline-block;padding:0 30px;}#header .navContainer .nav.lastNav{border-right:none;}
+#header{position:fixed;top:0;left:0;right:0;z-index:89;}#header .navContainer{height:30px;line-height:30px;width:770px;margin:auto;}#header .navContainer .nav{color:#808080;border-right:1px solid #e0e0e0;display:inline-block;padding:0 30px;}#header .navContainer .nav.lastNav{border-right:none;}
 #header .navContainer .nav:hover,#header .navContainer .nav.selected{color:#f0f0f0;}
 #header .navContainer .nav{*display:inline;}
+#forkMeOnGithub{display:block;position:absolute;z-index:99;right:0;top:0;width:149px;height:149px;background:url(../images/forkme.png) no-repeat;}

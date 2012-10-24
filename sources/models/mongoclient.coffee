@@ -7,6 +7,7 @@ mongoInfo = config.getMongoInfo()
 logger = require("#{appPath}/helpers/logger") __filename
 queryCache = require "#{appPath}/models/querycache"
 isLoggerQueryInfo = config.isLoggerQueryInfo()
+isCacheQueryResult = config.isCacheQueryResult()
 connectionOptions =
   server : 
     poolSize : mongoInfo.poolSize
@@ -265,25 +266,31 @@ _.each modelFunctions.split(' '), (func) ->
     self = @
     args = _.toArray arguments
     cbf = args.pop()
-    key = queryCache.key args, func
-    queryCache.get key, (err, data) ->
-      if !err && data
-        cbf null, data
-      else
-        args.push cbf
-        args.unshift self, func
-        if isLoggerQueryInfo
-          queryInfo = new QueryInfo args.slice 1
-          args[args.length - 1] = (err, data) ->
+    queryFunc = () ->
+      args.push cbf
+      args.unshift self, func
+      if isLoggerQueryInfo
+        queryInfo = new QueryInfo args.slice 1
+        args[args.length - 1] = (err, data) ->
+          if isCacheQueryResult
             if !err && data
               queryCache.set key, data
             else
               queryCache.next key
-            queryInfo.complete()
-            logger.info queryInfo.toString()
-            args = _.toArray arguments
-            cbf.apply null, args
-        mongooseModel.apply null, args
+          queryInfo.complete()
+          logger.info queryInfo.toString()
+          args = _.toArray arguments
+          cbf.apply null, args
+      mongooseModel.apply null, args      
+    if isCacheQueryResult
+      key = queryCache.key args, func
+      queryCache.get key, (err, data) ->
+        if !err && data
+          cbf null, data
+        else
+          queryFunc()
+    else
+      queryFunc()
 # 设置可以缓存的查询
 queryCache.setCacheFunctions 'findOne find findById'
 ###*

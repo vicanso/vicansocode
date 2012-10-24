@@ -1,5 +1,5 @@
 (function() {
-  var QueryInfo, Schema, appPath, config, connectionOptions, dataBaseHandler, isLoggerQueryInfo, logger, modelFunctions, mongoClient, mongoInfo, mongoose, mongooseModel, queryCache, transformDataToObject, wrapMongooseCallback, _,
+  var QueryInfo, Schema, appPath, config, connectionOptions, dataBaseHandler, isCacheQueryResult, isLoggerQueryInfo, logger, modelFunctions, mongoClient, mongoInfo, mongoose, mongooseModel, queryCache, transformDataToObject, wrapMongooseCallback, _,
     __slice = [].slice;
 
   config = require('../config');
@@ -19,6 +19,8 @@
   queryCache = require("" + appPath + "/models/querycache");
 
   isLoggerQueryInfo = config.isLoggerQueryInfo();
+
+  isCacheQueryResult = config.isCacheQueryResult();
 
   connectionOptions = {
     server: {
@@ -345,35 +347,44 @@
 
   _.each(modelFunctions.split(' '), function(func) {
     return dataBaseHandler[func] = function() {
-      var args, cbf, key, self;
+      var args, cbf, key, queryFunc, self;
       self = this;
       args = _.toArray(arguments);
       cbf = args.pop();
-      key = queryCache.key(args, func);
-      return queryCache.get(key, function(err, data) {
+      queryFunc = function() {
         var queryInfo;
-        if (!err && data) {
-          return cbf(null, data);
-        } else {
-          args.push(cbf);
-          args.unshift(self, func);
-          if (isLoggerQueryInfo) {
-            queryInfo = new QueryInfo(args.slice(1));
-            args[args.length - 1] = function(err, data) {
+        args.push(cbf);
+        args.unshift(self, func);
+        if (isLoggerQueryInfo) {
+          queryInfo = new QueryInfo(args.slice(1));
+          args[args.length - 1] = function(err, data) {
+            if (isCacheQueryResult) {
               if (!err && data) {
                 queryCache.set(key, data);
               } else {
                 queryCache.next(key);
               }
-              queryInfo.complete();
-              logger.info(queryInfo.toString());
-              args = _.toArray(arguments);
-              return cbf.apply(null, args);
-            };
-          }
-          return mongooseModel.apply(null, args);
+            }
+            queryInfo.complete();
+            logger.info(queryInfo.toString());
+            args = _.toArray(arguments);
+            return cbf.apply(null, args);
+          };
         }
-      });
+        return mongooseModel.apply(null, args);
+      };
+      if (isCacheQueryResult) {
+        key = queryCache.key(args, func);
+        return queryCache.get(key, function(err, data) {
+          if (!err && data) {
+            return cbf(null, data);
+          } else {
+            return queryFunc();
+          }
+        });
+      } else {
+        return queryFunc();
+      }
     };
   });
 
