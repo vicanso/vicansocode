@@ -1,0 +1,11 @@
+extends ../layout
+block bodyContainer
+  - fileImporter.importJs('/vicanso/javascripts/login.min.js');
+  #userLogin(style='width:400px;margin:auto;')
+    span 用户名：
+    input.user(type='text')
+    br 
+    span 密码：
+    input.password(type='password')
+    br
+    a.submit(href='javascript:;') 提交

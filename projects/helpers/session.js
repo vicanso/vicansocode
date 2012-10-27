@@ -40,6 +40,7 @@
         return cookieParser(req, res, function() {
           var appName;
           appName = appInfoParse.getAppName(req);
+          console.log(req.url);
           return session.getHandler(appName)(req, res, next);
         });
       };
@@ -51,11 +52,8 @@
     */
 
     addHandler: function(appName, options) {
-      if (options == null) {
-        options = {};
-      }
       if (appName) {
-        options = _.extend(options, defaultOptions);
+        options = _.extend({}, defaultOptions, options);
         options.store = new RedisStore(redisOptions);
         return sessionHandleFunctions[appName] = express.session(options);
       }

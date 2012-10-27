@@ -1,5 +1,5 @@
 (function() {
-  var FileImporter, appPath, config, errorPageHandler, httpHandler, mongoClient, routeInfos, viewContentHandler, _;
+  var FileImporter, appPath, config, errorPageHandler, httpHandler, mongoClient, routeInfos, session, sessionHandler, viewContentHandler, _;
 
   _ = require('underscore');
 
@@ -17,6 +17,10 @@
 
   errorPageHandler = require("" + appPath + "/apps/vicanso/helpers/errorpagehandler");
 
+  session = require("" + appPath + "/helpers/session");
+
+  sessionHandler = session.handler();
+
   routeInfos = [
     {
       type: 'get',
@@ -33,6 +37,11 @@
       route: '/vicanso/admin/addarticle',
       jadeView: 'vicanso/admin/addarticle',
       handerFunc: 'addArticle'
+    }, {
+      type: 'all',
+      route: '/vicanso/admin/login',
+      jadeView: 'vicanso/admin/login',
+      handerFunc: 'login'
     }
   ];
 
@@ -54,7 +63,7 @@
     app.get('/vicanso/ajax/*', function(req, res) {
       return res.send('success');
     });
-    app.get('/vicanso/nocacheinfo.js', function(req, res) {
+    app.get('/vicanso/nocacheinfo.js', sessionHandler, function(req, res) {
       res.header('Content-Type', 'application/javascript; charset=UTF-8');
       res.header('Cache-Control', 'no-cache, no-store, max-age=0');
       return res.send("var USER_INFO = {};");

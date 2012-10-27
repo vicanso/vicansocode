@@ -33,6 +33,8 @@ initExpress = () ->
     else
       next()
 
+  app.use express.favicon "#{appPath}/static/common/images/favicon.png"
+
   if !config.isProductionMode()
     # 响应时间
     app.use express.responseTime()
@@ -45,23 +47,8 @@ initExpress = () ->
 
   app.use express.bodyParser()
   app.use express.methodOverride()
-  # app.use express.cookieParser()
-  
-  app.use (req, res, next) ->
-    logger.info req.query
-    next()
 
-  app.use session.handler()
 
-  app.use (req, res, next) ->
-    logger.info '2:'
-    sess = req.session
-    logger.info sess
-    if sess.views
-      sess.views++
-    else
-      sess.views = 1
-    next()
 
   app.use app.router
   

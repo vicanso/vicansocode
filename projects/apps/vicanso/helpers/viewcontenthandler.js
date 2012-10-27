@@ -94,6 +94,18 @@
         return cbf(viewData);
       }
     },
+    login: function(req, res, cbf) {
+      var viewData;
+      if (req.xhr) {
+        console.log(req.body);
+        return res.send('success');
+      } else {
+        viewData = {
+          title: '登录界面'
+        };
+        return cbf(viewData);
+      }
+    },
     updateNodeModules: function(res) {
       return viewDataHandler.updateNodeModules(function() {
         return res.send('success');

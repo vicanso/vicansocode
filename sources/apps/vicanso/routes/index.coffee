@@ -6,7 +6,8 @@ FileImporter = require "#{appPath}/helpers/fileimporter"
 httpHandler = require "#{appPath}/helpers/httphandler"
 mongoClient = require "#{appPath}/apps/vicanso/models/mongoclient"
 errorPageHandler = require "#{appPath}/apps/vicanso/helpers/errorpagehandler"
-
+session = require "#{appPath}/helpers/session"
+sessionHandler = session.handler()
 # 路由信息表
 routeInfos = [
   {
@@ -27,6 +28,12 @@ routeInfos = [
     jadeView : 'vicanso/admin/addarticle'
     handerFunc : 'addArticle'
   }
+  {
+    type : 'all'
+    route : '/vicanso/admin/login'
+    jadeView : 'vicanso/admin/login'
+    handerFunc : 'login'
+  }
 ]
 
 module.exports = (app) ->
@@ -43,7 +50,7 @@ module.exports = (app) ->
   app.get '/vicanso/ajax/*', (req, res) ->
     res.send 'success'
 
-  app.get '/vicanso/nocacheinfo.js', (req, res) ->
+  app.get '/vicanso/nocacheinfo.js', sessionHandler, (req, res) ->
     res.header 'Content-Type', 'application/javascript; charset=UTF-8'
     res.header 'Cache-Control', 'no-cache, no-store, max-age=0'
     res.send "var USER_INFO = {};"

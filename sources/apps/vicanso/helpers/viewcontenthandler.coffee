@@ -62,6 +62,14 @@ viewContentHandler =
         viewContent : 
           header : webConfig.getHeader -1
       cbf viewData  
+  login : (req, res, cbf) ->
+    if req.xhr
+      console.log req.body
+      res.send 'success'
+    else 
+      viewData = 
+        title : '登录界面'
+      cbf viewData
   updateNodeModules : (res) ->
     viewDataHandler.updateNodeModules () ->
       res.send 'success'

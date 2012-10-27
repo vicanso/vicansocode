@@ -32,7 +32,7 @@ viewContentHandler =
         waterfallsConfig : waterfalls.getConfig true
         pageButtonSetConfig : pageButtonSetConfig
       baseConfig :
-        baseDialog : baseConfig.getDialogConfig()
+        baseDialog : baseConfig.getDialog()
         
     return viewData
 

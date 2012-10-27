@@ -9,7 +9,7 @@ appName = appConfig.getAppName()
 init = (app) ->
   # 初始化路由配置
   require("#{appPath}/apps/vicanso/routes") app
-  # 添加app信息处理的方法
+  # 添加app信息处理的函数
   appInfoParse.addParser (req) ->
     if req.url.indexOf('/vicanso') == 0
       return {
@@ -17,7 +17,7 @@ init = (app) ->
       }
     else
       return null
-
+  # 添加seestion的处理函数
   session.addHandler appName, {
     key : 'vicanso'
     secret : 'jenny&tree'

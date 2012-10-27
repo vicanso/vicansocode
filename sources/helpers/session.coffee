@@ -24,15 +24,16 @@ session =
     return (req, res, next) ->
       cookieParser req, res, () ->
         appName = appInfoParse.getAppName req
+        console.log req.url
         session.getHandler(appName) req, res, next
   ###*
    * [addHandler 添加session的处理函数]
    * @param {[type]} appName [app的名字（不同的app可以有不同的处理函数，则不加，则可使用默认的处理方法）]
    * @param {[type]} options [session的存储配置（key, secret）]
   ###
-  addHandler : (appName, options = {}) ->
+  addHandler : (appName, options) ->
     if appName
-      options = _.extend options, defaultOptions
+      options = _.extend {}, defaultOptions, options
       options.store = new RedisStore redisOptions
       sessionHandleFunctions[appName] = express.session options
   ###*

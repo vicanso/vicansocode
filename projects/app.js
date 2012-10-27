@@ -43,6 +43,7 @@
         return next();
       }
     });
+    app.use(express.favicon("" + appPath + "/static/common/images/favicon.png"));
     if (!config.isProductionMode()) {
       app.use(express.responseTime());
     } else {
@@ -52,23 +53,6 @@
     app.use(appInfoParse.handler());
     app.use(express.bodyParser());
     app.use(express.methodOverride());
-    app.use(function(req, res, next) {
-      logger.info(req.query);
-      return next();
-    });
-    app.use(session.handler());
-    app.use(function(req, res, next) {
-      var sess;
-      logger.info('2:');
-      sess = req.session;
-      logger.info(sess);
-      if (sess.views) {
-        sess.views++;
-      } else {
-        sess.views = 1;
-      }
-      return next();
-    });
     app.use(app.router);
     app.use(express.errorHandler({
       dumpExceptions: true,

@@ -42,7 +42,7 @@
           pageButtonSetConfig: pageButtonSetConfig
         },
         baseConfig: {
-          baseDialog: baseConfig.getDialogConfig()
+          baseDialog: baseConfig.getDialog()
         }
       };
       return viewData;
