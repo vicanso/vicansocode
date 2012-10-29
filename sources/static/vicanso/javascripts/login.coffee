@@ -3,7 +3,7 @@ jQuery ($) ->
     user = $('#userLogin .user').val()
     password = $('#userLogin .password').val()
     $.ajax {
-      url : '/vicanso/admin/login',
+      url : '/vicanso/ajax/admin/login',
       type : 'post'
       data : {
         user : user

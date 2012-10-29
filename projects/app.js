@@ -1,3 +1,10 @@
+
+/**!
+* Copyright(c) 2012 vicanso 腻味
+* MIT Licensed
+*/
+
+
 (function() {
   var appInfoParse, appPath, beforeRunningHandler, cluster, config, domain, express, initApp, initExpress, logger, myUtil, session, slaveTotal, staticHandler, _;
 
@@ -33,6 +40,7 @@
     app.set('views', "" + appPath + "/views");
     app.set('view engine', 'jade');
     app.engine('jade', require('jade').__express);
+    express.logger.format('production', "" + express.logger["default"] + " - :response-time ms");
     app.use(staticHandler.handler());
     app.use(function(req, res, next) {
       var userAgent;
@@ -45,10 +53,10 @@
     });
     app.use(express.favicon("" + appPath + "/static/common/images/favicon.png"));
     if (!config.isProductionMode()) {
-      app.use(express.responseTime());
+      app.use(express.logger('dev'));
     } else {
       app.use(express.limit('1mb'));
-      app.use(express.logger());
+      app.use(express.logger('production'));
     }
     app.use(appInfoParse.handler());
     app.use(express.bodyParser());

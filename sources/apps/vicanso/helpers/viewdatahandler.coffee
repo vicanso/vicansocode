@@ -24,10 +24,15 @@ viewDataHandler =
       nodeModules : (cbf) ->
         mongoClient.find 'NodeModule', {}, 'name githubPage version', cbf
     }, cbf
-  article : (id, cbf) ->
+  article : (id, behaviorData, cbf) ->
     mongoClient.findById 'Article', id, 'title createTime content', cbf
+    mongoClient.save 'UserBehavior', behaviorData, (err) ->
+      if err
+        logger.error err
   addArticle : (data, cbf) ->
     mongoClient.save 'Article', data, cbf
+  userBehavior : (data, cbf) ->
+    mongoClient.save 'UserBehavior', data, cbf
   updateNodeModules : (cbf) ->
     # downloadNodeModulesPackage cbf
     mongoClient.find 'NodeModule', {}, 'name repository version package', (err, data) ->

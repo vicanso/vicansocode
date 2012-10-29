@@ -1,3 +1,8 @@
+###*!
+* Copyright(c) 2012 vicanso 腻味
+* MIT Licensed
+###
+
 config = require '../config'
 appPath = config.getAppPath()
 express = require 'express'
@@ -24,7 +29,6 @@ session =
     return (req, res, next) ->
       cookieParser req, res, () ->
         appName = appInfoParse.getAppName req
-        console.log req.url
         session.getHandler(appName) req, res, next
   ###*
    * [addHandler 添加session的处理函数]

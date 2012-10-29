@@ -36,11 +36,19 @@
         }
       }, cbf);
     },
-    article: function(id, cbf) {
-      return mongoClient.findById('Article', id, 'title createTime content', cbf);
+    article: function(id, behaviorData, cbf) {
+      mongoClient.findById('Article', id, 'title createTime content', cbf);
+      return mongoClient.save('UserBehavior', behaviorData, function(err) {
+        if (err) {
+          return logger.error(err);
+        }
+      });
     },
     addArticle: function(data, cbf) {
       return mongoClient.save('Article', data, cbf);
+    },
+    userBehavior: function(data, cbf) {
+      return mongoClient.save('UserBehavior', data, cbf);
     },
     updateNodeModules: function(cbf) {
       return mongoClient.find('NodeModule', {}, 'name repository version package', function(err, data) {

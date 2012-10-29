@@ -1,3 +1,8 @@
+###*!
+* Copyright(c) 2012 vicanso 腻味
+* MIT Licensed
+###
+
 fs = require 'fs'
 _ = require 'underscore'
 path = require 'path'

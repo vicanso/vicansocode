@@ -1,10 +1,14 @@
+###*!
+* Copyright(c) 2012 vicanso 腻味
+* MIT Licensed
+###
+
 _ = require 'underscore'
 async = require 'async'
 fs = require 'fs'
 crypto = require 'crypto'
 path = require 'path'
 zlib = require 'zlib'
-_ = require 'underscore'
 mkdirp = require 'mkdirp'
 config = require '../config'
 appPath = config.getAppPath()
@@ -110,6 +114,26 @@ util =
       return str
     else
       return str.substring(0, index) + '...'
+  ###*
+   * [response 响应http请求]
+   * @param  {[type]} res         [response对象]
+   * @param  {[type]} data        [响应的数据]
+   * @param  {[type]} maxAge      [该请求头的maxAge]
+   * @param  {[type]} contentType [返回的contentType(默认为text/html)]
+   * @return {[type]}             [description]
+  ###
+  response : (res, data, maxAge, contentType = 'text/html') ->
+    switch contentType
+      when 'application/javascript'
+      then res.header 'Content-Type', 'application/javascript; charset=UTF-8'
+      when 'text/html'
+      then res.header 'Content-Type', 'text/html; charset=UTF-8'
+    if maxAge == 0
+      res.header 'Cache-Control', 'no-cache, no-store, max-age=0'
+    else
+      res.header 'Cache-Control', "public, max-age=#{maxAge}"
+    res.header 'Last-Modified', new Date()
+    res.send data
 
 
 module.exports = util

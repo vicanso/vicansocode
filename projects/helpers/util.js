@@ -1,3 +1,10 @@
+
+/**!
+* Copyright(c) 2012 vicanso 腻味
+* MIT Licensed
+*/
+
+
 (function() {
   var appPath, async, config, crypto, fs, logger, mkdirp, noop, path, util, zlib, _;
 
@@ -12,8 +19,6 @@
   path = require('path');
 
   zlib = require('zlib');
-
-  _ = require('underscore');
 
   mkdirp = require('mkdirp');
 
@@ -155,6 +160,34 @@
       } else {
         return str.substring(0, index) + '...';
       }
+    },
+    /**
+     * [response 响应http请求]
+     * @param  {[type]} res         [response对象]
+     * @param  {[type]} data        [响应的数据]
+     * @param  {[type]} maxAge      [该请求头的maxAge]
+     * @param  {[type]} contentType [返回的contentType(默认为text/html)]
+     * @return {[type]}             [description]
+    */
+
+    response: function(res, data, maxAge, contentType) {
+      if (contentType == null) {
+        contentType = 'text/html';
+      }
+      switch (contentType) {
+        case 'application/javascript':
+          res.header('Content-Type', 'application/javascript; charset=UTF-8');
+          break;
+        case 'text/html':
+          res.header('Content-Type', 'text/html; charset=UTF-8');
+      }
+      if (maxAge === 0) {
+        res.header('Cache-Control', 'no-cache, no-store, max-age=0');
+      } else {
+        res.header('Cache-Control', "public, max-age=" + maxAge);
+      }
+      res.header('Last-Modified', new Date());
+      return res.send(data);
     }
   };
 

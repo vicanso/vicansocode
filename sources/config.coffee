@@ -1,7 +1,11 @@
+###*!
+* Copyright(c) 2012 vicanso 腻味
+* MIT Licensed
+###
+
 path = require 'path'
 cluster = require 'cluster'
 commander = require 'commander'
-
 
 ###*
  * [initArguments 初始化启动参数]
@@ -12,9 +16,12 @@ initArguments = (program) ->
   program.version('0.0.1')
   .option('-p, --port <n>', 'listen port', parseInt)
   .option('-s, --slave <n>', 'slave total', parseInt)
+  .option('-u, --user <n>', 'database user')
+  .option('-w, --password <n>', 'database password')
   .parse process.argv
 
 initArguments commander
+
 
 # APP路径
 APP_PATH = __dirname
@@ -49,6 +56,10 @@ VARNISH_INFO =
 IS_MASTER = cluster.isMaster || false
 # slave的总数
 SLAVE_TOTAL = commander.slave || require('os').cpus().length
+# 数据库用户名
+DATA_BASE_USER = commander.user
+# 数据库的密码
+DATA_BASE_PWD = commander.password
 # 合并文件信息的json配置
 MERGE_FILES = require "#{APP_PATH}/mergefiles.json"
 # 是否记录查询数据的一些信息
@@ -152,6 +163,18 @@ config =
   ###
   isCacheQueryResult : () ->
     return CACHE_QUERY_RESULT
+  ###*
+   * [getDatabasePassword 返回数据库的密码]
+   * @return {[type]} [description]
+  ###
+  getDatabasePassword : () ->
+    return DATA_BASE_PWD
+  ###*
+   * [getDataBaseUser 返回数据库的用户名]
+   * @return {[type]} [description]
+  ###
+  getDataBaseUser : () ->
+    return DATA_BASE_USER
   ###*
    * [getUID 获取node的uid(如果是master则返回0)]
    * @return {[type]} [description]

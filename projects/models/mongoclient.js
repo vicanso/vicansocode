@@ -1,3 +1,10 @@
+
+/**!
+* Copyright(c) 2012 vicanso 腻味
+* MIT Licensed
+*/
+
+
 (function() {
   var QueryInfo, Schema, appPath, config, connectionOptions, dataBaseHandler, isCacheQueryResult, isLoggerQueryInfo, logger, modelFunctions, mongoClient, mongoInfo, mongoose, mongooseModel, queryCache, transformDataToObject, wrapMongooseCallback, _,
     __slice = [].slice;

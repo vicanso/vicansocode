@@ -142,6 +142,7 @@ var compileCoffeeScript = function(file, jsFile){
     }catch(err){
       if(err){
         logger.error(err);
+        return ;
       }
     }
     fs.writeFile(jsFile, jsCode, 'utf8', function(err){

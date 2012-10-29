@@ -1,4 +1,5 @@
-
+mongoose = require 'mongoose'
+ObjectId = mongoose.Schema.Types.ObjectId
 schemas =
   Article :
     title : 
@@ -7,6 +8,21 @@ schemas =
       index : true
       required : true
     content : []
+    tags : []
+    createTime : 
+      type : Date
+      default : Date.now
+  UserBehavior : 
+    userId : ObjectId
+    behavior : 
+      type : String
+      enum : [
+        'like'
+        'view'
+      ]
+    targetId : 
+      type : ObjectId
+      require : true
     createTime : 
       type : Date
       default : Date.now

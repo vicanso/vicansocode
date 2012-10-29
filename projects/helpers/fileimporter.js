@@ -1,3 +1,10 @@
+
+/**!
+* Copyright(c) 2012 vicanso 腻味
+* MIT Licensed
+*/
+
+
 (function() {
   var FileImporter, STATIC_PREFIX, VERSION, appPath, config, exportCssHTML, exportJsHTML, fileMerger, fs, getExportFilesHTML, getExportHTML, isFilter, path, _;
 

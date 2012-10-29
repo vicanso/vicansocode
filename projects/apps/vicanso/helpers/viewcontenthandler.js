@@ -52,13 +52,17 @@
       });
     },
     article: function(req, res, cbf) {
-      var id;
+      var behaviorData, id;
       id = req.param('id');
       if (!id) {
         logger.error('article id is required');
         return cbf(null);
       } else {
-        return viewDataHandler.article(id, function(err, data) {
+        behaviorData = {
+          targetId: id,
+          behavior: 'view'
+        };
+        return viewDataHandler.article(id, behaviorData, function(err, data) {
           var viewData;
           viewData = {
             title: '每天再浏览多一点！',
@@ -77,11 +81,18 @@
     addArticle: function(req, res, cbf) {
       var viewData;
       if (req.xhr) {
-        return viewDataHandler.addArticle(req.body, function(err) {
+        viewDataHandler.addArticle(req.body, function(err) {
+          var viewData;
           if (err) {
-            return res.send(err);
+            return viewData = {
+              code: 1000,
+              msg: err.toString()
+            };
           } else {
-            return res.send('success');
+            return viewData = {
+              code: 0,
+              msg: 'success'
+            };
           }
         });
       } else {
@@ -91,20 +102,51 @@
             header: webConfig.getHeader(-1)
           }
         };
-        return cbf(viewData);
       }
+      return cbf(viewData);
     },
     login: function(req, res, cbf) {
-      var viewData;
+      var sess, viewData;
       if (req.xhr) {
-        console.log(req.body);
-        return res.send('success');
+        viewData = {
+          code: 0,
+          msg: 'success'
+        };
+        sess = req.session;
+        sess.nick = req.body.user;
       } else {
         viewData = {
           title: '登录界面'
         };
-        return cbf(viewData);
       }
+      return cbf(viewData);
+    },
+    getNoCacheInfo: function(req, res, cbf) {
+      var jsonStr, sess, userInfo;
+      sess = req.session;
+      userInfo = {
+        nick: sess.nick || '匿名用户'
+      };
+      config = webConfig.getConfig();
+      jsonStr = '';
+      jsonStr += "var USER_INFO=" + (JSON.stringify(userInfo)) + ";";
+      jsonStr += "var WEB_CONFIG=" + (JSON.stringify(config)) + ";";
+      return cbf(jsonStr);
+    },
+    userBehavior: function(req, res, cbf) {
+      return viewDataHandler.userBehavior(req.params, function(err) {
+        if (err) {
+          return cbf({
+            code: 1000,
+            msg: err.toString()
+          });
+        } else {
+          return cbf({
+            code: 0,
+            msg: 'success'
+          });
+        }
+      });
     },
     updateNodeModules: function(res) {
       return viewDataHandler.updateNodeModules(function() {

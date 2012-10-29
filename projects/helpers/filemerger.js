@@ -1,3 +1,10 @@
+
+/**!
+* Copyright(c) 2012 vicanso 腻味
+* MIT Licensed
+*/
+
+
 (function() {
   var appPath, config, fileMerger, fs, logger, mkdirp, myUtil, path, staticPath, tempFilesStatus, tempPath, _;
 

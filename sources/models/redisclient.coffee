@@ -1,3 +1,8 @@
+###*!
+* Copyright(c) 2012 vicanso 腻味
+* MIT Licensed
+###
+
 config = require '../config'
 _ = require 'underscore'
 appPath = config.getAppPath()

@@ -20,7 +20,7 @@ jQuery ($) ->
       content.push data
     submitData.content = content
     $.ajax {
-      url : '/vicanso/admin/addarticle'
+      url : "#{WEB_CONFIG.ajaxPath}/admin/addarticle"
       type : 'post'
       data : submitData
       success : (data) ->

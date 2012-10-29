@@ -1,3 +1,8 @@
+###*!
+* Copyright(c) 2012 vicanso 腻味
+* MIT Licensed
+###
+
 config = require '../config'
 appPath = config.getAppPath()
 myUtil = require "#{appPath}/helpers/util"

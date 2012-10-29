@@ -11,7 +11,7 @@ if articles
         - var articleClass = 'articleContainer'
         if i === articlesTotal - 1
           - articleClass += ' lastArticleContainer';
-        div(class='#{articleClass}')
+        div(class='#{articleClass}', data-id='#{article._id}')
           h2 #{article.title}
           each item in article.content
             case item.tag

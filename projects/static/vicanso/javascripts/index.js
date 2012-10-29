@@ -1,12 +1,6 @@
 (function() {
 
   jQuery(function($) {
-    $.ajax({
-      url: '/vicanso/ajax/test',
-      success: function(data) {
-        return console.log(data);
-      }
-    });
     $('#articlesContainer .codeContainer textarea').each(function() {
       var editor;
       editor = CodeMirror.fromTextArea(this, {
@@ -18,8 +12,21 @@
     $('#articlesContainer .articleButtonSet').each(function() {
       return $(this).buttonSet();
     });
-    $.storage.set('key', 'test', 10);
-    return console.log($.storage.get('key'));
+    return $('#articlesContainer .articleButtonSet').on('click', '.recommend', function() {
+      var articleContainer, id, obj;
+      obj = $(this);
+      articleContainer = obj.closest('.articleContainer');
+      id = articleContainer.attr('data-id');
+      if (id) {
+        return $.ajax({
+          url: "" + WEB_CONFIG.ajaxPath + "/userbehavior/like/" + id,
+          success: function(data) {
+            return console.log(data);
+          },
+          error: function() {}
+        });
+      }
+    });
   });
 
 }).call(this);

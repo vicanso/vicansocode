@@ -30,7 +30,7 @@
       });
       submitData.content = content;
       return $.ajax({
-        url: '/vicanso/admin/addarticle',
+        url: "" + WEB_CONFIG.ajaxPath + "/admin/addarticle",
         type: 'post',
         data: submitData,
         success: function(data) {

@@ -1,5 +1,5 @@
 (function() {
-  var appPath, client, config, dbAlias, mongoClient, schemas, _;
+  var appConfig, appPath, client, config, dbAlias, mongoClient, schemas, _;
 
   _ = require('underscore');
 
@@ -11,9 +11,11 @@
 
   schemas = require("" + appPath + "/apps/ys/models/schemas");
 
+  appConfig = require("" + appPath + "/apps/ys/config");
+
   dbAlias = 'ys';
 
-  mongoClient = client.getClient(dbAlias, "mongodb://vicanso:86545610@127.0.0.1:10020/ys", schemas);
+  mongoClient = client.getClient(appConfig.getDataBaseName(), appConfig.getConnectionStr(), schemas);
 
   module.exports = mongoClient;
 

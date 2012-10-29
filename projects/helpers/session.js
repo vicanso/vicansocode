@@ -1,3 +1,10 @@
+
+/**!
+* Copyright(c) 2012 vicanso 腻味
+* MIT Licensed
+*/
+
+
 (function() {
   var RedisStore, appInfoParse, appPath, config, cookieParser, defaultOptions, express, redisClient, redisOptions, session, sessionHandleFunctions, _;
 
@@ -40,7 +47,6 @@
         return cookieParser(req, res, function() {
           var appName;
           appName = appInfoParse.getAppName(req);
-          console.log(req.url);
           return session.getHandler(appName)(req, res, next);
         });
       };

@@ -1,5 +1,5 @@
 (function() {
-  var FileImporter, appPath, config, errorPageHandler, httpHandler, mongoClient, routeInfos, session, sessionHandler, viewContentHandler, _;
+  var FileImporter, appPath, config, errorPageHandler, httpHandler, mongoClient, myUtil, routeInfos, user, userLoader, viewContentHandler, _;
 
   _ = require('underscore');
 
@@ -17,9 +17,11 @@
 
   errorPageHandler = require("" + appPath + "/apps/vicanso/helpers/errorpagehandler");
 
-  session = require("" + appPath + "/helpers/session");
+  myUtil = require("" + appPath + "/helpers/util");
 
-  sessionHandler = session.handler();
+  user = require("" + appPath + "/helpers/user");
+
+  userLoader = user.loader();
 
   routeInfos = [
     {
@@ -30,43 +32,64 @@
     }, {
       type: 'get',
       route: '/vicanso/article/:id',
+      middleware: [userLoader],
       jadeView: 'vicanso/article',
       handerFunc: 'article'
     }, {
-      type: 'all',
+      type: 'get',
       route: '/vicanso/admin/addarticle',
       jadeView: 'vicanso/admin/addarticle',
       handerFunc: 'addArticle'
     }, {
-      type: 'all',
+      type: 'post',
+      route: '/vicanso/ajax/admin/addarticle',
+      handerFunc: 'addArticle'
+    }, {
+      type: 'get',
       route: '/vicanso/admin/login',
       jadeView: 'vicanso/admin/login',
       handerFunc: 'login'
+    }, {
+      type: 'post',
+      route: '/vicanso/ajax/admin/login',
+      middleware: [userLoader],
+      handerFunc: 'login'
+    }, {
+      type: 'get',
+      route: '/vicanso/ajax/userbehavior/:behavior/:targetId',
+      middleware: [userLoader],
+      handerFunc: 'userBehavior'
     }
   ];
 
   module.exports = function(app) {
     _.each(routeInfos, function(routeInfo) {
-      return app[routeInfo.type](routeInfo.route, function(req, res) {
+      var middleware;
+      middleware = routeInfo.middleware || [];
+      return app[routeInfo.type](routeInfo.route, middleware, function(req, res) {
         var debug;
         debug = !config.isProductionMode();
         return viewContentHandler[routeInfo.handerFunc](req, res, function(viewData) {
           if (viewData) {
-            viewData.fileImporter = new FileImporter(debug);
-            return httpHandler.render(req, res, routeInfo.jadeView, viewData);
+            if (routeInfo.jadeView) {
+              viewData.fileImporter = new FileImporter(debug);
+              return httpHandler.render(req, res, routeInfo.jadeView, viewData);
+            } else {
+              if (_.isObject(viewData)) {
+                viewData = JSON.stringify(viewData);
+              }
+              return res.send(viewData);
+            }
           } else {
             return errorPageHandler.response(500);
           }
         });
       });
     });
-    app.get('/vicanso/ajax/*', function(req, res) {
-      return res.send('success');
-    });
-    app.get('/vicanso/nocacheinfo.js', sessionHandler, function(req, res) {
-      res.header('Content-Type', 'application/javascript; charset=UTF-8');
-      res.header('Cache-Control', 'no-cache, no-store, max-age=0');
-      return res.send("var USER_INFO = {};");
+    app.get('/vicanso/nocacheinfo.js', userLoader, function(req, res) {
+      return viewContentHandler.getNoCacheInfo(req, res, function(viewData) {
+        return myUtil.response(res, viewData, 0, 'application/javascript');
+      });
     });
     return app.get('/vicanso/updatenodemodules', function(req, res) {
       return viewContentHandler.updateNodeModules(res);

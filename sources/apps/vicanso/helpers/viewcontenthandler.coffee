@@ -40,7 +40,10 @@ viewContentHandler =
       logger.error 'article id is required'
       cbf null
     else
-      viewDataHandler.article id, (err, data) ->
+      behaviorData =
+        targetId : id
+        behavior : 'view'
+      viewDataHandler.article id, behaviorData, (err, data) ->
         viewData =
           title : '每天再浏览多一点！'
           viewContent : 
@@ -53,23 +56,54 @@ viewContentHandler =
     if req.xhr
       viewDataHandler.addArticle req.body, (err) ->
         if err
-          res.send err
+          viewData = {
+            code : 1000
+            msg : err.toString()
+          }
         else
-          res.send 'success'
+          viewData = {
+            code : 0
+            msg : 'success'
+          }
     else
       viewData =
         title : '添加新的文章'
         viewContent : 
           header : webConfig.getHeader -1
-      cbf viewData  
+    cbf viewData  
   login : (req, res, cbf) ->
     if req.xhr
-      console.log req.body
-      res.send 'success'
+      viewData = {
+        code : 0
+        msg : 'success'
+      }
+      sess = req.session
+      sess.nick = req.body.user
     else 
       viewData = 
         title : '登录界面'
-      cbf viewData
+    cbf viewData
+  getNoCacheInfo : (req, res, cbf) ->
+    sess = req.session
+    userInfo = 
+      nick : sess.nick || '匿名用户'
+    config = webConfig.getConfig()
+    jsonStr = ''
+    jsonStr += "var USER_INFO=#{JSON.stringify(userInfo)};"
+    jsonStr += "var WEB_CONFIG=#{JSON.stringify(config)};"
+    cbf jsonStr
+  userBehavior : (req, res, cbf) ->
+    viewDataHandler.userBehavior req.params, (err) ->
+      if err
+        cbf {
+          code : 1000
+          msg : err.toString()
+        }
+      else
+        cbf {
+          code : 0
+          msg : 'success'
+        }
   updateNodeModules : (res) ->
     viewDataHandler.updateNodeModules () ->
       res.send 'success'

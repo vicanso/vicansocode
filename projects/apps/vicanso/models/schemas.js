@@ -1,5 +1,9 @@
 (function() {
-  var schemas;
+  var ObjectId, mongoose, schemas;
+
+  mongoose = require('mongoose');
+
+  ObjectId = mongoose.Schema.Types.ObjectId;
 
   schemas = {
     Article: {
@@ -10,6 +14,22 @@
         required: true
       },
       content: [],
+      tags: [],
+      createTime: {
+        type: Date,
+        "default": Date.now
+      }
+    },
+    UserBehavior: {
+      userId: ObjectId,
+      behavior: {
+        type: String,
+        "enum": ['like', 'view']
+      },
+      targetId: {
+        type: ObjectId,
+        require: true
+      },
       createTime: {
         type: Date,
         "default": Date.now

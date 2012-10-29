@@ -1,3 +1,8 @@
+###*!
+* Copyright(c) 2012 vicanso 腻味
+* MIT Licensed
+###
+
 Varnish = require 'node-varnish'
 config = require '../config'
 appPath = config.getAppPath()

@@ -1,5 +1,12 @@
+
+/**!
+* Copyright(c) 2012 vicanso 腻味
+* MIT Licensed
+*/
+
+
 (function() {
-  var APP_PATH, CACHE_QUERY_RESULT, IS_MASTER, IS_PRODUCTION_MODE, LISTEN_PORT, LOGGER_QUERY_INFO, MERGE_FILES, MONGO_INFO, REDIS_INFO, SLAVE_TOTAL, STATIC_FILE_MAX_AGE, STATIC_PATH, STATIC_PREFIX, TEMP_STATIC_PATH, TEMP_STATIC_PREFIX, VARNISH_INFO, cluster, commander, config, initArguments, path;
+  var APP_PATH, CACHE_QUERY_RESULT, DATA_BASE_PWD, DATA_BASE_USER, IS_MASTER, IS_PRODUCTION_MODE, LISTEN_PORT, LOGGER_QUERY_INFO, MERGE_FILES, MONGO_INFO, REDIS_INFO, SLAVE_TOTAL, STATIC_FILE_MAX_AGE, STATIC_PATH, STATIC_PREFIX, TEMP_STATIC_PATH, TEMP_STATIC_PREFIX, VARNISH_INFO, cluster, commander, config, initArguments, path;
 
   path = require('path');
 
@@ -15,7 +22,7 @@
 
 
   initArguments = function(program) {
-    return program.version('0.0.1').option('-p, --port <n>', 'listen port', parseInt).option('-s, --slave <n>', 'slave total', parseInt).parse(process.argv);
+    return program.version('0.0.1').option('-p, --port <n>', 'listen port', parseInt).option('-s, --slave <n>', 'slave total', parseInt).option('-u, --user <n>', 'database user').option('-w, --password <n>', 'database password').parse(process.argv);
   };
 
   initArguments(commander);
@@ -55,6 +62,10 @@
   IS_MASTER = cluster.isMaster || false;
 
   SLAVE_TOTAL = commander.slave || require('os').cpus().length;
+
+  DATA_BASE_USER = commander.user;
+
+  DATA_BASE_PWD = commander.password;
 
   MERGE_FILES = require("" + APP_PATH + "/mergefiles.json");
 
@@ -190,6 +201,22 @@
 
     isCacheQueryResult: function() {
       return CACHE_QUERY_RESULT;
+    },
+    /**
+     * [getDatabasePassword 返回数据库的密码]
+     * @return {[type]} [description]
+    */
+
+    getDatabasePassword: function() {
+      return DATA_BASE_PWD;
+    },
+    /**
+     * [getDataBaseUser 返回数据库的用户名]
+     * @return {[type]} [description]
+    */
+
+    getDataBaseUser: function() {
+      return DATA_BASE_USER;
     },
     /**
      * [getUID 获取node的uid(如果是master则返回0)]
