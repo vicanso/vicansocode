@@ -7,13 +7,14 @@ _ = require 'underscore'
 express = require 'express'
 cluster = require 'cluster'
 domain = require 'domain'
+fs = require 'fs'
 
 config = require './config'
 appPath = config.getAppPath()
 
 logger = require("#{appPath}/helpers/logger") __filename
 beforeRunningHandler = require "#{appPath}/helpers/beforerunninghandler"
-staticHandler = require "#{appPath}/helpers/staticHandler"
+staticHandler = require "#{appPath}/helpers/static"
 slaveTotal = config.getSlaveTotal()
 myUtil = require "#{appPath}/helpers/util"
 session = require "#{appPath}/helpers/session"
@@ -66,9 +67,17 @@ initExpress = () ->
   }
 
   
-
-  require("#{appPath}/apps/vicanso/init") app
-  require("#{appPath}/apps/ys/init") app
+  startAppList = config.getStartAppList()
+  if startAppList == 'all'
+    fs.readdir "#{appPath}/apps", (err, files) ->
+      _.each files, (appName) ->
+        if appName[0] != '.'
+          require("#{appPath}/apps/#{appName}/init") app
+  else
+    _.each startAppList, (appName) ->
+      require("#{appPath}/apps/#{appName}/init") app
+  # require("#{appPath}/apps/vicanso/init") app
+  # require("#{appPath}/apps/ys/init") app
 
   app.listen config.getListenPort()
 

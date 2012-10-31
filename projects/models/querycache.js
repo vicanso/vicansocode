@@ -6,7 +6,7 @@
 
 
 (function() {
-  var appPath, cacheFunctions, config, logger, myUtil, queryCache, queryList, redisClient, _;
+  var appPath, cacheFunctions, config, isProductionMode, logger, myUtil, queryCache, queryList, redisClient, _;
 
   config = require('../config');
 
@@ -20,6 +20,8 @@
 
   redisClient = require("" + appPath + "/models/redisclient");
 
+  isProductionMode = config.isProductionMode();
+
   cacheFunctions = [];
 
   queryCache = {
@@ -31,7 +33,7 @@
     */
 
     key: function(query, func) {
-      if (!config.isProductionMode()) {
+      if (!isProductionMode) {
         return null;
       }
       if (query[2].noCache === true) {

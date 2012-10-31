@@ -7,6 +7,7 @@ path = require 'path'
 cluster = require 'cluster'
 commander = require 'commander'
 
+
 ###*
  * [initArguments 初始化启动参数]
  * @param  {[type]} program [commander模块]
@@ -18,6 +19,9 @@ initArguments = (program) ->
   .option('-s, --slave <n>', 'slave total', parseInt)
   .option('-u, --user <n>', 'database user')
   .option('-w, --password <n>', 'database password')
+  .option('-l, --list <items>', 'the app list, separated by ","', (val) ->
+    return val.split ','  
+  )
   .parse process.argv
 
 initArguments commander
@@ -62,6 +66,8 @@ DATA_BASE_USER = commander.user
 DATA_BASE_PWD = commander.password
 # 合并文件信息的json配置
 MERGE_FILES = require "#{APP_PATH}/mergefiles.json"
+# 启动的app列表
+START_APP_LIST = commander.list || 'all'
 # 是否记录查询数据的一些信息
 LOGGER_QUERY_INFO = true
 # 是否缓存查询记录
@@ -175,6 +181,12 @@ config =
   ###
   getDataBaseUser : () ->
     return DATA_BASE_USER
+  ###*
+   * [getStartAppList 获取启动app的列表]
+   * @return {[type]} [description]
+  ###
+  getStartAppList : () ->
+    return START_APP_LIST
   ###*
    * [getUID 获取node的uid(如果是master则返回0)]
    * @return {[type]} [description]

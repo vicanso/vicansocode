@@ -6,7 +6,7 @@
 
 
 (function() {
-  var appInfoParse, appPath, beforeRunningHandler, cluster, config, domain, express, initApp, initExpress, logger, myUtil, session, slaveTotal, staticHandler, _;
+  var appInfoParse, appPath, beforeRunningHandler, cluster, config, domain, express, fs, initApp, initExpress, logger, myUtil, session, slaveTotal, staticHandler, _;
 
   _ = require('underscore');
 
@@ -16,6 +16,8 @@
 
   domain = require('domain');
 
+  fs = require('fs');
+
   config = require('./config');
 
   appPath = config.getAppPath();
@@ -24,7 +26,7 @@
 
   beforeRunningHandler = require("" + appPath + "/helpers/beforerunninghandler");
 
-  staticHandler = require("" + appPath + "/helpers/staticHandler");
+  staticHandler = require("" + appPath + "/helpers/static");
 
   slaveTotal = config.getSlaveTotal();
 
@@ -35,7 +37,7 @@
   appInfoParse = require("" + appPath + "/helpers/appinfoparse");
 
   initExpress = function() {
-    var app;
+    var app, startAppList;
     app = express();
     app.set('views', "" + appPath + "/views");
     app.set('view engine', 'jade');
@@ -66,8 +68,20 @@
       dumpExceptions: true,
       showStack: true
     }));
-    require("" + appPath + "/apps/vicanso/init")(app);
-    require("" + appPath + "/apps/ys/init")(app);
+    startAppList = config.getStartAppList();
+    if (startAppList === 'all') {
+      fs.readdir("" + appPath + "/apps", function(err, files) {
+        return _.each(files, function(appName) {
+          if (appName[0] !== '.') {
+            return require("" + appPath + "/apps/" + appName + "/init")(app);
+          }
+        });
+      });
+    } else {
+      _.each(startAppList, function(appName) {
+        return require("" + appPath + "/apps/" + appName + "/init")(app);
+      });
+    }
     app.listen(config.getListenPort());
     return logger.info("listen port " + (config.getListenPort()));
   };

@@ -6,7 +6,7 @@
 
 
 (function() {
-  var APP_PATH, CACHE_QUERY_RESULT, DATA_BASE_PWD, DATA_BASE_USER, IS_MASTER, IS_PRODUCTION_MODE, LISTEN_PORT, LOGGER_QUERY_INFO, MERGE_FILES, MONGO_INFO, REDIS_INFO, SLAVE_TOTAL, STATIC_FILE_MAX_AGE, STATIC_PATH, STATIC_PREFIX, TEMP_STATIC_PATH, TEMP_STATIC_PREFIX, VARNISH_INFO, cluster, commander, config, initArguments, path;
+  var APP_PATH, CACHE_QUERY_RESULT, DATA_BASE_PWD, DATA_BASE_USER, IS_MASTER, IS_PRODUCTION_MODE, LISTEN_PORT, LOGGER_QUERY_INFO, MERGE_FILES, MONGO_INFO, REDIS_INFO, SLAVE_TOTAL, START_APP_LIST, STATIC_FILE_MAX_AGE, STATIC_PATH, STATIC_PREFIX, TEMP_STATIC_PATH, TEMP_STATIC_PREFIX, VARNISH_INFO, cluster, commander, config, initArguments, path;
 
   path = require('path');
 
@@ -22,7 +22,9 @@
 
 
   initArguments = function(program) {
-    return program.version('0.0.1').option('-p, --port <n>', 'listen port', parseInt).option('-s, --slave <n>', 'slave total', parseInt).option('-u, --user <n>', 'database user').option('-w, --password <n>', 'database password').parse(process.argv);
+    return program.version('0.0.1').option('-p, --port <n>', 'listen port', parseInt).option('-s, --slave <n>', 'slave total', parseInt).option('-u, --user <n>', 'database user').option('-w, --password <n>', 'database password').option('-l, --list <items>', 'the app list, separated by ","', function(val) {
+      return val.split(',');
+    }).parse(process.argv);
   };
 
   initArguments(commander);
@@ -68,6 +70,8 @@
   DATA_BASE_PWD = commander.password;
 
   MERGE_FILES = require("" + APP_PATH + "/mergefiles.json");
+
+  START_APP_LIST = commander.list || 'all';
 
   LOGGER_QUERY_INFO = true;
 
@@ -217,6 +221,14 @@
 
     getDataBaseUser: function() {
       return DATA_BASE_USER;
+    },
+    /**
+     * [getStartAppList 获取启动app的列表]
+     * @return {[type]} [description]
+    */
+
+    getStartAppList: function() {
+      return START_APP_LIST;
     },
     /**
      * [getUID 获取node的uid(如果是master则返回0)]
