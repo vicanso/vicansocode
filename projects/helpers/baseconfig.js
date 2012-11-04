@@ -12,19 +12,19 @@
 
   base = {
     dialog: {
-      selfClass: 'uiDialog uiWidget uiBlackBorder uiCornerAll uiBlackBoxShadow',
-      titleBarClass: 'uiTitleBar uiBlackGradientBG uiCornerAll',
+      selfClass: 'uiDialog uiWidget uiThemeBorder uiCornerAll uiThemeBoxShadow',
+      titleBarClass: 'uiTitleBar uiThemeGradientBG uiCornerAll',
       contentClass: 'uiContent'
     },
     list: {
-      selfClass: 'uiList uiWidget uiBlackBorder uiCornerAll uiBlackBoxShadow',
-      titleBarClass: 'uiListTitleBar uiNoSelectText uiBlackGradientBG',
+      selfClass: 'uiList uiWidget uiThemeBorder uiCornerAll uiThemeBoxShadow',
+      titleBarClass: 'uiListTitleBar uiNoSelectText uiThemeGradientBG',
       contentClass: 'uiListContent',
       listItemClass: 'uiListItem'
     },
     buttonSet: {
-      selfClass: 'uiButtonSet uiWidget uiNoSelectText uiBlackBoxShadow uiCornerAll uiBlackBorder',
-      buttonClass: 'uiButton uiBlackGradientBG'
+      selfClass: 'uiButtonSet uiWidget uiNoSelectText uiThemeBoxShadow uiCornerAll uiThemeBorder',
+      buttonClass: 'uiButton uiThemeGradientBG'
     }
   };
 

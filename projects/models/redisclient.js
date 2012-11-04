@@ -30,23 +30,22 @@
   initRedisClient = function(redisClient, client) {
     var functions;
     functions = _.functions(client);
-    return _.each(functions, function(func, i) {
+    _.each(functions, function(func, i) {
       return redisClient[func] = function() {
-        var args, cbf;
+        var args, cbf, err;
         args = Array.prototype.slice.call(arguments);
         if (client.connected) {
           return client[func].apply(client, args);
         } else {
           cbf = args.pop();
+          err = new Error('redis is not connected');
           if (_.isFunction(cbf)) {
-            return cbf({
-              code: -1,
-              msg: 'redis is not connected'
-            });
+            return cbf(err);
           }
         }
       };
     });
+    return redisClient;
   };
 
   logRedisReady = true;
@@ -69,9 +68,7 @@
     return logRedisReady = true;
   });
 
-  redisClient = {};
-
-  initRedisClient(redisClient, client);
+  redisClient = initRedisClient({}, client);
 
   module.exports = redisClient;
 

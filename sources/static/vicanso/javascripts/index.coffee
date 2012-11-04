@@ -7,7 +7,9 @@ jQuery ($) ->
     editor.setOption 'theme', 'monokai'
 
   $('#articlesContainer .articleButtonSet').each () ->
-    $(@).buttonSet()
+    $(@).buttonSet {
+      buttonClass : 'uiThemeGradientBG'
+    }
 
   $('#articlesContainer .articleButtonSet').on 'click', '.recommend', () ->
     obj = $ @

@@ -354,9 +354,13 @@
 
   _.each(modelFunctions.split(' '), function(func) {
     return dataBaseHandler[func] = function() {
-      var args, cbf, key, queryFunc, self;
+      var args, cbf, key, queryFunc, self, ttl, _ref;
       self = this;
       args = _.toArray(arguments);
+      ttl = (_ref = args[2]) != null ? _ref.ttl : void 0;
+      if (ttl) {
+        delete args[2].ttl;
+      }
       cbf = args.pop();
       queryFunc = function() {
         var queryInfo;
@@ -364,20 +368,22 @@
         args.unshift(self, func);
         if (isLoggerQueryInfo) {
           queryInfo = new QueryInfo(args.slice(1));
-          args[args.length - 1] = function(err, data) {
-            if (isCacheQueryResult) {
-              if (!err && data) {
-                queryCache.set(key, data);
-              } else {
-                queryCache.next(key);
-              }
+        }
+        args[args.length - 1] = function(err, data) {
+          if (isCacheQueryResult) {
+            if (!err && data) {
+              queryCache.set(key, data, ttl);
+            } else {
+              queryCache.next(key);
             }
+          }
+          if (queryInfo) {
             queryInfo.complete();
             logger.info(queryInfo.toString());
-            args = _.toArray(arguments);
-            return cbf.apply(null, args);
-          };
-        }
+          }
+          args = _.toArray(arguments);
+          return cbf.apply(null, args);
+        };
         return mongooseModel.apply(null, args);
       };
       if (isCacheQueryResult) {

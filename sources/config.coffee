@@ -19,6 +19,7 @@ initArguments = (program) ->
   .option('-s, --slave <n>', 'slave total', parseInt)
   .option('-u, --user <n>', 'database user')
   .option('-w, --password <n>', 'database password')
+  .option('-key, --dbcachekey <n>', 'db cache key prefix')
   .option('-l, --list <items>', 'the app list, separated by ","', (val) ->
     return val.split ','  
   )
@@ -71,7 +72,10 @@ START_APP_LIST = commander.list || 'all'
 # 是否记录查询数据的一些信息
 LOGGER_QUERY_INFO = true
 # 是否缓存查询记录
-CACHE_QUERY_RESULT = true
+CACHE_QUERY_RESULT = IS_PRODUCTION_MODE
+# http响应超时单位ms
+RESPONSE_TIME_OUT = 5000
+DB_CACHE_KEY_PREFIX = commander.dbcachekey || 'dbcache_'
 config = 
   ###*
    * [getAppPath 返回APP的所在的目录]
@@ -192,12 +196,33 @@ config =
    * @return {[type]} [description]
   ###
   getUID : () ->
-    if IS_MASTER
+    if @isMaster()
       return 0
     else
-      return cluster.worker?.uniqueID
-  
-
-
+      return cluster.worker?.uniqueID || -1
+  ###*
+   * [getDataBaseConnectionStr 返回数据库的连接字符串]
+   * @param  {[type]} db       [数据库名]
+   * @param  {[type]} user     [数据库登录用户，若无认证则为空]
+   * @param  {[type]} password [登录密码]
+   * @return {[type]}          [description]
+  ###
+  getDataBaseConnectionStr : (db, user, password) ->
+    if user && password
+      return "mongodb://#{user}:#{password}@#{MONGO_INFO.host}:#{MONGO_INFO.port}/#{db}"
+    else
+      return "mongodb://#{MONGO_INFO.host}:#{MONGO_INFO.port}/#{db}"
+  ###*
+   * [getResponseTimeout 返回响应超时的时间]
+   * @return {[type]} [description]
+  ###
+  getResponseTimeout : () ->
+    return RESPONSE_TIME_OUT
+  ###*
+   * [getDBCacheKeyPrefix 返回db缓存key的前缀]
+   * @return {[type]} [description]
+  ###
+  getDBCacheKeyPrefix : () ->
+    return DB_CACHE_KEY_PREFIX
 module.exports = config
   

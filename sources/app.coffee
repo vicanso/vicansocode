@@ -17,8 +17,8 @@ beforeRunningHandler = require "#{appPath}/helpers/beforerunninghandler"
 staticHandler = require "#{appPath}/helpers/static"
 slaveTotal = config.getSlaveTotal()
 myUtil = require "#{appPath}/helpers/util"
-session = require "#{appPath}/helpers/session"
 appInfoParse = require "#{appPath}/helpers/appinfoparse"
+pageError = require "#{appPath}/helpers/pageerror"
 # varnish = require "#{appPath}/helpers/varnish"
 
 
@@ -28,7 +28,10 @@ initExpress = () ->
   app.set 'view engine', 'jade'
   app.engine 'jade', require('jade').__express
 
-  express.logger.format 'production', "#{express.logger.default} - :response-time ms"
+  uid = config.getUID()
+  express.logger.token 'node', () ->
+    return "node:#{uid}"
+  express.logger.format 'production', ":node -- #{express.logger.default} -- :response-time ms"
     
   # 静态文件处理函数
   app.use staticHandler.handler()
@@ -49,22 +52,19 @@ initExpress = () ->
     app.use express.limit '1mb'
     app.use express.logger 'production'
 
+  app.use express.timeout config.getResponseTimeout()
   app.use appInfoParse.handler()
-
-
 
 
   app.use express.bodyParser()
   app.use express.methodOverride()
 
-
-
+  
+  
   app.use app.router
   
-  app.use express.errorHandler {
-    dumpExceptions : true
-    showStack : true
-  }
+
+  app.use pageError.handler()
 
   
   startAppList = config.getStartAppList()
@@ -76,8 +76,6 @@ initExpress = () ->
   else
     _.each startAppList, (appName) ->
       require("#{appPath}/apps/#{appName}/init") app
-  # require("#{appPath}/apps/vicanso/init") app
-  # require("#{appPath}/apps/ys/init") app
 
   app.listen config.getListenPort()
 

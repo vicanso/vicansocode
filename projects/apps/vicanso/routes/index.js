@@ -1,5 +1,5 @@
 (function() {
-  var FileImporter, appPath, config, errorPageHandler, httpHandler, mongoClient, myUtil, routeInfos, user, userLoader, viewContentHandler, _;
+  var FileImporter, appPath, config, httpHandler, mongoClient, myUtil, pageError, routeInfos, user, userLoader, viewContentHandler, _;
 
   _ = require('underscore');
 
@@ -15,11 +15,11 @@
 
   mongoClient = require("" + appPath + "/apps/vicanso/models/mongoclient");
 
-  errorPageHandler = require("" + appPath + "/apps/vicanso/helpers/errorpagehandler");
-
   myUtil = require("" + appPath + "/helpers/util");
 
   user = require("" + appPath + "/helpers/user");
+
+  pageError = require("" + appPath + "/helpers/pageerror");
 
   userLoader = user.loader();
 
@@ -66,10 +66,11 @@
     _.each(routeInfos, function(routeInfo) {
       var middleware;
       middleware = routeInfo.middleware || [];
-      return app[routeInfo.type](routeInfo.route, middleware, function(req, res) {
+      return app[routeInfo.type](routeInfo.route, middleware, function(req, res, next) {
         var debug;
         debug = !config.isProductionMode();
         return viewContentHandler[routeInfo.handerFunc](req, res, function(viewData) {
+          var err;
           if (viewData) {
             if (routeInfo.jadeView) {
               viewData.fileImporter = new FileImporter(debug);
@@ -81,7 +82,8 @@
               return res.send(viewData);
             }
           } else {
-            return errorPageHandler.response(500);
+            err = pageError.error(500, "" + __filename + ": the viewData is null");
+            return next(err);
           }
         });
       });

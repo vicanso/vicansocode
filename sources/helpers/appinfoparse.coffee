@@ -20,9 +20,9 @@ appInfoParse =
       _.each parserList, (parse) ->
         if !appInfo
           appInfo = parse req
-          req.appInfo = appInfo
+          req._appInfo = appInfo
       if !appInfo
-        appInfo = defaultAppInfo
+        req._appInfo = defaultAppInfo
       next()
   ###*
    * [getAppName 获取app的名字]
@@ -30,7 +30,7 @@ appInfoParse =
    * @return {[type]}     [description]
   ###
   getAppName : (req) ->
-    return req.appInfo?.app
+    return req._appInfo?.app
   ###*
    * [addParser 添加app信息的parser函数]
    * @param {[type]} func [description]

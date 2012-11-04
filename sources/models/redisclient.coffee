@@ -25,10 +25,10 @@ initRedisClient = (redisClient, client) ->
         client[func].apply client, args
       else
         cbf = args.pop()
+        err = new Error 'redis is not connected'
         if _.isFunction cbf
-          cbf
-            code : -1
-            msg : 'redis is not connected'
+          cbf err
+  return redisClient
 
 
 logRedisReady = true
@@ -44,7 +44,6 @@ client.on 'error', (err) ->
     logger.error err
   logRedisReady = true
 
-redisClient = {}
-initRedisClient redisClient, client
+redisClient = initRedisClient {}, client
  
 module.exports = redisClient

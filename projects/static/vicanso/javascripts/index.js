@@ -10,7 +10,9 @@
       return editor.setOption('theme', 'monokai');
     });
     $('#articlesContainer .articleButtonSet').each(function() {
-      return $(this).buttonSet();
+      return $(this).buttonSet({
+        buttonClass: 'uiThemeGradientBG'
+      });
     });
     return $('#articlesContainer .articleButtonSet').on('click', '.recommend', function() {
       var articleContainer, id, obj;

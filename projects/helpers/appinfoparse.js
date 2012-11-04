@@ -29,11 +29,11 @@
         _.each(parserList, function(parse) {
           if (!appInfo) {
             appInfo = parse(req);
-            return req.appInfo = appInfo;
+            return req._appInfo = appInfo;
           }
         });
         if (!appInfo) {
-          appInfo = defaultAppInfo;
+          req._appInfo = defaultAppInfo;
         }
         return next();
       };
@@ -46,7 +46,7 @@
 
     getAppName: function(req) {
       var _ref;
-      return (_ref = req.appInfo) != null ? _ref.app : void 0;
+      return (_ref = req._appInfo) != null ? _ref.app : void 0;
     },
     /**
      * [addParser 添加app信息的parser函数]

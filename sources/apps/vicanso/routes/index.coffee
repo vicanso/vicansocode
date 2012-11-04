@@ -5,9 +5,10 @@ viewContentHandler = require "#{appPath}/apps/vicanso/helpers/viewcontenthandler
 FileImporter = require "#{appPath}/helpers/fileimporter"
 httpHandler = require "#{appPath}/helpers/httphandler"
 mongoClient = require "#{appPath}/apps/vicanso/models/mongoclient"
-errorPageHandler = require "#{appPath}/apps/vicanso/helpers/errorpagehandler"
+# errorPageHandler = require "#{appPath}/apps/vicanso/helpers/errorpagehandler"
 myUtil = require "#{appPath}/helpers/util"
 user = require "#{appPath}/helpers/user"
+pageError = require "#{appPath}/helpers/pageerror"
 userLoader = user.loader()
 # 路由信息表
 routeInfos = [
@@ -58,7 +59,7 @@ routeInfos = [
 module.exports = (app) ->
   _.each routeInfos, (routeInfo) ->
     middleware = routeInfo.middleware || []
-    app[routeInfo.type] routeInfo.route, middleware, (req, res) ->
+    app[routeInfo.type] routeInfo.route, middleware, (req, res, next) ->
       debug = !config.isProductionMode()
       viewContentHandler[routeInfo.handerFunc] req, res, (viewData) ->
         if viewData
@@ -70,7 +71,9 @@ module.exports = (app) ->
               viewData = JSON.stringify viewData
             res.send viewData
         else
-          errorPageHandler.response 500
+          err = pageError.error 500, "#{__filename}: the viewData is null"
+          next err
+          # errorPageHandler.response 500
           
   # app.get '/vicanso/ajax/*', (req, res) ->
   #   res.send 'success'
@@ -81,7 +84,6 @@ module.exports = (app) ->
 
   app.get '/vicanso/updatenodemodules', (req, res) ->
     viewContentHandler.updateNodeModules res
-    
 
 
 

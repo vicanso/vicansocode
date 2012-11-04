@@ -270,22 +270,28 @@ _.each modelFunctions.split(' '), (func) ->
   dataBaseHandler[func] = () ->
     self = @
     args = _.toArray arguments
+    # 查询条件中是否带缓存的ttl
+    ttl = args[2]?.ttl
+    if ttl
+      delete args[2].ttl
     cbf = args.pop()
+    # 生成新的查询函数，主要是添加查询时间的记录以及一些缓存的处理
     queryFunc = () ->
       args.push cbf
       args.unshift self, func
       if isLoggerQueryInfo
         queryInfo = new QueryInfo args.slice 1
-        args[args.length - 1] = (err, data) ->
-          if isCacheQueryResult
-            if !err && data
-              queryCache.set key, data
-            else
-              queryCache.next key
+      args[args.length - 1] = (err, data) ->
+        if isCacheQueryResult
+          if !err && data
+            queryCache.set key, data, ttl
+          else
+            queryCache.next key
+        if queryInfo
           queryInfo.complete()
           logger.info queryInfo.toString()
-          args = _.toArray arguments
-          cbf.apply null, args
+        args = _.toArray arguments
+        cbf.apply null, args
       mongooseModel.apply null, args      
     if isCacheQueryResult
       key = queryCache.key args, func

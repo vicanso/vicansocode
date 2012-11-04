@@ -6,7 +6,7 @@
 
 
 (function() {
-  var appInfoParse, appPath, beforeRunningHandler, cluster, config, domain, express, fs, initApp, initExpress, logger, myUtil, session, slaveTotal, staticHandler, _;
+  var appInfoParse, appPath, beforeRunningHandler, cluster, config, domain, express, fs, initApp, initExpress, logger, myUtil, pageError, slaveTotal, staticHandler, _;
 
   _ = require('underscore');
 
@@ -32,17 +32,21 @@
 
   myUtil = require("" + appPath + "/helpers/util");
 
-  session = require("" + appPath + "/helpers/session");
-
   appInfoParse = require("" + appPath + "/helpers/appinfoparse");
 
+  pageError = require("" + appPath + "/helpers/pageerror");
+
   initExpress = function() {
-    var app, startAppList;
+    var app, startAppList, uid;
     app = express();
     app.set('views', "" + appPath + "/views");
     app.set('view engine', 'jade');
     app.engine('jade', require('jade').__express);
-    express.logger.format('production', "" + express.logger["default"] + " - :response-time ms");
+    uid = config.getUID();
+    express.logger.token('node', function() {
+      return "node:" + uid;
+    });
+    express.logger.format('production', ":node -- " + express.logger["default"] + " -- :response-time ms");
     app.use(staticHandler.handler());
     app.use(function(req, res, next) {
       var userAgent;
@@ -60,14 +64,12 @@
       app.use(express.limit('1mb'));
       app.use(express.logger('production'));
     }
+    app.use(express.timeout(config.getResponseTimeout()));
     app.use(appInfoParse.handler());
     app.use(express.bodyParser());
     app.use(express.methodOverride());
     app.use(app.router);
-    app.use(express.errorHandler({
-      dumpExceptions: true,
-      showStack: true
-    }));
+    app.use(pageError.handler());
     startAppList = config.getStartAppList();
     if (startAppList === 'all') {
       fs.readdir("" + appPath + "/apps", function(err, files) {

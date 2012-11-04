@@ -6,13 +6,15 @@
 
 
 (function() {
-  var appPath, config, getLogger, _;
+  var appPath, config, getLogger, uid, _;
 
   _ = require('underscore');
 
   config = require('../config');
 
   appPath = config.getAppPath();
+
+  uid = config.getUID();
 
   /**
    * [getLogger 返回logger对象（输出信息包含调用该logger的文件名）]
@@ -22,8 +24,9 @@
 
 
   getLogger = function(runningFile) {
-    var logger;
-    return logger = require('log4js').getLogger(runningFile.replace(appPath, ''));
+    var logger, loggerFile;
+    loggerFile = runningFile.replace(appPath, '');
+    return logger = require('log4js').getLogger("node:" + uid + " " + loggerFile);
   };
 
   module.exports = getLogger;

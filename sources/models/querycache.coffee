@@ -9,8 +9,7 @@ myUtil = require "#{appPath}/helpers/util"
 logger = require("#{appPath}/helpers/logger") __filename
 _ = require 'underscore'
 redisClient = require "#{appPath}/models/redisclient"
-isProductionMode = config.isProductionMode()
-
+dbCacheKeyPrefix = config.getDBCacheKeyPrefix()
 cacheFunctions = []
 queryCache = 
   ###*
@@ -21,13 +20,11 @@ queryCache =
   ###
   key : (query, func) ->
     # 如果查询条件中还有noCache字段，表示该查询不用缓存，删除该字段以免影响查询结果
-    if !isProductionMode
-      return null
     if query[2].noCache == true
       delete query[2].noCache
       return null
     if @isCacheAvailable func
-      return myUtil.sha1 JSON.stringify query
+      return dbCacheKeyPrefix + myUtil.sha1 JSON.stringify query
     else
       return null
   ###*

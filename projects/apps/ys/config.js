@@ -1,5 +1,5 @@
 (function() {
-  var APP_NAME, CONNECT_STRING, DB_NAME, config, mongoInfo;
+  var APP_NAME, CONNECT_STRING, DB_NAME, config;
 
   config = require('../../config');
 
@@ -7,9 +7,7 @@
 
   DB_NAME = 'ys';
 
-  mongoInfo = config.getMongoInfo();
-
-  CONNECT_STRING = "mongodb://" + (config.getDataBaseUser()) + ":" + (config.getDatabasePassword()) + "@" + mongoInfo.host + ":" + mongoInfo.port + "/" + DB_NAME;
+  CONNECT_STRING = config.getDataBaseConnectionStr(DB_NAME, config.getDataBaseUser(), config.getDatabasePassword());
 
   config = {
     /**

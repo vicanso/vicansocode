@@ -1,8 +1,7 @@
 config = require '../../config'
 DB_NAME = 'vicanso'
 APP_NAME = 'vicanso'
-mongoInfo = config.getMongoInfo()
-CONNECT_STRING = "mongodb://#{config.getDataBaseUser()}:#{config.getDatabasePassword()}@#{mongoInfo.host}:#{mongoInfo.port}/#{DB_NAME}"
+CONNECT_STRING = config.getDataBaseConnectionStr DB_NAME, config.getDataBaseUser(), config.getDatabasePassword()
 config = 
   ###*
    * [getAppName 返回app的名字]

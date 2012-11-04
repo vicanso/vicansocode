@@ -6,7 +6,7 @@
 
 
 (function() {
-  var APP_PATH, CACHE_QUERY_RESULT, DATA_BASE_PWD, DATA_BASE_USER, IS_MASTER, IS_PRODUCTION_MODE, LISTEN_PORT, LOGGER_QUERY_INFO, MERGE_FILES, MONGO_INFO, REDIS_INFO, SLAVE_TOTAL, START_APP_LIST, STATIC_FILE_MAX_AGE, STATIC_PATH, STATIC_PREFIX, TEMP_STATIC_PATH, TEMP_STATIC_PREFIX, VARNISH_INFO, cluster, commander, config, initArguments, path;
+  var APP_PATH, CACHE_QUERY_RESULT, DATA_BASE_PWD, DATA_BASE_USER, DB_CACHE_KEY_PREFIX, IS_MASTER, IS_PRODUCTION_MODE, LISTEN_PORT, LOGGER_QUERY_INFO, MERGE_FILES, MONGO_INFO, REDIS_INFO, RESPONSE_TIME_OUT, SLAVE_TOTAL, START_APP_LIST, STATIC_FILE_MAX_AGE, STATIC_PATH, STATIC_PREFIX, TEMP_STATIC_PATH, TEMP_STATIC_PREFIX, VARNISH_INFO, cluster, commander, config, initArguments, path;
 
   path = require('path');
 
@@ -22,7 +22,7 @@
 
 
   initArguments = function(program) {
-    return program.version('0.0.1').option('-p, --port <n>', 'listen port', parseInt).option('-s, --slave <n>', 'slave total', parseInt).option('-u, --user <n>', 'database user').option('-w, --password <n>', 'database password').option('-l, --list <items>', 'the app list, separated by ","', function(val) {
+    return program.version('0.0.1').option('-p, --port <n>', 'listen port', parseInt).option('-s, --slave <n>', 'slave total', parseInt).option('-u, --user <n>', 'database user').option('-w, --password <n>', 'database password').option('-key, --dbcachekey <n>', 'db cache key prefix').option('-l, --list <items>', 'the app list, separated by ","', function(val) {
       return val.split(',');
     }).parse(process.argv);
   };
@@ -75,7 +75,11 @@
 
   LOGGER_QUERY_INFO = true;
 
-  CACHE_QUERY_RESULT = true;
+  CACHE_QUERY_RESULT = IS_PRODUCTION_MODE;
+
+  RESPONSE_TIME_OUT = 5000;
+
+  DB_CACHE_KEY_PREFIX = commander.dbcachekey || 'dbcache_';
 
   config = {
     /**
@@ -237,11 +241,42 @@
 
     getUID: function() {
       var _ref;
-      if (IS_MASTER) {
+      if (this.isMaster()) {
         return 0;
       } else {
-        return (_ref = cluster.worker) != null ? _ref.uniqueID : void 0;
+        return ((_ref = cluster.worker) != null ? _ref.uniqueID : void 0) || -1;
       }
+    },
+    /**
+     * [getDataBaseConnectionStr 返回数据库的连接字符串]
+     * @param  {[type]} db       [数据库名]
+     * @param  {[type]} user     [数据库登录用户，若无认证则为空]
+     * @param  {[type]} password [登录密码]
+     * @return {[type]}          [description]
+    */
+
+    getDataBaseConnectionStr: function(db, user, password) {
+      if (user && password) {
+        return "mongodb://" + user + ":" + password + "@" + MONGO_INFO.host + ":" + MONGO_INFO.port + "/" + db;
+      } else {
+        return "mongodb://" + MONGO_INFO.host + ":" + MONGO_INFO.port + "/" + db;
+      }
+    },
+    /**
+     * [getResponseTimeout 返回响应超时的时间]
+     * @return {[type]} [description]
+    */
+
+    getResponseTimeout: function() {
+      return RESPONSE_TIME_OUT;
+    },
+    /**
+     * [getDBCacheKeyPrefix 返回db缓存key的前缀]
+     * @return {[type]} [description]
+    */
+
+    getDBCacheKeyPrefix: function() {
+      return DB_CACHE_KEY_PREFIX;
     }
   };
 

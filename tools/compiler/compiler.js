@@ -65,20 +65,26 @@ var compileLess = function(file, cssFile){
       logger.error(err);
       return ;
     }
-    var parser = new less.Parser();
+    var env = {
+      paths : [path.dirname(file)]
+    };
+    var parser = new less.Parser(env);
     try{
       parser.parse(data, function(err, tree){
         if(err){
           logger.error(err);
           return ;
         }
-        fs.writeFile(cssFile, tree.toCSS({compress : true}), 'utf8', function(err){
-          if(err){
-            logger.error(err);
-          }else{
-            logger.info('complie less to file:' + cssFile + ' successful');
-          }
-        });
+        data = tree.toCSS({compress : true}).trim();
+        if(data.length !== 0){
+          fs.writeFile(cssFile, data.replace(/\n/g, ''), 'utf8', function(err){
+            if(err){
+              logger.error(err);
+            }else{
+              logger.info('complie less to file:' + cssFile + ' successful');
+            }
+          });
+        }
       });
     }catch(err){
       logger.error(err);

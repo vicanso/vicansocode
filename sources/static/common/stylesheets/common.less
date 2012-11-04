@@ -1,0 +1,22 @@
+.gradientBGFunc(@backgroundColorStart : #315389, @backgroundColorEnd : #0f1e3b, @color){
+    color:@color;
+    background-color: @backgroundColorEnd;
+    background-repeat:no-repeat;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='@{backgroundColorStart}', endColorstr='@{backgroundColorEnd}', GradientType=0);
+    background-image: -khtml-gradient(linear, left top, left bottom, from(@backgroundColorStart), to(@backgroundColorEnd));
+    background-image: -moz-linear-gradient(top, @backgroundColorStart, @backgroundColorEnd);
+    background-image: -ms-linear-gradient(top, @backgroundColorStart, @backgroundColorEnd);
+    background-image: -webkit-linear-gradient(top, @backgroundColorStart, @backgroundColorEnd);
+    background-image: -o-linear-gradient(top, @backgroundColorStart, @backgroundColorEnd);
+    background-image: linear-gradient(top, @backgroundColorStart, @backgroundColorEnd);
+}
+.borderRadiusFunc(@radius : 4px){
+    -moz-border-radius: @radius;
+    -webkit-border-radius: @radius;
+    border-radius: @radius;
+}
+.boxShadowFunc(@color : rgba(0, 0, 0, 0.2)){
+    -webkit-box-shadow: 1px 1px 3px @color;
+    -moz-box-shadow: 1px 1px 3px @color;
+    box-shadow: 1px 1px 3px @color;
+}

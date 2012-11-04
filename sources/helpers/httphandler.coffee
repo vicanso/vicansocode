@@ -15,10 +15,9 @@ httpHandler =
    * @param  {[type]} res  [respone]
    * @param  {[type]} view [模板路径]
    * @param  {[type]} data [模板中使用到的一些数据]
-   * @param  {[type]} ttl  [缓存的时间（可选），若带该参数则将HTML缓存到redis中]
    * @return {[type]}      [description]
   ###
-  render : (req, res, view, data, ttl) ->
+  render : (req, res, view, data) ->
     if data
       fileImporter = data.fileImporter
       res.render view, data, (err, html) ->

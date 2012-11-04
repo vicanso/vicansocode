@@ -6,7 +6,7 @@
 
 
 (function() {
-  var appPath, cacheFunctions, config, isProductionMode, logger, myUtil, queryCache, queryList, redisClient, _;
+  var appPath, cacheFunctions, config, dbCacheKeyPrefix, logger, myUtil, queryCache, queryList, redisClient, _;
 
   config = require('../config');
 
@@ -20,7 +20,7 @@
 
   redisClient = require("" + appPath + "/models/redisclient");
 
-  isProductionMode = config.isProductionMode();
+  dbCacheKeyPrefix = config.getDBCacheKeyPrefix();
 
   cacheFunctions = [];
 
@@ -33,15 +33,12 @@
     */
 
     key: function(query, func) {
-      if (!isProductionMode) {
-        return null;
-      }
       if (query[2].noCache === true) {
         delete query[2].noCache;
         return null;
       }
       if (this.isCacheAvailable(func)) {
-        return myUtil.sha1(JSON.stringify(query));
+        return dbCacheKeyPrefix + myUtil.sha1(JSON.stringify(query));
       } else {
         return null;
       }
