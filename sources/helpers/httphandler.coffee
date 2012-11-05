@@ -26,8 +26,6 @@ httpHandler =
           return 
         html = appendJsAndCss html, fileImporter
         response req, res, html
-    else
-      errorResponse res
 
 ###*
  * [appendJsAndCss 往HTML中插入js,css引入列表]
@@ -70,7 +68,5 @@ response = (req, res, html) ->
   else
     res.send html
 
-errorResponse = (res) ->
-  res.send 500, 'server error'
 
 module.exports = httpHandler

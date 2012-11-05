@@ -48,6 +48,8 @@
     return redisClient;
   };
 
+  redisClient = initRedisClient({}, client);
+
   logRedisReady = true;
 
   client.on('ready', function(err) {
@@ -67,8 +69,6 @@
     }
     return logRedisReady = true;
   });
-
-  redisClient = initRedisClient({}, client);
 
   module.exports = redisClient;
 

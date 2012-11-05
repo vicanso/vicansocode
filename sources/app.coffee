@@ -41,7 +41,7 @@ initExpress = () ->
     userAgent = req.header 'User-Agent'
     if !userAgent
       res.send 'success'
-    else
+    else  
       next()
 
   app.use express.favicon "#{appPath}/static/common/images/favicon.png"

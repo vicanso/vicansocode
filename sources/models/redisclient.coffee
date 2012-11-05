@@ -29,7 +29,7 @@ initRedisClient = (redisClient, client) ->
         if _.isFunction cbf
           cbf err
   return redisClient
-
+redisClient = initRedisClient {}, client
 
 logRedisReady = true
 client.on 'ready', (err) ->
@@ -38,12 +38,13 @@ client.on 'ready', (err) ->
     logRedisReady = true
   if logRedisReady
     logger.info 'redis ready'
+    # redisClient.info (err, info) ->
+    #   logger.info info
     logRedisReady = false
 client.on 'error', (err) ->
   if err
     logger.error err
   logRedisReady = true
 
-redisClient = initRedisClient {}, client
  
 module.exports = redisClient

@@ -25,7 +25,7 @@ sub vcl_recv {
     if (req.url ~ "^/[a-zA-Z]+/ajax/" || req.url ~ "/nocacheinfo.js$"){
         return (pass);
     }    
-    #将所有的cookie清除（用户的信息只要通过上面的userinfo.js请求，因此对于其它的请求，cookie是没意义的）
+    #将所有的cookie清除（用户的信息主要通过上面的userinfo.js请求，因此对于其它的请求，cookie是没意义的）
     unset req.http.cookie;
     #整理浏览器的accept-encoding
     if(req.http.Accept-Encoding){

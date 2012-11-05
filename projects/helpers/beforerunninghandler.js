@@ -6,7 +6,7 @@
 
 
 (function() {
-  var appPath, config, fileMerger, fs, isProductionMode, logger, path, removeTempPathFiles, run, _;
+  var appPath, config, fileMerger, fs, isMaster, isProductionMode, logger, path, removeTempPathFiles, run, _;
 
   fs = require('fs');
 
@@ -24,6 +24,8 @@
 
   isProductionMode = config.isProductionMode();
 
+  isMaster = config.isMaster();
+
   /**
    * [run 在node的http启动前作的一些操作，合并静态文件等]
    * @return {[type]}
@@ -31,8 +33,6 @@
 
 
   run = function() {
-    var isMaster;
-    isMaster = config.isMaster();
     if (isProductionMode && isMaster) {
       return removeTempPathFiles();
     } else {

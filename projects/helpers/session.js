@@ -47,7 +47,6 @@
         return cookieParser(req, res, function() {
           var appName;
           appName = appInfoParse.getAppName(req);
-          console.log(appName);
           return session.getHandler(appName)(req, res, next);
         });
       };
@@ -75,7 +74,7 @@
       if (appName == null) {
         appName = 'all';
       }
-      return sessionHandleFunctions[appName];
+      return sessionHandleFunctions[appName] || sessionHandleFunctions['all'];
     }
   };
 

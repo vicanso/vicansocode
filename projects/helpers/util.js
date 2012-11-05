@@ -188,6 +188,29 @@
       }
       res.header('Last-Modified', new Date());
       return res.send(data);
+    },
+    randomKey: function(length, legalChars) {
+      var getRandomChar, legalCharList, num;
+      if (length == null) {
+        length = 10;
+      }
+      if (legalChars == null) {
+        legalChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      }
+      legalCharList = legalChars.split('');
+      getRandomChar = function(legalCharList) {
+        var legalCharListLength;
+        legalCharListLength = legalCharList.length;
+        return legalCharList[Math.floor(Math.random() * legalCharListLength)];
+      };
+      return ((function() {
+        var _i, _results;
+        _results = [];
+        for (num = _i = 0; 0 <= length ? _i < length : _i > length; num = 0 <= length ? ++_i : --_i) {
+          _results.push(getRandomChar(legalCharList));
+        }
+        return _results;
+      })()).join('');
     }
   };
 

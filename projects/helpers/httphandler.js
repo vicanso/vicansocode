@@ -6,7 +6,7 @@
 
 
 (function() {
-  var appPath, appendJsAndCss, config, errorResponse, httpHandler, logger, myUtil, response;
+  var appPath, appendJsAndCss, config, httpHandler, logger, myUtil, response;
 
   config = require('../config');
 
@@ -38,8 +38,6 @@
           html = appendJsAndCss(html, fileImporter);
           return response(req, res, html);
         });
-      } else {
-        return errorResponse(res);
       }
     }
   };
@@ -95,10 +93,6 @@
     } else {
       return res.send(html);
     }
-  };
-
-  errorResponse = function(res) {
-    return res.send(500, 'server error');
   };
 
   module.exports = httpHandler;

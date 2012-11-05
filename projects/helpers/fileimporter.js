@@ -22,7 +22,7 @@
 
   STATIC_PREFIX = config.getStaticPrefix();
 
-  VERSION = new Date().getTime();
+  VERSION = Date.now();
 
   FileImporter = (function() {
     /**
@@ -236,7 +236,7 @@
   /**
    * [exportJsHTML 返回引入JS的标签HTML]
    * @param  {[type]} file   [文件名]
-   * @param  {[type]} suffix [是否需要文件后缀]
+   * @param  {[type]} suffix [是否需要版本后缀]
    * @return {[type]}        [description]
   */
 
@@ -251,7 +251,7 @@
   /**
    * [exportCssHTML 返回引入CSS标签的HTML]
    * @param  {[type]} file   [文件名]
-   * @param  {[type]} suffix [是否需要文件后缀]
+   * @param  {[type]} suffix [是否需要版本后缀]
    * @return {[type]}        [description]
   */
 

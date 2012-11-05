@@ -53,7 +53,7 @@ MONGO_INFO =
   port :10020
   host : '127.0.0.1'
   poolsize : 16
-#varnish的配置信息
+# varnish的配置信息
 VARNISH_INFO =
   managementPort : 10030
   host : '127.0.0.1'
@@ -75,6 +75,7 @@ LOGGER_QUERY_INFO = true
 CACHE_QUERY_RESULT = IS_PRODUCTION_MODE
 # http响应超时单位ms
 RESPONSE_TIME_OUT = 5000
+# 缓存数据库查询的cache的key前缀
 DB_CACHE_KEY_PREFIX = commander.dbcachekey || 'dbcache_'
 config = 
   ###*

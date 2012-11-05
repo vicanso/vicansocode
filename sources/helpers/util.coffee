@@ -134,6 +134,11 @@ util =
       res.header 'Cache-Control', "public, max-age=#{maxAge}"
     res.header 'Last-Modified', new Date()
     res.send data
-
+  randomKey : (length = 10, legalChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789') ->
+    legalCharList = legalChars.split ''
+    getRandomChar = (legalCharList) ->
+      legalCharListLength = legalCharList.length
+      return legalCharList[Math.floor Math.random() * legalCharListLength]
+    return (getRandomChar legalCharList for num in [0...length]).join ''
 
 module.exports = util

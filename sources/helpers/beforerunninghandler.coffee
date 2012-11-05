@@ -11,12 +11,12 @@ appPath = config.getAppPath()
 fileMerger = require "#{appPath}/helpers/filemerger"
 logger = require("#{appPath}/helpers/logger") __filename
 isProductionMode = config.isProductionMode()
+isMaster = config.isMaster()
 ###*
  * [run 在node的http启动前作的一些操作，合并静态文件等]
  * @return {[type]}
 ###
 run = () ->
-  isMaster = config.isMaster()
   if isProductionMode && isMaster
     removeTempPathFiles()
   else

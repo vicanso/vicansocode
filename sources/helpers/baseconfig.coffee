@@ -36,10 +36,16 @@ getBaseWidgetConfig = (type, options) ->
     return widgetOpts
   else
     return null
-module.exports = 
-  getDialog : (options) ->
-    return getBaseWidgetConfig 'dialog', options
-  getButtonSet : (options) ->
-    return getBaseWidgetConfig 'buttonSet', options
-  getList : (options) ->
-    return getBaseWidgetConfig 'list', options
+
+baseConfig = {}
+_.each 'dialog buttonSet list'.split(' '), (widget) ->
+  func = "get#{widget[0].toUpperCase()}#{widget.substring(1)}"
+  baseConfig[func] = (options) ->
+    return getBaseWidgetConfig widget, options
+module.exports = baseConfig
+  # getDialog : (options) ->
+  #   return getBaseWidgetConfig 'dialog', options
+  # getButtonSet : (options) ->
+  #   return getBaseWidgetConfig 'buttonSet', options
+  # getList : (options) ->
+  #   return getBaseWidgetConfig 'list', options

@@ -6,7 +6,7 @@
 
 
 (function() {
-  var base, getBaseWidgetConfig, _;
+  var base, baseConfig, getBaseWidgetConfig, _;
 
   _ = require('underscore');
 
@@ -55,16 +55,16 @@
     }
   };
 
-  module.exports = {
-    getDialog: function(options) {
-      return getBaseWidgetConfig('dialog', options);
-    },
-    getButtonSet: function(options) {
-      return getBaseWidgetConfig('buttonSet', options);
-    },
-    getList: function(options) {
-      return getBaseWidgetConfig('list', options);
-    }
-  };
+  baseConfig = {};
+
+  _.each('dialog buttonSet list'.split(' '), function(widget) {
+    var func;
+    func = "get" + (widget[0].toUpperCase()) + (widget.substring(1));
+    return baseConfig[func] = function(options) {
+      return getBaseWidgetConfig(widget, options);
+    };
+  });
+
+  module.exports = baseConfig;
 
 }).call(this);

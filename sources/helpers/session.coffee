@@ -29,7 +29,6 @@ session =
     return (req, res, next) ->
       cookieParser req, res, () ->
         appName = appInfoParse.getAppName req
-        console.log appName
         session.getHandler(appName) req, res, next
   ###*
    * [addHandler 添加session的处理函数]
@@ -47,7 +46,7 @@ session =
    * @return {[type]}         [description]
   ###
   getHandler : (appName = 'all') ->
-    return sessionHandleFunctions[appName]
+    return sessionHandleFunctions[appName] || sessionHandleFunctions['all']
 
 
 session.addHandler 'all'

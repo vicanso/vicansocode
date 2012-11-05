@@ -12,7 +12,7 @@ appPath = config.getAppPath()
 fileMerger = require "#{appPath}/helpers/filemerger"
 
 STATIC_PREFIX = config.getStaticPrefix()
-VERSION = new Date().getTime()
+VERSION = Date.now()
 
 
 class FileImporter
@@ -163,7 +163,7 @@ getExportHTML = (file, type, suffix) ->
 ###*
  * [exportJsHTML 返回引入JS的标签HTML]
  * @param  {[type]} file   [文件名]
- * @param  {[type]} suffix [是否需要文件后缀]
+ * @param  {[type]} suffix [是否需要版本后缀]
  * @return {[type]}        [description]
 ###
 exportJsHTML = (file, suffix) ->
@@ -174,7 +174,7 @@ exportJsHTML = (file, suffix) ->
 ###*
  * [exportCssHTML 返回引入CSS标签的HTML]
  * @param  {[type]} file   [文件名]
- * @param  {[type]} suffix [是否需要文件后缀]
+ * @param  {[type]} suffix [是否需要版本后缀]
  * @return {[type]}        [description]
 ###
 exportCssHTML = (file, suffix) ->
