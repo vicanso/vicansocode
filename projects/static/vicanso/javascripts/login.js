@@ -5,6 +5,7 @@
       var password, user;
       user = $('#userLogin .user').val();
       password = $('#userLogin .password').val();
+      password = CryptoJS.SHA1(password).toString();
       return $.ajax({
         url: '/vicanso/ajax/admin/login',
         type: 'post',

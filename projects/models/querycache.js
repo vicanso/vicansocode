@@ -60,8 +60,8 @@
             var cache;
             if (!err && (data != null ? data.cache : void 0)) {
               cache = JSON.parse(data.cache);
-              cbf(null, cache);
-              return queryList.execQuery(key, cache);
+              queryList.execQuery(key, cache);
+              return cbf(null, cache);
             } else {
               cbf(err, null);
               return queryList.setQuering(key);
@@ -69,8 +69,7 @@
           });
         }
       } else {
-        cbf(null, null);
-        return queryList.setQuering(key);
+        return cbf(null, null);
       }
     },
     /**
@@ -86,7 +85,6 @@
       }
       if (key && data) {
         queryList.execQuery(key, data);
-        console.log(key);
         return redisClient.hmset(key, 'cache', JSON.stringify(data), 'createTime', Date.now(), function(err) {
           if (err) {
             return logger.error(err);

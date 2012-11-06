@@ -1,6 +1,7 @@
 extends ../layout
 block bodyContainer
   - fileImporter.importJs('/vicanso/javascripts/login.min.js');
+  - fileImporter.importJs('/common/javascripts/util/sha1.min.js');
   #userLogin(style='width:400px;margin:auto;')
     span 用户名：
     input.user(type='text')

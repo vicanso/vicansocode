@@ -42,14 +42,13 @@ queryCache =
         redisClient.hgetall key, (err, data) ->
           if !err && data?.cache
             cache = JSON.parse data.cache
-            cbf null, cache
             queryList.execQuery key, cache
+            cbf null, cache
           else
             cbf err, null
             queryList.setQuering key
     else
       cbf null, null
-      queryList.setQuering key
   ###*
    * [set 设置缓存的值]
    * @param {[type]} key  [查询条件对应的hash key]
@@ -59,7 +58,6 @@ queryCache =
   set : (key, data, ttl = 300) ->
     if key && data
       queryList.execQuery key, data
-      console.log key
       redisClient.hmset key, 'cache', JSON.stringify(data), 'createTime', Date.now(), (err) ->
         if err
           logger.error err
