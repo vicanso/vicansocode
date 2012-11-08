@@ -33,10 +33,6 @@
     */
 
     key: function(query, func) {
-      if (query[2].noCache === true) {
-        delete query[2].noCache;
-        return null;
-      }
       if (this.isCacheAvailable(func)) {
         return dbCacheKeyPrefix + myUtil.sha1(JSON.stringify(query));
       } else {
@@ -73,7 +69,7 @@
       }
     },
     /**
-     * [set 设置缓存的值]
+     * [set 设置缓存的值，若ttl小于0，则不作缓存]
      * @param {[type]} key  [查询条件对应的hash key]
      * @param {[type]} data [缓存的数据]
      * @param {[type]} ttl  [缓存的TTL]
@@ -83,7 +79,7 @@
       if (ttl == null) {
         ttl = 300;
       }
-      if (key && data) {
+      if (key && data && ttl > 0) {
         queryList.execQuery(key, data);
         return redisClient.hmset(key, 'cache', JSON.stringify(data), 'createTime', Date.now(), function(err) {
           if (err) {

@@ -7,6 +7,8 @@ path = require 'path'
 cluster = require 'cluster'
 commander = require 'commander'
 
+splitArgs = (val) ->
+  return val.split ','
 
 ###*
  * [initArguments 初始化启动参数]
@@ -20,13 +22,12 @@ initArguments = (program) ->
   .option('-u, --user <n>', 'database user')
   .option('-w, --password <n>', 'database password')
   .option('-key, --dbcachekey <n>', 'db cache key prefix')
-  .option('-l, --list <items>', 'the app list, separated by ","', (val) ->
-    return val.split ','  
-  )
+  .option('--mongohost <n>', 'mongodb host')
+  .option('--mongoport <n>', 'mongodb port', parseInt)
+  .option('-l, --list <items>', 'the app list, separated by ","', splitArgs)
   .parse process.argv
 
 initArguments commander
-
 
 # APP路径
 APP_PATH = __dirname
@@ -50,8 +51,8 @@ REDIS_INFO =
   host : '127.0.0.1'
 # mongo的配置信息
 MONGO_INFO =
-  port :10020
-  host : '127.0.0.1'
+  port : commander.mongoport || 10020
+  host : commander.mongohost || '127.0.0.1'
   poolsize : 16
 # varnish的配置信息
 VARNISH_INFO =

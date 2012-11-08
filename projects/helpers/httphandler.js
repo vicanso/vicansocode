@@ -36,8 +36,15 @@
             return;
           }
           html = appendJsAndCss(html, fileImporter);
-          return response(req, res, html);
+          if (myUtil.resIsAvailable(res)) {
+            return response(req, res, html);
+          }
         });
+      }
+    },
+    json: function(req, res, data) {
+      if (myUtil.resIsAvailable(res)) {
+        return res.json(data);
       }
     }
   };

@@ -69,7 +69,7 @@ module.exports = (app) ->
           else
             if _.isObject viewData
               viewData = JSON.stringify viewData
-            res.send viewData
+            httpHandler.json req, res, viewData
         else
           err = pageError.error 500, "#{__filename}: the viewData is null"
           next err

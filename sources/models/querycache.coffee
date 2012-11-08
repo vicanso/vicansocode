@@ -19,10 +19,6 @@ queryCache =
    * @return {[type]}               [description]
   ###
   key : (query, func) ->
-    # 如果查询条件中还有noCache字段，表示该查询不用缓存，删除该字段以免影响查询结果
-    if query[2].noCache == true
-      delete query[2].noCache
-      return null
     if @isCacheAvailable func
       return dbCacheKeyPrefix + myUtil.sha1 JSON.stringify query
     else
@@ -50,13 +46,13 @@ queryCache =
     else
       cbf null, null
   ###*
-   * [set 设置缓存的值]
+   * [set 设置缓存的值，若ttl小于0，则不作缓存]
    * @param {[type]} key  [查询条件对应的hash key]
    * @param {[type]} data [缓存的数据]
    * @param {[type]} ttl  [缓存的TTL]
   ###
   set : (key, data, ttl = 300) ->
-    if key && data
+    if key && data && ttl > 0
       queryList.execQuery key, data
       redisClient.hmset key, 'cache', JSON.stringify(data), 'createTime', Date.now(), (err) ->
         if err

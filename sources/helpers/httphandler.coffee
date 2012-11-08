@@ -25,7 +25,11 @@ httpHandler =
           logger.error err
           return 
         html = appendJsAndCss html, fileImporter
-        response req, res, html
+        if myUtil.resIsAvailable res
+          response req, res, html
+  json : (req, res, data) ->
+    if myUtil.resIsAvailable res
+      res.json data
 
 ###*
  * [appendJsAndCss 往HTML中插入js,css引入列表]

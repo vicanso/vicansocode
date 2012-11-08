@@ -115,6 +115,16 @@ util =
     else
       return str.substring(0, index) + '...'
   ###*
+   * [resIsAvailable 判断response是否可用]
+   * @param  {[type]} res [response对象]
+   * @return {[type]}     [description]
+  ###
+  resIsAvailable : (res) ->
+    if res._headerSent
+      return false
+    else
+      return true
+  ###*
    * [response 响应http请求]
    * @param  {[type]} res         [response对象]
    * @param  {[type]} data        [响应的数据]
@@ -123,6 +133,8 @@ util =
    * @return {[type]}             [description]
   ###
   response : (res, data, maxAge, contentType = 'text/html') ->
+    if !@resIsAvailable res
+      return 
     switch contentType
       when 'application/javascript'
       then res.header 'Content-Type', 'application/javascript; charset=UTF-8'

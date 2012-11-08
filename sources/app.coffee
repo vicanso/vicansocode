@@ -63,7 +63,6 @@ initExpress = () ->
   
   app.use app.router
   
-
   app.use pageError.handler()
 
   

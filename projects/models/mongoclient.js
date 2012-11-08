@@ -357,9 +357,9 @@
       var args, cbf, key, queryFunc, self, ttl, _ref;
       self = this;
       args = _.toArray(arguments);
-      ttl = (_ref = args[2]) != null ? _ref.ttl : void 0;
+      ttl = (_ref = args[2]) != null ? _ref._ttl : void 0;
       if (ttl) {
-        delete args[2].ttl;
+        delete args[2]._ttl;
       }
       cbf = args.pop();
       queryFunc = function() {

@@ -162,6 +162,19 @@
       }
     },
     /**
+     * [resIsAvailable 判断response是否可用]
+     * @param  {[type]} res [response对象]
+     * @return {[type]}     [description]
+    */
+
+    resIsAvailable: function(res) {
+      if (res._headerSent) {
+        return false;
+      } else {
+        return true;
+      }
+    },
+    /**
      * [response 响应http请求]
      * @param  {[type]} res         [response对象]
      * @param  {[type]} data        [响应的数据]
@@ -173,6 +186,9 @@
     response: function(res, data, maxAge, contentType) {
       if (contentType == null) {
         contentType = 'text/html';
+      }
+      if (!this.resIsAvailable(res)) {
+        return;
       }
       switch (contentType) {
         case 'application/javascript':

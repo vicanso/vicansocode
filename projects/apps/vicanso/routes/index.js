@@ -79,7 +79,7 @@
               if (_.isObject(viewData)) {
                 viewData = JSON.stringify(viewData);
               }
-              return res.send(viewData);
+              return httpHandler.json(req, res, viewData);
             }
           } else {
             err = pageError.error(500, "" + __filename + ": the viewData is null");

@@ -6,13 +6,17 @@
 
 
 (function() {
-  var APP_PATH, CACHE_QUERY_RESULT, DATA_BASE_PWD, DATA_BASE_USER, DB_CACHE_KEY_PREFIX, IS_MASTER, IS_PRODUCTION_MODE, LISTEN_PORT, LOGGER_QUERY_INFO, MERGE_FILES, MONGO_INFO, REDIS_INFO, RESPONSE_TIME_OUT, SLAVE_TOTAL, START_APP_LIST, STATIC_FILE_MAX_AGE, STATIC_PATH, STATIC_PREFIX, TEMP_STATIC_PATH, TEMP_STATIC_PREFIX, VARNISH_INFO, cluster, commander, config, initArguments, path;
+  var APP_PATH, CACHE_QUERY_RESULT, DATA_BASE_PWD, DATA_BASE_USER, DB_CACHE_KEY_PREFIX, IS_MASTER, IS_PRODUCTION_MODE, LISTEN_PORT, LOGGER_QUERY_INFO, MERGE_FILES, MONGO_INFO, REDIS_INFO, RESPONSE_TIME_OUT, SLAVE_TOTAL, START_APP_LIST, STATIC_FILE_MAX_AGE, STATIC_PATH, STATIC_PREFIX, TEMP_STATIC_PATH, TEMP_STATIC_PREFIX, VARNISH_INFO, cluster, commander, config, initArguments, path, splitArgs;
 
   path = require('path');
 
   cluster = require('cluster');
 
   commander = require('commander');
+
+  splitArgs = function(val) {
+    return val.split(',');
+  };
 
   /**
    * [initArguments 初始化启动参数]
@@ -22,9 +26,7 @@
 
 
   initArguments = function(program) {
-    return program.version('0.0.1').option('-p, --port <n>', 'listen port', parseInt).option('-s, --slave <n>', 'slave total', parseInt).option('-u, --user <n>', 'database user').option('-w, --password <n>', 'database password').option('-key, --dbcachekey <n>', 'db cache key prefix').option('-l, --list <items>', 'the app list, separated by ","', function(val) {
-      return val.split(',');
-    }).parse(process.argv);
+    return program.version('0.0.1').option('-p, --port <n>', 'listen port', parseInt).option('-s, --slave <n>', 'slave total', parseInt).option('-u, --user <n>', 'database user').option('-w, --password <n>', 'database password').option('-key, --dbcachekey <n>', 'db cache key prefix').option('--mongohost <n>', 'mongodb host').option('--mongoport <n>', 'mongodb port', parseInt).option('-l, --list <items>', 'the app list, separated by ","', splitArgs).parse(process.argv);
   };
 
   initArguments(commander);
@@ -51,8 +53,8 @@
   };
 
   MONGO_INFO = {
-    port: 10020,
-    host: '127.0.0.1',
+    port: commander.mongoport || 10020,
+    host: commander.mongohost || '127.0.0.1',
     poolsize: 16
   };
 

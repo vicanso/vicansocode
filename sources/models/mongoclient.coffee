@@ -271,9 +271,9 @@ _.each modelFunctions.split(' '), (func) ->
     self = @
     args = _.toArray arguments
     # 查询条件中是否带缓存的ttl
-    ttl = args[2]?.ttl
+    ttl = args[2]?._ttl
     if ttl
-      delete args[2].ttl
+      delete args[2]._ttl
     cbf = args.pop()
     # 生成新的查询函数，主要是添加查询时间的记录以及一些缓存的处理
     queryFunc = () ->
