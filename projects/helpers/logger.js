@@ -6,9 +6,11 @@
 
 
 (function() {
-  var appPath, config, getLogger, uid, _;
+  var appPath, config, getLogger, log4js, uid, _;
 
   _ = require('underscore');
+
+  log4js = require('log4js');
 
   config = require('../config');
 
@@ -24,9 +26,19 @@
 
 
   getLogger = function(runningFile) {
-    var logger, loggerFile;
+    var errorLog, logger, loggerFile;
     loggerFile = runningFile.replace(appPath, '');
-    return logger = require('log4js').getLogger("node:" + uid + " " + loggerFile);
+    logger = log4js.getLogger("node:" + uid + " " + loggerFile);
+    errorLog = logger.error;
+    logger.error = function() {
+      var args, err, infos;
+      args = _.toArray(arguments);
+      err = new Error();
+      infos = err.stack.split('\n')[2];
+      args[args.length - 1] = args[args.length - 1] + infos;
+      return errorLog.apply(logger, args);
+    };
+    return logger;
   };
 
   module.exports = getLogger;

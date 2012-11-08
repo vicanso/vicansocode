@@ -21,10 +21,12 @@ initArguments = (program) ->
   .option('-s, --slave <n>', 'slave total', parseInt)
   .option('-u, --user <n>', 'database user')
   .option('-w, --password <n>', 'database password')
-  .option('-key, --dbcachekey <n>', 'db cache key prefix')
+  .option('-l, --list <items>', 'the app list, separated by ","', splitArgs)
+  .option('--dbcachekey <n>', 'db cache key prefix')
   .option('--mongohost <n>', 'mongodb host')
   .option('--mongoport <n>', 'mongodb port', parseInt)
-  .option('-l, --list <items>', 'the app list, separated by ","', splitArgs)
+  .option('--redishost <n>', 'redis host')
+  .option('--redisport <n>', 'redis port', parseInt)
   .parse process.argv
 
 initArguments commander
@@ -35,7 +37,7 @@ APP_PATH = __dirname
 IS_PRODUCTION_MODE = process.env.NODE_ENV is 'production'
 # 静态文件的HTTP请求前缀
 STATIC_PREFIX = '/static'
-# 静态文件的HTTP缓存时间
+# 静态文件的HTTP缓存时间(单位秒)
 STATIC_FILE_MAX_AGE = 15 * 60
 # 静态文件目录
 STATIC_PATH = path.join APP_PATH, STATIC_PREFIX
@@ -47,8 +49,8 @@ TEMP_STATIC_PATH = path.join APP_PATH, TEMP_STATIC_PREFIX
 LISTEN_PORT = commander.port || 10000
 # redis的配置信息
 REDIS_INFO = 
-  port : 10010
-  host : '127.0.0.1'
+  port : commander.redisport || 10010
+  host : commander.redishost || '127.0.0.1'
 # mongo的配置信息
 MONGO_INFO =
   port : commander.mongoport || 10020

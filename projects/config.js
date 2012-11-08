@@ -26,7 +26,7 @@
 
 
   initArguments = function(program) {
-    return program.version('0.0.1').option('-p, --port <n>', 'listen port', parseInt).option('-s, --slave <n>', 'slave total', parseInt).option('-u, --user <n>', 'database user').option('-w, --password <n>', 'database password').option('-key, --dbcachekey <n>', 'db cache key prefix').option('--mongohost <n>', 'mongodb host').option('--mongoport <n>', 'mongodb port', parseInt).option('-l, --list <items>', 'the app list, separated by ","', splitArgs).parse(process.argv);
+    return program.version('0.0.1').option('-p, --port <n>', 'listen port', parseInt).option('-s, --slave <n>', 'slave total', parseInt).option('-u, --user <n>', 'database user').option('-w, --password <n>', 'database password').option('-l, --list <items>', 'the app list, separated by ","', splitArgs).option('--dbcachekey <n>', 'db cache key prefix').option('--mongohost <n>', 'mongodb host').option('--mongoport <n>', 'mongodb port', parseInt).option('--redishost <n>', 'redis host').option('--redisport <n>', 'redis port', parseInt).parse(process.argv);
   };
 
   initArguments(commander);
@@ -48,8 +48,8 @@
   LISTEN_PORT = commander.port || 10000;
 
   REDIS_INFO = {
-    port: 10010,
-    host: '127.0.0.1'
+    port: commander.redisport || 10010,
+    host: commander.redishost || '127.0.0.1'
   };
 
   MONGO_INFO = {

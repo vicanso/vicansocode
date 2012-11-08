@@ -4,6 +4,7 @@
 ###
 
 _ = require 'underscore'
+log4js = require 'log4js'
 config = require '../config'
 appPath = config.getAppPath()
 uid = config.getUID()
@@ -14,6 +15,14 @@ uid = config.getUID()
 ###
 getLogger = (runningFile) ->
   loggerFile = runningFile.replace appPath, ''
-  logger = require('log4js').getLogger "node:#{uid} #{loggerFile}"
+  logger = log4js.getLogger "node:#{uid} #{loggerFile}"
+  errorLog = logger.error
+  logger.error = () ->
+    args = _.toArray arguments
+    err = new Error()
+    infos = err.stack.split('\n')[2]
+    args[args.length - 1] = args[args.length - 1] + infos
+    errorLog.apply logger, args
+  return logger
 
 module.exports = getLogger
