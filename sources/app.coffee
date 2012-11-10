@@ -80,7 +80,6 @@ initExpress = () ->
 
   logger.info "listen port #{config.getListenPort()}"
 
-
 ###*
  * [initApp 初始化APP]
  * @return {[type]} [description]

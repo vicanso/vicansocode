@@ -18,6 +18,8 @@
 
   uid = config.getUID();
 
+  log4js.loadAppender('file');
+
   /**
    * [getLogger 返回logger对象（输出信息包含调用该logger的文件名）]
    * @param  {[type]} runningFile [description]
@@ -30,12 +32,13 @@
     loggerFile = runningFile.replace(appPath, '');
     logger = log4js.getLogger("node:" + uid + " " + loggerFile);
     errorLog = logger.error;
-    logger.error = function() {
+    logger.error = function(msg) {
       var args, err, infos;
       args = _.toArray(arguments);
       err = new Error();
       infos = err.stack.split('\n')[2];
-      args[args.length - 1] = args[args.length - 1] + infos;
+      console.log(infos.trim());
+      args.unshift(infos.trim().replace(appPath, ''));
       return errorLog.apply(logger, args);
     };
     return logger;
