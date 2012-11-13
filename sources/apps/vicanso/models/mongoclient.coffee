@@ -8,4 +8,4 @@ appConfig = require "#{appPath}/apps/vicanso/config"
 # 创建一个新的mongo client，保存有相关的连接信息与schema
 mongoClient = client.getClient appConfig.getDataBaseName(), appConfig.getConnectionStr(), schemas
 
-module.exports = mongoClient
+module.exports[key] = func for key, func of mongoClient

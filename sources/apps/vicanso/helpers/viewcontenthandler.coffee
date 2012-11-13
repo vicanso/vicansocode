@@ -107,4 +107,5 @@ viewContentHandler =
   updateNodeModules : (res) ->
     viewDataHandler.updateNodeModules () ->
       res.send 'success'
-module.exports = viewContentHandler
+      
+module.exports[key] = func for key, func of viewContentHandler

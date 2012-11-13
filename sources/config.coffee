@@ -39,6 +39,8 @@ IS_PRODUCTION_MODE = process.env.NODE_ENV is 'production'
 STATIC_PREFIX = '/static'
 # 静态文件的HTTP缓存时间(单位秒)
 STATIC_FILE_MAX_AGE = 15 * 60
+# views的目录
+VIEWS_PATH = "#{APP_PATH}/views"
 # 静态文件目录
 STATIC_PATH = path.join APP_PATH, STATIC_PREFIX
 # 临时文件（根据网页合并的css,js文件）HTTP请求前缀
@@ -118,11 +120,17 @@ config =
   isMaster : () ->
     return IS_MASTER
   ###*
+   * [getViewsPath 返回view的目录]
+   * @return {[type]} [description]
+  ###
+  getViewsPath : () ->
+    return convertStaticPath VIEWS_PATH
+  ###*
    * [getStaticPath 返回静态文件路径]
    * @return {[type]} [description]
   ###
   getStaticPath : () ->
-    return STATIC_PATH
+    return convertStaticPath STATIC_PATH
   ###*
    * [getStaticFileMaxAge 返回静态文件的HTTP缓存时间，以second为单位]
    * @return {[type]} [description]
@@ -134,7 +142,7 @@ config =
    * @return {[type]} [description]
   ###
   getTempPath : () ->
-    return path.join APP_PATH, TEMP_STATIC_PREFIX
+    return convertStaticPath path.join APP_PATH, TEMP_STATIC_PREFIX
   ###*
    * [getMergeFiles 返回合并文件列表]
    * @return {[type]} [description]
@@ -228,5 +236,10 @@ config =
   ###
   getDBCacheKeyPrefix : () ->
     return DB_CACHE_KEY_PREFIX
-module.exports = config
+
+convertStaticPath = (path) ->
+  return path
+  # return path.replace '/sources', '/projects'
+
+module.exports[key] = func for key, func of config
   

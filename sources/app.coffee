@@ -15,8 +15,6 @@ appPath = config.getAppPath()
 logger = require("#{appPath}/helpers/logger") __filename
 beforeRunningHandler = require "#{appPath}/helpers/beforerunninghandler"
 staticHandler = require "#{appPath}/helpers/static"
-slaveTotal = config.getSlaveTotal()
-myUtil = require "#{appPath}/helpers/util"
 appInfoParse = require "#{appPath}/helpers/appinfoparse"
 pageError = require "#{appPath}/helpers/pageerror"
 # varnish = require "#{appPath}/helpers/varnish"
@@ -24,7 +22,7 @@ pageError = require "#{appPath}/helpers/pageerror"
 
 initExpress = () ->
   app = express()
-  app.set 'views', "#{appPath}/views"
+  app.set 'views', config.getViewsPath()
   app.set 'view engine', 'jade'
   app.engine 'jade', require('jade').__express
 
@@ -70,7 +68,7 @@ initExpress = () ->
   if startAppList == 'all'
     fs.readdir "#{appPath}/apps", (err, files) ->
       _.each files, (appName) ->
-        if appName[0] != '.'
+        if appName.charAt(0) != '.'
           require("#{appPath}/apps/#{appName}/init") app
   else
     _.each startAppList, (appName) ->
@@ -87,6 +85,7 @@ initExpress = () ->
 initApp = () ->
   if config.isProductionMode() && config.isMaster()
     beforeRunningHandler.run()
+    slaveTotal = config.getSlaveTotal()
     while slaveTotal
       cluster.fork()
       slaveTotal--
@@ -96,7 +95,7 @@ initApp = () ->
       cluster.on event, (worker) ->
         logger.info "worker #{worker.process.pid} #{event}"
     cluster.on 'exit', (worker) ->
-      logger.error "worker #{worker.process.pid} #{event}"
+      logger.error "worker #{worker.process.pid} exit"
       cluster.fork()
   else
     beforeRunningHandler.run()

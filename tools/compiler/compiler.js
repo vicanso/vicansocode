@@ -35,7 +35,11 @@ var getWatchFiles = function(watchPath, ext, resultFiles, cbf){
             cbf();
           }
           else if(stat.isFile()){
-            if(path.extname(file) === ext && file.indexOf('.min' + ext) === -1){
+            if(ext){
+              if(path.extname(file) === ext && file.indexOf('.min' + ext) === -1){
+                resultFiles.push(file);
+              }
+            }else{
               resultFiles.push(file);
             }
             cbf();
@@ -268,6 +272,14 @@ var compileStart = function(){
     }
   });
 };
+
+
+// var copyFiles = function(sourcePath, destPath, filterExt){
+//   var resultFiles = [];
+//   getWatchFiles('/Users/vicanso/workspace/vicansocode/projects', '/Users/vicanso/workspace/vicansocode/sources', resultFiles, function(){
+//     logger.info(resultFiles);
+//   });
+// };
 
 var HANDLE_FUNCTIONS = {
   less : compileLess,

@@ -22,4 +22,4 @@ config =
   getDataBaseName : () ->
     return DB_NAME
 
-module.exports = config
+module.exports[key] = func for key, func of config

@@ -12,4 +12,4 @@ user =
   loader : () ->
     return sessionHandler
 
-module.exports = user
+module.exports[key] = func for key, func of user

@@ -18,5 +18,6 @@ client.on 'ready', () ->
     logger.error e
 
 
-module.exports = client
+module.exports[key] = func for key, func of client
+
 

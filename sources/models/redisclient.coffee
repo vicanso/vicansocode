@@ -11,6 +11,7 @@ redisInfo = config.getRedisInfo()
 client = require('redis').createClient redisInfo.port, redisInfo.host
 logger = require("#{appPath}/helpers/logger") __filename
 
+
 ###*
  * [initRedisClient 初始化redis client，将原来client的函数添加到redisClient中，增加对client的调用会先判断是否已连接]
  * @param  {[type]} redisClient [新的redis client]
@@ -46,5 +47,5 @@ client.on 'error', (err) ->
     logger.error err
   logRedisReady = true
 
- 
-module.exports = redisClient
+module.exports[key] = func for key, func of redisClient
+

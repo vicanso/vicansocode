@@ -19,7 +19,6 @@ redisOptions =
   # ttl的单位为S
   ttl : 30 * 60
 sessionHandleFunctions = {}
-cookieParser = express.cookieParser()
 session = 
   ###*
    * [handler session的处理函数]
@@ -27,6 +26,7 @@ session =
   ###
   handler : () ->
     return (req, res, next) ->
+      cookieParser = express.cookieParser()
       cookieParser req, res, () ->
         appName = appInfoParse.getAppName req
         session.getHandler(appName) req, res, next
@@ -48,7 +48,7 @@ session =
   getHandler : (appName = 'all') ->
     return sessionHandleFunctions[appName] || sessionHandleFunctions['all']
 
-
 session.addHandler 'all'
 
-module.exports = session
+
+module.exports[key] = func for key, func of session

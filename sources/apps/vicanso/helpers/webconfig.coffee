@@ -65,4 +65,5 @@ getNav = () ->
       alias : 'aboutMe'
     }
   ]
-module.exports = webConfig
+
+module.exports[key] = func for key, func of webConfig

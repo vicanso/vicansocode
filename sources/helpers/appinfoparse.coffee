@@ -39,4 +39,5 @@ appInfoParse =
     if _.isFunction func
       parserList.push func
 
-module.exports = appInfoParse
+
+module.exports[key] = func for key, func of appInfoParse

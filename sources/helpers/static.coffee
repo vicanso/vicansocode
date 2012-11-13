@@ -33,4 +33,4 @@ staticHandler =
       else
         next()
 
-module.exports = staticHandler
+module.exports[key] = func for key, func of staticHandler

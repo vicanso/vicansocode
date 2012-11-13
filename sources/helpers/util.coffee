@@ -153,4 +153,5 @@ util =
       return legalCharList[Math.floor Math.random() * legalCharListLength]
     return (getRandomChar legalCharList for num in [0...length]).join ''
 
-module.exports = util
+module.exports[key] = func for key, func of util
+

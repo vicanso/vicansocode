@@ -158,4 +158,4 @@ queryList =
         execFunction = query.execFunctions.pop()
         execFunction null, null
 
-module.exports = queryCache
+module.exports[key] = func for key, func of queryCache

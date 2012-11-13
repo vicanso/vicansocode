@@ -392,4 +392,4 @@ class QueryInfo
       queryStr = queryInfo.toString()
     return "#{queryStr} used time: #{usedTime}ms"
 
-module.exports = mongoClient
+module.exports[key] = func for key, func of mongoClient

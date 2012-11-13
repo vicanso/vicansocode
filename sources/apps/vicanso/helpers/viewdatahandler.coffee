@@ -101,4 +101,4 @@ downloadNodeModulesPackage = (cbf) ->
 
 
 
-module.exports = viewDataHandler
+module.exports[key] = func for key, func of viewDataHandler

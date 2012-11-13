@@ -5,4 +5,4 @@ errorPageHandler =
     else
       res.send statusCode, 'error'
 
-module.exports = errorPageHandler
+module.exports[key] = func for key, func of errorPageHandler

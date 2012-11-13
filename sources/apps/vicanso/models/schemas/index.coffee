@@ -14,4 +14,4 @@ initSchemas = (schemas) ->
       schemaInfo = require "./#{file}"
       schemas[schemaInfo.name] = schemaInfo.schema
   return schemas
-module.exports = initSchemas {}
+module.exports[key] = func for key, func of initSchemas {}

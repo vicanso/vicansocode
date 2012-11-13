@@ -38,5 +38,4 @@ removeTempPathFiles = () ->
           if err
             logger.error err
 
-module.exports = 
-  run : run
+module.exports.run = run

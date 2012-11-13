@@ -109,5 +109,4 @@ fileMerger =
             tempFilesStatus[linkFileHash] = 'complete'
       return ''
 
-
-module.exports = fileMerger
+module.exports[key] = func for key, func of fileMerger

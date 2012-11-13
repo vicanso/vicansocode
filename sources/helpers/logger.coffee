@@ -8,7 +8,6 @@ log4js = require 'log4js'
 config = require '../config'
 appPath = config.getAppPath()
 uid = config.getUID()
-log4js.loadAppender 'file'
 ###*
  * [getLogger 返回logger对象（输出信息包含调用该logger的文件名）]
  * @param  {[type]} runningFile [description]

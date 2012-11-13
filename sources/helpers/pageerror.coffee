@@ -32,5 +32,4 @@ pageError =
     err.status = status
     return err
 
-
-module.exports = pageError
+module.exports[key] = func for key, func of pageError

@@ -72,5 +72,4 @@ response = (req, res, html) ->
   else
     res.send html
 
-
-module.exports = httpHandler
+module.exports[key] = func for key, func of httpHandler
