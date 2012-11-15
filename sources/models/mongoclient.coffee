@@ -6,6 +6,7 @@
 config = require '../config'
 _ = require 'underscore'
 mongoose = require 'mongoose'
+fs = require 'fs'
 Schema = mongoose.Schema
 appPath = config.getAppPath()
 mongoInfo = config.getMongoInfo()
@@ -19,40 +20,45 @@ connectionOptions =
   db : 
     native_parser : false
 
- 
+noop = () ->
 
 mongoClient =
   ###*
    * [getClient 返回一个新的mongoclient对象，调用相应的方法时，不再输入传alias参数]
    * @param  {[type]} alias   [数据库连接别名]
    * @param  {[type]} uri     [数据库连接地址]
-   * @param  {[type]} schemas [schemas列表]
+   * @param  {[type]} schemasPath [schemasPath文件目录]
+   * @param  {[type]} cbf [回调函数]
    * @return {[type]}         [description]
   ###
-  getClient : (alias, uri, schemas) ->
+  getClient : (alias, uri, schemasPath, cbf = noop) ->
     self = @
-    mongoClient = {}
+    newMongoClient = {}
     _.each _.functions(self), (func) ->
       if func != 'getClient'
-        mongoClient[func] = () ->
+        newMongoClient[func] = () ->
           if !_.isFunction self[func]
             logger.error "call mongoClient function: #{func} is not defined"
           else
             args = _.toArray arguments
             args.unshift alias  
             self[func].apply self, args
-    mongoClient.createConnection uri
-    _.each schemas, (model, name) ->
-      mongoClient.model name, model
-    return mongoClient
+    newMongoClient.createConnection uri, connectionOptions, (err) ->
+      if !err
+        schemas = initSchemas schemasPath
+        _.each schemas, (model, name) ->
+          newMongoClient.model name, model
+      cbf err
+    return newMongoClient
   ###*
    * [createConnection 创建mongo数据库连接]
    * @param  {[type]} alias [数据库连接别名（用于获取该连接）]
    * @param  {[type]} uri   [数据库连接字符串]
    * @param  {[type]} options [数据库连接选项]
+   * @param  {[type]} cbf [回调函数]
    * @return {[type]}       [description]
   ###
-  createConnection : (alias, uri, options = connectionOptions) ->
+  createConnection : (alias, uri, options, cbf = noop) ->
     conn = dataBaseHandler.getConnection alias
     if !conn
       conn = mongoose.createConnection uri, options, (err) ->
@@ -60,11 +66,12 @@ mongoClient =
           logger.error err
         else
           logger.info uri
-      dataBaseHandler.setDBInfo {
-        uri : uri
-        conn : conn
-        alias : alias
-      }
+          dataBaseHandler.setDBInfo {
+            uri : uri
+            conn : conn
+            alias : alias
+          }
+        cbf err
     return conn
   ###*
    * [getConnection 返回数据库连接]
@@ -227,13 +234,13 @@ dataBaseHandler =
   model : (alias, name, modelObj) ->
     self = @
     dbInfo = self.getDBInfo alias
+    if !dbInfo
+      return null
     models = dbInfo.models
     conn = dbInfo.conn
     if modelObj
       if conn
-        schema = new Schema modelObj
-        model = conn.model name, schema
-        models[name] = model
+        models[name] = conn.model name, modelObj
     else
       return models[name]
   ###*
@@ -340,6 +347,18 @@ transformDataToObject = (func) ->
       data = data.toObject()
     func err, data
 
+
+initSchemas = (path) ->
+  schemas = {}
+  files = fs.readdirSync path
+  _.each files, (file) ->
+    if file.charAt(0) != '.'
+      schemaInfo = require "#{path}/#{file}"
+      model = new Schema schemaInfo.schema
+      _.each schemaInfo.indexList, (param) ->
+        model.index param
+      schemas[schemaInfo.name] = model
+  return schemas
 
 class QueryInfo
   constructor : (queryInfo) ->

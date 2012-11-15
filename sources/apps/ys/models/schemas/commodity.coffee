@@ -1,5 +1,6 @@
-schemas = 
-  Commodity :
+module.exports = 
+  name : 'Commodity'
+  schema :
     title : 
       type : String
       trim : true
@@ -47,5 +48,3 @@ schemas =
       default : Date.now
     # 记录修改时间
     modifiedTime : Date
-    
-module.exports = schemas

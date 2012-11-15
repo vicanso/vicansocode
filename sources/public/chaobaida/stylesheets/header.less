@@ -1,18 +1,14 @@
 @import "../../common/stylesheets/common";
 @import "common";
 #header{
-  position: fixed;
-  top:0;
-  left:0;
-  right:0;
-  z-index: 89;
   .navContainer{
-    height: @headerHeight;
+    height: @NAV_HEIGHT;
     line-height: 30px;
-    width:770px;
+    width:@CONTENT_WIDTH;
+    background-color: @THEME_COLOR1;
     margin:auto;
     .nav{
-      color:#808080;
+      color:white;
       border-right: 1px solid #e0e0e0;
       display: inline-block;
       padding:0 30px;
@@ -20,21 +16,13 @@
         border-right: none;
       }
       &:hover, &.selected{
-        color:#f0f0f0;
+        background-color: @THEME_COLOR2;
+        font-size: 16px;
+        font-weight: 900;
       }
     }
     .nav{
       *display:inline;
     }
   }
-}
-#forkMeOnGithub{
-  display: block;
-  position: absolute;
-  z-index: 99;
-  right: 0;
-  top:0;
-  width: 149px;
-  height: 149px;
-  background: url(../images/forkme.png) no-repeat;
 }

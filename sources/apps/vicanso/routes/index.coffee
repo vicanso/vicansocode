@@ -2,13 +2,10 @@ _ = require 'underscore'
 config = require '../../../config'
 appPath = config.getAppPath()
 viewContentHandler = require "#{appPath}/apps/vicanso/helpers/viewcontenthandler"
-FileImporter = require "#{appPath}/helpers/fileimporter"
-httpHandler = require "#{appPath}/helpers/httphandler"
 mongoClient = require "#{appPath}/apps/vicanso/models/mongoclient"
-# errorPageHandler = require "#{appPath}/apps/vicanso/helpers/errorpagehandler"
 myUtil = require "#{appPath}/helpers/util"
+routeHandler = require "#{appPath}/helpers/routehandler"
 user = require "#{appPath}/helpers/user"
-pageError = require "#{appPath}/helpers/pageerror"
 userLoader = user.loader()
 # 路由信息表
 routeInfos = [
@@ -57,23 +54,7 @@ routeInfos = [
 ]
 
 module.exports = (app) ->
-  _.each routeInfos, (routeInfo) ->
-    middleware = routeInfo.middleware || []
-    app[routeInfo.type] routeInfo.route, middleware, (req, res, next) ->
-      debug = !config.isProductionMode()
-      viewContentHandler[routeInfo.handerFunc] req, res, (viewData) ->
-        if viewData
-          if routeInfo.jadeView
-            viewData.fileImporter = new FileImporter debug
-            httpHandler.render req, res, routeInfo.jadeView, viewData
-          else
-            if _.isObject viewData
-              viewData = JSON.stringify viewData
-            httpHandler.json req, res, viewData
-        else
-          err = pageError.error 500, "#{__filename}: the viewData is null"
-          next err
-          # errorPageHandler.response 500
+  routeHandler.initRoutes app, routeInfos, viewContentHandler
           
   # app.get '/vicanso/ajax/*', (req, res) ->
   #   res.send 'success'

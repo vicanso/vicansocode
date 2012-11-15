@@ -1,0 +1,25 @@
+- fileImporter.importCss('/chaobaida/stylesheets/header.css');
+- var headerInfo = viewContent.header;
+- var navData = headerInfo.nav;
+- var navTotal = navData.length;
+//- - var userInfo = userInfo;
+//- #loginContainer
+//-   if !userInfo
+//-     #wb_connect_btn
+//-   else
+//-     #userInfoContainer
+//-       - var userWebSite = 'http://weibo.com/' + userInfo.url;
+//-       a.userName(href='#{userWebSite}', titl='#{userInfo.name}') #{userInfo.name}
+//-         a.userWeb(href='#{userWebSite}')
+//-           img(src='#{userInfo.avatar}')
+//-   p 每天都能进步，那是好事。每天都不进步，那不是坏事。每天都在退步，那是什么事啊！
+if headerInfo
+  header#header
+    nav.navContainer
+      each item, i in navData
+        - var navClass = 'nav';
+        if i === headerInfo.selectedIndex
+          - navClass += ' selected uiRedGradientBG';
+        if i === navTotal - 1
+          - navClass += ' lastNav';
+        a(class='#{navClass}', href='#{item.href}') #{item.name}

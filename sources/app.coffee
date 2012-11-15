@@ -13,6 +13,7 @@ config = require './config'
 appPath = config.getAppPath()
 
 logger = require("#{appPath}/helpers/logger") __filename
+myUtil = require "#{appPath}/helpers/util"
 beforeRunningHandler = require "#{appPath}/helpers/beforerunninghandler"
 staticHandler = require "#{appPath}/helpers/static"
 appInfoParse = require "#{appPath}/helpers/appinfoparse"
@@ -63,20 +64,26 @@ initExpress = () ->
   
   app.use pageError.handler()
 
-  
+
+  startApps = (appNames) ->
+    _.each appNames, (appName) ->
+      if appName.charAt(0) != '.'
+        file = "#{appPath}/apps/#{appName}/init"
+        myUtil.requireFileExists file, (exists) ->
+          if exists
+            require(file) app
+
   startAppList = config.getStartAppList()
   if startAppList == 'all'
     fs.readdir "#{appPath}/apps", (err, files) ->
-      _.each files, (appName) ->
-        if appName.charAt(0) != '.'
-          require("#{appPath}/apps/#{appName}/init") app
+      startApps files
   else
-    _.each startAppList, (appName) ->
-      require("#{appPath}/apps/#{appName}/init") app
+    startApps startAppList
 
   app.listen config.getListenPort()
 
   logger.info "listen port #{config.getListenPort()}"
+
 
 ###*
  * [initApp 初始化APP]

@@ -91,6 +91,23 @@ util =
   deflate : (data, cbf) ->
     zlib.deflate data, cbf
   ###*
+   * [requireFileExists 判断require的文件是否存在（主要判断该文件还以四种后缀文件coffee, js, json, node）]
+   * @param  {[type]} file [description]
+   * @param  {[type]} cbf  [description]
+   * @return {[type]}      [description]
+  ###
+  requireFileExists : (file, cbf) ->
+    requireExts = ['', 'coffee', 'js', 'json', 'node']
+    checkFunctions = []
+    _.each requireExts, (ext) ->
+      checkFunctions.push (cbf) ->
+        if ext
+          file += ".#{ext}"
+        fs.exists file, (exists) ->
+          cbf null, exists
+    async.parallel checkFunctions, (err, results) ->
+      cbf _.any results
+  ###*
    * [cutStringByViewSize 根据显示的尺寸截剪字符串]
    * @param  {[type]} str      [字符串]
    * @param  {[type]} viewSize [显示的长度（中文字符为2，英文字符为1）]

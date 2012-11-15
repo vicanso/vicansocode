@@ -20,8 +20,8 @@ getLogger = (runningFile) ->
   logger.error = (msg) ->
     args = _.toArray arguments
     err = new Error()
-    infos = err.stack.split('\n')[2]
-    args.unshift infos.trim().replace appPath, ''
+    info = err.stack.split('\n')[2]
+    args.unshift info.trim().replace "#{runningFile}:", ''
     errorLog.apply logger, args
   return logger
 

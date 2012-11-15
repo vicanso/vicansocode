@@ -1,0 +1,19 @@
+!!!5
+html(lang='zh-CN')
+  head
+    meta(http-equiv='Content-Type', content='text/html; charset=UTF-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge,chrome=1')
+    meta(name='keywords', content='javascript, node.js, WEB前端')
+    meta(name='description', content='')
+    meta(name='author',content='vicanso 腻味 tree')
+    title= title
+    - fileImporter.importCss('/common/stylesheets/global.css');
+    //CSS_FILES_CONTAINER
+    //if lt IE 9
+      script(src='/static/common/javascripts/util/html5shiv.min.js', type='text/javascript')
+  body
+    block bodyContainer
+  script(src='/static/common/javascripts/jquery/jquery-1.8.1.min.js', type='text/javascript')
+  - fileImporter.importJs(['/common/javascripts/util/underscore.min.js', '/common/javascripts/jquery/jquery.cookies.min.js', '/common/javascripts/jquery/jquery.url.min.js', '/common/javascripts/jquery/jquery.mousewheel.min.js', '/common/javascripts/util/localstorage.min.js']);
+  //JS_FILES_CONTAINER
+  script(src='/qz/nocacheinfo.js', type='text/javascript')
