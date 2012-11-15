@@ -64,6 +64,7 @@ var getWatchFiles = function(watchPath, ext, resultFiles, cbf){
  * @return {[type]}         [description]
  */
 var compileLess = function(file, cssFile){
+  logger.warn(file);
   fs.readFile(file, 'utf8', function(err, data){
     if(err){
       logger.error(err);
@@ -72,6 +73,8 @@ var compileLess = function(file, cssFile){
     var env = {
       paths : [path.dirname(file)]
     };
+    logger.warn(data);
+    
     var parser = new less.Parser(env);
     try{
       parser.parse(data, function(err, tree){
@@ -173,9 +176,9 @@ var compileCoffeeScript = function(file, jsFile){
  */
 var startWatchFiles = function(watchConfig, immediatelyCompile){
   var resultFiles = [];
-  var cbf = function(){
-    logger.info(resultFiles);
-    _.each(resultFiles, function(file){
+  var cbf = function(files){
+    logger.info(files);
+    _.each(files, function(file){
       var compileFunc = _.debounce(function(file){
         compileHandle(file, watchConfig);
       }, watchConfig.delay);
@@ -187,8 +190,24 @@ var startWatchFiles = function(watchConfig, immediatelyCompile){
       });
     });
   };
-  getWatchFiles(watchConfig.path, watchConfig.ext, resultFiles, cbf);
+
+  var tmpFunc = function(){
+    var files = [];
+    getWatchFiles(watchConfig.path, watchConfig.ext, files, function(){
+      var results = _.difference(files, resultFiles);
+      if(results.length){
+        cbf(results);
+        resultFiles = resultFiles.concat(results);
+      }
+      setTimeout(tmpFunc, 5000);
+    });
+
+  };
+  tmpFunc();
+
 };
+
+
 
 /**
  * compileHandle 根据不同的文件执行各自对应的编译方法
