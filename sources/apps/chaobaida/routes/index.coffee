@@ -7,6 +7,9 @@ myUtil = require "#{appPath}/helpers/util"
 user = require "#{appPath}/helpers/user"
 pageError = require "#{appPath}/helpers/pageerror"
 userLoader = user.loader()
+convertQueryHandler = routeHandler.convertQueryHandler()
+mongoClient = require "#{appPath}/apps/chaobaida/models/mongoclient"
+logger = require("#{appPath}/helpers/logger") __filename
 
 routeInfos = [
   {
@@ -17,18 +20,35 @@ routeInfos = [
   }
 ]
 
-module.exports = (app) ->
-  routeHandler.initRoutes app, routeInfos, viewContentHandler
+# convertQuery = (params) ->
+#   logger.warn convertSpecialChar params.conditions
+#   queryArgs = [
+#     params.schema
+#     JSON.parse convertSpecialChar params.conditions
+#     ''
+#     JSON.parse convertSpecialChar params.limit
+#   ]
+#   return queryArgs
 
-  # setTimeout () ->
-  #   mongoClient.find "Good", {
-  #     delistTime : 
-  #       '$gt' : 1352961900000
-  #     itemPrice : 
-  #       '$lt' : 100
-  #     'categories.cid' : 100101
-  #   }, '', {
-  #     limit : 30
-  #   }, (err, docs) ->
-  #     console.log docs.length
-  # , 2000
+
+module.exports = (app) ->
+  params = [
+    'conditions'
+    'fields'
+    'options'
+  ]
+  routes = routeHandler.getAllRoutes params, '/qz/schema/:schema'
+  _.each routes, (route) ->
+    app.get route, queryHandler
+
+
+queryHandler = [
+  convertQueryHandler
+  (req, res, next) ->
+    args = req._queryArgs
+    logger.warn args
+    args.push (err, docs) ->
+      res.json docs
+    mongoClient.find.apply mongoClient, args
+]
+

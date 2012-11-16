@@ -163,12 +163,65 @@ util =
       res.header 'Cache-Control', "public, max-age=#{maxAge}"
     res.header 'Last-Modified', new Date()
     res.send data
+  ###*
+   * [randomKey description]
+   * @param  {[type]} length [随机数的获取长度]
+   * @param  {[type]} legalChars [description]
+   * @return {[type]}            [description]
+  ###
   randomKey : (length = 10, legalChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789') ->
     legalCharList = legalChars.split ''
     getRandomChar = (legalCharList) ->
       legalCharListLength = legalCharList.length
       return legalCharList[Math.floor Math.random() * legalCharListLength]
     return (getRandomChar legalCharList for num in [0...length]).join ''
+  ###*
+   * http://mengliao.blog.51cto.com/876134/824079
+   * [permutation 生成数组元素的所有排列]
+   * @param  {[type]} arr [description]
+   * @return {[type]}     [description]
+  ###
+  permutation : (arr) ->
+    arrLength = arr.length
+    result = []
+    fac = 1
+    for i in [2..arrLength]
+      fac *= i
+    for index in [0...fac]
+      tmpResult = new Array arrLength
+      t = index
+      for i in [1..arrLength]
+        w = t % i
+        j = i - 1
+        while j > w
+          tmpResult[j] = tmpResult[j - 1]
+          j--
+        tmpResult[w] = arr[i - 1]
+        t = Math.floor(t / i)
+      result.push tmpResult
+    return result
+  combination : (arr, num) ->
+    r = []
+    func = (t, a, n) ->
+      if n == 0
+        return r.push t
+      total = a.length - n
+      for i in [0..total]
+        func t.concat(a[i]), a.slice(i + 1), n - 1
+    func [], arr, num
+    return r
+
+
+# function combine(arr, num) {
+#     var r = [];
+#     (function f(t, a, n) {
+#         if (n == 0) return r.push(t);
+#         for (var i = 0, l = a.length; i <= l - n; i++) {
+#             f(t.concat(a[i]), a.slice(i + 1), n - 1);
+#         }
+#     })([], arr, num);
+#     return r;
+# }
 
 module.exports[key] = func for key, func of util
 
