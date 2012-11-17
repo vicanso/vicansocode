@@ -7,6 +7,13 @@ pageError = require "#{appPath}/helpers/pageerror"
 myUtil = require "#{appPath}/helpers/util"
 
 routeHandler = 
+  ###*
+   * initRoutes 初始化路由处理
+   * @param  {[type]} app                [description]
+   * @param  {[type]} routeInfos         [description]
+   * @param  {[type]} viewContentHandler [description]
+   * @return {[type]}                    [description]
+  ###
   initRoutes : (app, routeInfos, viewContentHandler) ->
     _.each routeInfos, (routeInfo) ->
       middleware = routeInfo.middleware || []
@@ -24,12 +31,20 @@ routeHandler =
           else
             err = pageError.error 500, "#{__filename}: the viewData is null"
             next err
+  ###*
+   * convertQueryHandler 转换查询函数的处理器
+   * @return {[type]} [description]
+  ###
   convertQueryHandler : () ->
     return (req, res, next) ->
       schema = req.param 'schema'
-      conditions = JSON.parse req.param('conditions') || '{}'
+      conditions = req.param('conditions') || '{}'
+      if _.isString conditions
+        conditions = JSON.parse conditions
       fields = req.param('fields') || ''
-      options = JSON.parse req.param('options') || '{}'
+      options = req.param('options') || '{}'
+      if _.isString options
+        options = JSON.parse options
       options.limit ?= 30
       req._queryArgs = [
         schema
@@ -38,7 +53,13 @@ routeHandler =
         options
       ]
       next()
-  getAllRoutes : (params, prefix = '') ->
+  ###*
+   * getAllRoutes 根据参数列表生成所有的路由
+   * @param  {[type]} prefix = '' [description]
+   * @param  {[type]} params [description]
+   * @return {[type]}        [description]
+  ###
+  getAllRoutes : (prefix = '', params = ['conditions', 'fields', 'options']) ->
     paramsLength = params.length
     routes = []
     routeParamsList = myUtil.permutation params

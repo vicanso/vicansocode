@@ -94,8 +94,9 @@ initApp = () ->
     beforeRunningHandler.run()
     slaveTotal = config.getSlaveTotal()
     while slaveTotal
-      cluster.fork()
+      worker = cluster.fork()
       slaveTotal--
+    # logger.info cluster.workers
 
     #worker的事件输出，当其中一个worker退出时，启动另外一个worker
     _.each 'fork listening online'.split(' '), (event) ->
@@ -104,7 +105,16 @@ initApp = () ->
     cluster.on 'exit', (worker) ->
       logger.error "worker #{worker.process.pid} exit"
       cluster.fork()
+
+
+    initMsg cluster
   else
+    process.on 'message', (m, type) ->
+      logger.info type
+      process.send m
+    setTimeout () ->
+      process.send 0
+    , 2000
     beforeRunningHandler.run()
     if config.isProductionMode()
       domain = domain.create()
@@ -114,6 +124,28 @@ initApp = () ->
         initExpress()
     else
       initExpress()
+
+initMsg = (cluster) ->
+  _.each cluster.workers, (worker) ->
+    start = null
+    worker.on 'message', (m) ->
+      m = global.parseInt(m) + 1
+      if m == 1
+        start = Date.now()
+      if m < 10
+        worker.send m
+      else
+        logger.error Date.now() - start
+
+#     if (cluster.isMaster) {
+#   var worker = cluster.fork();
+#   worker.send('hi there');
+
+# } else if (cluster.isWorker) {
+#   process.on('message', function(msg) {
+#     process.send(msg);
+#   });
+# }
 
 initApp()
 

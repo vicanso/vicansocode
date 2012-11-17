@@ -32,12 +32,7 @@ routeInfos = [
 
 
 module.exports = (app) ->
-  params = [
-    'conditions'
-    'fields'
-    'options'
-  ]
-  routes = routeHandler.getAllRoutes params, '/qz/schema/:schema'
+  routes = routeHandler.getAllRoutes '/qz/schema/:schema'
   _.each routes, (route) ->
     app.get route, queryHandler
 
