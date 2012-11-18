@@ -62,8 +62,6 @@ MONGO_INFO =
 VARNISH_INFO =
   managementPort : 10030
   host : '127.0.0.1'
-# 是否master
-IS_MASTER = cluster.isMaster || false
 # slave的总数
 SLAVE_TOTAL = commander.slave || require('os').cpus().length
 # 数据库用户名
@@ -118,7 +116,7 @@ config =
    * @return {Boolean} [description]
   ###
   isMaster : () ->
-    return IS_MASTER
+    return cluster.isMaster || false
   ###*
    * [getViewsPath 返回view的目录]
    * @return {[type]} [description]

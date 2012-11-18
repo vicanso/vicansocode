@@ -41,7 +41,6 @@ queryHandler = [
   convertQueryHandler
   (req, res, next) ->
     args = req._queryArgs
-    logger.warn args
     args.push (err, docs) ->
       res.json docs
     mongoClient.find.apply mongoClient, args

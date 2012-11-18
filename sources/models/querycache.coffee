@@ -151,10 +151,10 @@ queryList =
   ###
   next : (key) ->
     self = @
-    if key && data
+    if key
       queries = self.queries
       query = queries[key]
-      if query?.execFunctions
+      if query?.execFunctions.length != 0
         execFunction = query.execFunctions.pop()
         execFunction null, null
 

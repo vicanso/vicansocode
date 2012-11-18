@@ -14,6 +14,7 @@ appPath = config.getAppPath()
 
 logger = require("#{appPath}/helpers/logger") __filename
 myUtil = require "#{appPath}/helpers/util"
+MessageHandler = require "#{appPath}/helpers/messagehandler"
 beforeRunningHandler = require "#{appPath}/helpers/beforerunninghandler"
 staticHandler = require "#{appPath}/helpers/static"
 appInfoParse = require "#{appPath}/helpers/appinfoparse"
@@ -31,17 +32,17 @@ initExpress = () ->
   express.logger.token 'node', () ->
     return "node:#{uid}"
   express.logger.format 'production', ":node -- #{express.logger.default} -- :response-time ms"
-    
+  
   # 静态文件处理函数
   app.use staticHandler.handler()
   
   # request by varnish（check node is healthy） just response "success"
-  app.use (req, res, next) ->
-    userAgent = req.header 'User-Agent'
-    if !userAgent
-      res.send 'success'
-    else  
-      next()
+  # app.use (req, res, next) ->
+  #   userAgent = req.header 'User-Agent'
+  #   if !userAgent
+  #     res.send 'success'
+  #   else  
+  #     next()
 
   app.use express.favicon "#{appPath}/static/common/images/favicon.png"
 
@@ -90,6 +91,9 @@ initExpress = () ->
  * @return {[type]} [description]
 ###
 initApp = () ->
+
+  
+
   if config.isProductionMode() && config.isMaster()
     beforeRunningHandler.run()
     slaveTotal = config.getSlaveTotal()
@@ -107,14 +111,19 @@ initApp = () ->
       cluster.fork()
 
 
-    initMsg cluster
+    # setTimeout () ->
+    #   messageHandler.send 0
+    # , 5000
+    # initMsg cluster
   else
-    process.on 'message', (m, type) ->
-      logger.info type
-      process.send m
-    setTimeout () ->
-      process.send 0
-    , 2000
+    # messageHandler = new MessageHandler process
+    # messageHandler.on 'message', (m) ->
+    #   messageHandler.send m
+    # if config.getUID() == 1
+    #   setTimeout () ->
+    #     messageHandler.send 0
+    #   , 5000
+
     beforeRunningHandler.run()
     if config.isProductionMode()
       domain = domain.create()
@@ -125,17 +134,28 @@ initApp = () ->
     else
       initExpress()
 
+    if config.getUID() == 4
+      setTimeout () ->
+        messageHandler.send 0
+      , 5000
+
+    
+  messageHandler = new MessageHandler cluster
+  messageHandler.on 'message', (m) ->
+    logger.warn m
+
 initMsg = (cluster) ->
-  _.each cluster.workers, (worker) ->
-    start = null
-    worker.on 'message', (m) ->
-      m = global.parseInt(m) + 1
-      if m == 1
-        start = Date.now()
-      if m < 10
-        worker.send m
-      else
-        logger.error Date.now() - start
+  # _.each cluster.workers, (worker) ->
+  #   start = null
+  #   messageHandler = new MessageHandler worker
+  #   messageHandler.on 'message', (m) ->
+  #     m = global.parseInt(m) + 1
+  #     if m == 1
+  #       start = Date.now()
+  #     if m < 10
+  #       messageHandler.send m
+  #     else
+  #       logger.error Date.now() - start
 
 #     if (cluster.isMaster) {
 #   var worker = cluster.fork();
