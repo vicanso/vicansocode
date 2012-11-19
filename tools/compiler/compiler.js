@@ -64,7 +64,6 @@ var getWatchFiles = function(watchPath, ext, resultFiles, cbf){
  * @return {[type]}         [description]
  */
 var compileLess = function(file, cssFile){
-  logger.warn(file);
   fs.readFile(file, 'utf8', function(err, data){
     if(err){
       logger.error(err);
@@ -73,7 +72,6 @@ var compileLess = function(file, cssFile){
     var env = {
       paths : [path.dirname(file)]
     };
-    logger.warn(data);
     
     var parser = new less.Parser(env);
     try{
@@ -185,7 +183,7 @@ var startWatchFiles = function(watchConfig, immediatelyCompile){
       if(immediatelyCompile){
         compileHandle(file, watchConfig);
       }
-      fs.watchFile(file, {persistent : true, interval : 2000},function(curr, prev){
+      fs.watch(file, {persistent : true, interval : 2000},function(curr, prev){
         compileFunc(file);
       });
     });

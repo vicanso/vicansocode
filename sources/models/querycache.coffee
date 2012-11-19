@@ -42,7 +42,6 @@ queryCache =
             cbf null, cache
           else
             cbf err, null
-            queryList.setQuering key
     else
       cbf null, null
   ###*
@@ -52,8 +51,8 @@ queryCache =
    * @param {[type]} ttl  [缓存的TTL]
   ###
   set : (key, data, ttl = 300) ->
+    queryList.execQuery key, data
     if key && data && ttl > 0
-      queryList.execQuery key, data
       redisClient.hmset key, 'cache', JSON.stringify(data), 'createTime', Date.now(), (err) ->
         if err
           logger.error err
@@ -143,7 +142,7 @@ queryList =
       if query?.execFunctions
         _.each query.execFunctions, (execFunction) ->
           execFunction null, JSON.parse dataJSONStr
-      delete self.queries[key]
+    delete self.queries[key]
   ###*
    * [next 让等待的下一条查询执行]
    * @param  {[type]}   key [查询条件对应的hash key]

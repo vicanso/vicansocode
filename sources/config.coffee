@@ -22,6 +22,7 @@ initArguments = (program) ->
   .option('-u, --user <n>', 'database user')
   .option('-w, --password <n>', 'database password')
   .option('-l, --list <items>', 'the app list, separated by ","', splitArgs)
+  .option('--log <n>', 'the log file\'s path(in production mode)')
   .option('--dbcachekey <n>', 'db cache key prefix')
   .option('--mongohost <n>', 'mongodb host')
   .option('--mongoport <n>', 'mongodb port', parseInt)
@@ -80,6 +81,8 @@ CACHE_QUERY_RESULT = IS_PRODUCTION_MODE
 RESPONSE_TIME_OUT = 5000
 # 缓存数据库查询的cache的key前缀
 DB_CACHE_KEY_PREFIX = commander.dbcachekey || 'dbcache_'
+# log文件
+LOG_FILE_Name = commander.log || '/var/log/node/log'
 config = 
   ###*
    * [getAppPath 返回APP的所在的目录]
@@ -234,6 +237,12 @@ config =
   ###
   getDBCacheKeyPrefix : () ->
     return DB_CACHE_KEY_PREFIX
+  ###*
+   * [getLogFile 返回log文件的地址]
+   * @return {[type]} [description]
+  ###
+  getLogFileName : () ->
+    return LOG_FILE_Name
 
 convertStaticPath = (path) ->
   return path

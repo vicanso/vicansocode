@@ -23,7 +23,8 @@ startTest = (limit, urls) ->
     request url, (err, res, body) ->
       if err
         console.error err
-      console.log res.statusCode
+      if res.statusCode != 200
+        console.error url
       cbf()
   ,() ->
     console.log 'finished'
@@ -36,4 +37,4 @@ createUrls = (urls, total) ->
     index = Math.floor Math.random() * urlTotal
     results.push urls[index]
   return results
-startTest commander.requests,  createUrls commander.urls, commander.concurrency
+startTest commander.concurrency,  createUrls commander.urls, commander.requests
