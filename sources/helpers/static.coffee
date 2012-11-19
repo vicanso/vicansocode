@@ -4,7 +4,7 @@
 ###
 
 express = require 'express'
-config = require '../config'
+config = require "#{process._appPath}/config"
 appPath = config.getAppPath()
 
 staticHandler =

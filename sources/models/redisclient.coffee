@@ -3,7 +3,7 @@
 * MIT Licensed
 ###
 
-config = require '../config'
+config = require "#{process._appPath}/config"
 _ = require 'underscore'
 appPath = config.getAppPath()
 redisInfo = config.getRedisInfo()

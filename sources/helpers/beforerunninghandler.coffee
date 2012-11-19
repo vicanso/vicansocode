@@ -6,7 +6,7 @@
 fs = require 'fs'
 _ = require 'underscore'
 path = require 'path'
-config = require '../config'
+config = require "#{process._appPath}/config"
 appPath = config.getAppPath()
 fileMerger = require "#{appPath}/helpers/filemerger"
 logger = require("#{appPath}/helpers/logger") __filename

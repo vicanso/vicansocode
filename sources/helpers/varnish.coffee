@@ -4,7 +4,7 @@
 ###
 
 Varnish = require 'node-varnish'
-config = require '../config'
+config = require "#{process._appPath}/config"
 appPath = config.getAppPath()
 logger = require("#{appPath}/helpers/logger") __filename
 

@@ -11,6 +11,9 @@ fs = require 'fs'
 
 config = require './config'
 appPath = config.getAppPath()
+if process._appPath
+  console.error 'the _appPath property is exists in process'
+process._appPath = appPath
 
 logger = require("#{appPath}/helpers/logger") __filename
 myUtil = require "#{appPath}/helpers/util"

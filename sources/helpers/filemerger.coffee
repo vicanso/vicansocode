@@ -8,7 +8,7 @@ path = require 'path'
 fs = require 'fs'
 mkdirp = require 'mkdirp'
 
-config = require '../config'
+config = require "#{process._appPath}/config"
 appPath = config.getAppPath()
 tempPath = config.getTempPath()
 staticPath = config.getStaticPath()

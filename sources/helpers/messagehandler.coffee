@@ -1,4 +1,4 @@
-config = require '../config'
+config = require "#{process._appPath}/config"
 _ = require 'underscore'
 isMaster = config.isMaster()
 class MessageHandler

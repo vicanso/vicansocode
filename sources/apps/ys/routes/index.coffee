@@ -1,4 +1,4 @@
-config = require '../../../config'
+config = require "#{process._appPath}/config"
 appPath = config.getAppPath()
 viewContentHandler = require "#{appPath}/apps/ys/helpers/viewcontenthandler"
 FileImporter = require "#{appPath}/helpers/fileimporter"

@@ -5,8 +5,7 @@
 
 _ = require 'underscore'
 log4js = require 'log4js'
-config = require '../config'
-stream = require 'stream'
+config = require "#{process._appPath}/config"
 appPath = config.getAppPath()
 uid = config.getUID()
 

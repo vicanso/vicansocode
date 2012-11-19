@@ -1,6 +1,6 @@
 _ =require 'underscore'
 async = require 'async'
-config = require '../../../config'
+config = require "#{process._appPath}/config"
 appPath = config.getAppPath()
 logger = require("#{appPath}/helpers/logger") __filename
 mongoClient = require "#{appPath}/apps/ys/models/mongoclient"

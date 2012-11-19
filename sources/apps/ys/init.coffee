@@ -1,4 +1,4 @@
-config = require '../../config'
+config = require "#{process._appPath}/config"
 appPath = config.getAppPath()
 
 appConfig = require "#{appPath}/apps/ys/config"

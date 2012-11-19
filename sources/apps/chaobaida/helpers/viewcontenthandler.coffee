@@ -1,5 +1,5 @@
 _ =require 'underscore'
-config = require '../../../config'
+config = require "#{process._appPath}/config"
 appPath = config.getAppPath()
 webConfig = require "#{appPath}/apps/chaobaida/helpers/webconfig"
 baseConfig = require "#{appPath}/helpers/baseconfig"

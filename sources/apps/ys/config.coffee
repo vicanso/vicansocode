@@ -1,4 +1,4 @@
-config = require '../../config'
+config = require "#{process._appPath}/config"
 APP_NAME = 'ys'
 DB_NAME = 'ys'
 CONNECT_STRING = config.getDataBaseConnectionStr DB_NAME, config.getDataBaseUser(), config.getDatabasePassword()

@@ -1,5 +1,5 @@
 _ = require 'underscore'
-config = require '../../../config'
+config = require "#{process._appPath}/config"
 appPath = config.getAppPath()
 client = require "#{appPath}/models/mongoclient"
 appConfig = require "#{appPath}/apps/ys/config"

@@ -1,4 +1,4 @@
-config = require '../../../config'
+config = require "#{process._appPath}/config"
 appPath = config.getAppPath()
 _ = require 'underscore'
 webConfig = require "#{appPath}/apps/ys/helpers/webconfig"

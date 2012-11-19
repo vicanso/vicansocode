@@ -1,5 +1,5 @@
 _ = require 'underscore'
-config = require '../config'
+config = require "#{process._appPath}/config"
 appPath = config.getAppPath()
 FileImporter = require "#{appPath}/helpers/fileimporter"
 httpHandler = require "#{appPath}/helpers/httphandler"

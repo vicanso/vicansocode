@@ -1,5 +1,5 @@
 _ = require 'underscore'
-config = require '../../../config'
+config = require "#{process._appPath}/config"
 appPath = config.getAppPath()
 viewContentHandler = require "#{appPath}/apps/vicanso/helpers/viewcontenthandler"
 mongoClient = require "#{appPath}/apps/vicanso/models/mongoclient"

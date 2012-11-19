@@ -3,7 +3,7 @@
 * MIT Licensed
 ###
 
-config = require '../config'
+config = require "#{process._appPath}/config"
 appPath = config.getAppPath()
 myUtil = require "#{appPath}/helpers/util"
 logger = require("#{appPath}/helpers/logger") __filename

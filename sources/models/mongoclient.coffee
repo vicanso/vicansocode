@@ -3,7 +3,7 @@
 * MIT Licensed
 ###
 
-config = require '../config'
+config = require "#{process._appPath}/config"
 _ = require 'underscore'
 mongoose = require 'mongoose'
 fs = require 'fs'
