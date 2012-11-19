@@ -3,13 +3,17 @@ _ = require 'underscore'
 webConfig = 
   ###*
    * [getHeader 返回header的数据]
-   * @param  {[type]} selectedIndex [选中头部导航的index]
+   * @param  {[type]} url [当前页面url地址]
    * @return {[type]}               [description]
   ###
-  getHeader : (selectedIndex) ->
-    selectedIndex = selectedIndex || 0
+  getHeader : (url) ->
+    nav = getNav()
+    selectedIndex = -1
+    _.each nav, (item, i) ->
+      if item.href == url
+        selectedIndex = i
     headerInfo = 
-      nav : getNav()
+      nav : nav
       selectedIndex : selectedIndex
     return headerInfo
   ###*

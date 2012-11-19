@@ -7,7 +7,7 @@ block bodyContainer
   - fileImporter.importJs('/vicanso/javascripts/article.min.js');
   #contentContainer
     - var baseDialog = baseConfig.baseDialog;
-    - var article = viewContent.article;
+    - var article = locals.article;
     #articleContainer(class='#{baseDialog.selfClass}')
       div(class='#{baseDialog.titleBarClass}') 
         .uiTitle #{article.title}

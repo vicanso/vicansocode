@@ -24,8 +24,8 @@ viewContentHandler =
           article.content = article.content.slice 0, 5
         viewData = 
           title : '每天再往前一点！'
-          viewContent : 
-            header : webConfig.getHeader 0
+          locals : 
+            header : webConfig.getHeader req.url
             articles : articles
             reflection : data.reflection
             nodeModules : data.nodeModules
@@ -46,8 +46,8 @@ viewContentHandler =
       viewDataHandler.article id, behaviorData, (err, data) ->
         viewData =
           title : '每天再浏览多一点！'
-          viewContent : 
-            header : webConfig.getHeader -1
+          locals : 
+            header : webConfig.getHeader req.url
             article : data
           baseConfig : 
             baseDialog : baseConfig.getDialog()
@@ -68,7 +68,7 @@ viewContentHandler =
     else
       viewData =
         title : '添加新的文章'
-        viewContent : 
+        locals : 
           header : webConfig.getHeader -1
     cbf viewData  
   login : (req, res, cbf) ->
