@@ -7,8 +7,6 @@ path = require 'path'
 cluster = require 'cluster'
 commander = require 'commander'
 
-splitArgs = (val) ->
-  return val.split ','
 
 ###*
  * [initArguments 初始化启动参数]
@@ -16,9 +14,11 @@ splitArgs = (val) ->
  * @return {[type]}         [description]
 ###
 initArguments = (program) ->
+  splitArgs = (val) ->
+    return val.split ','
   program.version('0.0.1')
   .option('-p, --port <n>', 'listen port', parseInt)
-  .option('-s, --slave <n>', 'slave total', parseInt)
+  .option('-s, --slaver <n>', 'slaver total', parseInt)
   .option('-u, --user <n>', 'database user')
   .option('-w, --password <n>', 'database password')
   .option('-l, --list <items>', 'the app list, separated by ","', splitArgs)
@@ -63,8 +63,8 @@ MONGO_INFO =
 VARNISH_INFO =
   managementPort : 10030
   host : '127.0.0.1'
-# slave的总数
-SLAVE_TOTAL = commander.slave || require('os').cpus().length
+# slaver的总数
+SLAVER_TOTAL = commander.slaver || require('os').cpus().length
 # 数据库用户名
 DATA_BASE_USER = commander.user
 # 数据库的密码
@@ -166,8 +166,8 @@ config =
    * [getSlaveTotal 返回从进程的总数]
    * @return {[type]} [description]
   ###
-  getSlaveTotal : () ->
-    return SLAVE_TOTAL
+  getSlaverTotal : () ->
+    return SLAVER_TOTAL
   ###*
    * [getVarnishInfo 获取varnish的一些配置信息]
    * @return {[type]} [description]

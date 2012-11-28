@@ -9,6 +9,8 @@ cluster = require 'cluster'
 domain = require 'domain'
 fs = require 'fs'
 
+montend = require 'montend'
+
 config = require './config'
 appPath = config.getAppPath()
 if process._appPath
@@ -22,6 +24,7 @@ beforeRunningHandler = require "#{appPath}/helpers/beforerunninghandler"
 staticHandler = require "#{appPath}/helpers/static"
 appInfoParse = require "#{appPath}/helpers/appinfoparse"
 pageError = require "#{appPath}/helpers/pageerror"
+redisClient = require "#{appPath}/models/redisclient"
 # varnish = require "#{appPath}/helpers/varnish"
 
 
@@ -94,10 +97,10 @@ initExpress = () ->
 initApp = () ->
   if config.isProductionMode() && config.isMaster()
     beforeRunningHandler.run()
-    slaveTotal = config.getSlaveTotal()
-    while slaveTotal
+    slaverTotal = config.getSlaverTotal()
+    while slaverTotal
       worker = cluster.fork()
-      slaveTotal--
+      slaverTotal--
 
     #worker的事件输出，当其中一个worker退出时，启动另外一个worker
     _.each 'fork listening online'.split(' '), (event) ->
@@ -130,3 +133,28 @@ initApp = () ->
 initApp()
 
 
+
+montend = require 'montend'
+montend.createConnection 'mongodb://vicanso:86545610@localhost:10020/vicanso,mongodb://localhost:10020/goods', (err) ->
+  console.warn 'init success'
+  if err
+    console.error err
+  # montend.find 'goods', 'goods', {}, {}, {limit : 30}, (err, docs) ->
+  #   console.log err
+  #   console.log docs
+  montend.setConfig {
+    logQueryTime : true
+    logger : logger
+    queryCache : true
+    # redisClient : redisClient
+    # disableLog : true
+  }
+  goodsClient = montend.getClient 'goods'
+  goodsClient.find 'goods', {'categories.cid' : '1001'}, 'itemId title', (err, docs) ->
+    logger.info docs.length
+  goodsClient.count 'goods', {'categories.cid' : '1001'}, (err, count) ->
+    logger.info count
+  goodsClient.count 'goods', {'categories.cid' : '1001'}, (err, count) ->
+    logger.info count
+  goodsClient.count 'goods', {'categories.cid' : '1001'}, (err, count) ->
+    logger.info count

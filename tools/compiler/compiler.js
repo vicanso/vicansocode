@@ -183,7 +183,7 @@ var startWatchFiles = function(watchConfig, immediatelyCompile){
       if(immediatelyCompile){
         compileHandle(file, watchConfig);
       }
-      fs.watch(file, {persistent : true, interval : 2000},function(curr, prev){
+      fs.watchFile(file, {persistent : true, interval : 2000},function(curr, prev){
         compileFunc(file);
       });
     });

@@ -7,7 +7,6 @@ mongoClient = require "#{appPath}/apps/vicanso/models/mongoclient"
 logger = require("#{appPath}/helpers/logger") __filename
 
 
-
 viewDataHandler = 
   index : (cbf) ->
     async.parallel {
