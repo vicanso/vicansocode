@@ -9,7 +9,6 @@ cluster = require 'cluster'
 domain = require 'domain'
 fs = require 'fs'
 
-montend = require 'montend'
 
 config = require './config'
 appPath = config.getAppPath()
@@ -132,9 +131,10 @@ initApp = () ->
 
 initApp()
 
+logger.warn process
 
 
-montend = require 'montend'
+montend = require('webtend').montend
 montend.createConnection 'mongodb://vicanso:86545610@localhost:10020/vicanso,mongodb://localhost:10020/goods', (err) ->
   console.warn 'init success'
   if err
@@ -145,7 +145,6 @@ montend.createConnection 'mongodb://vicanso:86545610@localhost:10020/vicanso,mon
   montend.setConfig {
     logQueryTime : true
     logger : logger
-    queryCache : true
     # redisClient : redisClient
     # disableLog : true
   }
