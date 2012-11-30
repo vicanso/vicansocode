@@ -24,6 +24,7 @@ staticHandler = require "#{appPath}/helpers/static"
 appInfoParse = require "#{appPath}/helpers/appinfoparse"
 pageError = require "#{appPath}/helpers/pageerror"
 redisClient = require "#{appPath}/models/redisclient"
+webtend = require('webtend')
 # varnish = require "#{appPath}/helpers/varnish"
 
 
@@ -35,7 +36,7 @@ initExpress = () ->
 
   
   # 静态文件处理函数
-  app.use staticHandler.handler()
+  app.use webtend.middleware.staticHandler()
   
   # request by varnish（check node is healthy） just response "success"
   # app.use (req, res, next) ->
@@ -131,7 +132,6 @@ initApp = () ->
 
 initApp()
 
-logger.warn process
 
 
 montend = require('webtend').montend
