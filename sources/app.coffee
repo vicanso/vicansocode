@@ -33,10 +33,10 @@ initExpress = () ->
   app.set 'views', config.getViewsPath()
   app.set 'view engine', 'jade'
   app.engine 'jade', require('jade').__express
-
+  webtendMiddleware = webtend.middleware
   
   # 静态文件处理函数
-  app.use webtend.middleware.staticHandler()
+  app.use webtendMiddleware.staticHandler()
   
   # request by varnish（check node is healthy） just response "success"
   # app.use (req, res, next) ->
@@ -57,7 +57,7 @@ initExpress = () ->
     }
 
   app.use express.timeout config.getResponseTimeout()
-  app.use appInfoParse.handler()
+  app.use webtendMiddleware.infoParser()
 
 
   app.use express.bodyParser()

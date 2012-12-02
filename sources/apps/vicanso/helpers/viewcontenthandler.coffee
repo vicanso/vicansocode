@@ -8,10 +8,10 @@ logger = require("#{appPath}/helpers/logger") __filename
 myUtil = require "#{appPath}/helpers/util"
 
 viewContentHandler = 
-  index : (req, res, cbf) ->
+  index : (req, cbf) ->
     viewDataHandler.index (err, data) ->
       if err
-        logger.error err
+        cbf err
       else
         # 推荐文章内容的截取
         recommendArticles = data.recommendArticles
@@ -33,8 +33,8 @@ viewContentHandler =
           baseConfig :
             baseDialog : baseConfig.getDialog()
             baseButtonSet : baseConfig.getButtonSet()
-      cbf viewData
-  article : (req, res, cbf) ->
+      cbf null, viewData
+  article : (req, cbf) ->
     id = req.param 'id'
     if !id
       logger.error 'article id is required'
@@ -52,7 +52,7 @@ viewContentHandler =
           baseConfig : 
             baseDialog : baseConfig.getDialog()
         cbf viewData
-  addArticle : (req, res, cbf) ->
+  addArticle : (req, cbf) ->
     if req.xhr
       viewDataHandler.addArticle req.body, (err) ->
         if err
@@ -71,7 +71,7 @@ viewContentHandler =
         locals : 
           header : webConfig.getHeader -1
     cbf viewData  
-  login : (req, res, cbf) ->
+  login : (req, cbf) ->
     if req.xhr
       viewData = {
         code : 0
@@ -83,7 +83,7 @@ viewContentHandler =
       viewData = 
         title : '登录界面'
     cbf viewData
-  getNoCacheInfo : (req, res, cbf) ->
+  getNoCacheInfo : (req, cbf) ->
     sess = req.session
     userInfo = 
       nick : sess.nick || '匿名用户'
@@ -92,7 +92,7 @@ viewContentHandler =
     jsonStr += "var USER_INFO=#{JSON.stringify(userInfo)};"
     jsonStr += "var WEB_CONFIG=#{JSON.stringify(config)};"
     cbf jsonStr
-  userBehavior : (req, res, cbf) ->
+  userBehavior : (req, cbf) ->
     viewDataHandler.userBehavior req.params, (err) ->
       if err
         cbf {

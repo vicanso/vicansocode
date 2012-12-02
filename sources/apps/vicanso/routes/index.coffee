@@ -4,7 +4,7 @@ appPath = config.getAppPath()
 viewContentHandler = require "#{appPath}/apps/vicanso/helpers/viewcontenthandler"
 mongoClient = require "#{appPath}/apps/vicanso/models/mongoclient"
 myUtil = require "#{appPath}/helpers/util"
-routeHandler = require "#{appPath}/helpers/routehandler"
+routeHandler = require('webtend').middleware.routeHandler()
 user = require "#{appPath}/helpers/user"
 userLoader = user.loader()
 # 路由信息表
@@ -12,8 +12,9 @@ routeInfos = [
   {
     type : 'get'
     route : '/vicanso'
+    middleware : [userLoader]
     jadeView : 'vicanso/index'
-    handerFunc : 'index'
+    handerFunc : viewContentHandler.index
   }
   {
     type : 'get'
@@ -54,7 +55,7 @@ routeInfos = [
 ]
 
 module.exports = (app) ->
-  routeHandler.initRoutes app, routeInfos, viewContentHandler
+  routeHandler.initRoutes app, routeInfos, 
           
   # app.get '/vicanso/ajax/*', (req, res) ->
   #   res.send 'success'

@@ -1,8 +1,9 @@
 _ = require 'underscore'
 config = require "#{process._appPath}/config"
 appPath = config.getAppPath()
-FileImporter = require "#{appPath}/helpers/fileimporter"
-httpHandler = require "#{appPath}/helpers/httphandler"
+webtendMiddleware = require('webtend').middleware
+FileImporter = webtendMiddleware.fileImporter()
+httpHandler = webtendMiddleware.httpHandler()
 pageError = require "#{appPath}/helpers/pageerror"
 myUtil = require "#{appPath}/helpers/util"
 

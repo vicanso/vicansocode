@@ -8,7 +8,7 @@ _ = require 'underscore'
 path = require 'path'
 config = require "#{process._appPath}/config"
 appPath = config.getAppPath()
-fileMerger = require "#{appPath}/helpers/filemerger"
+fileMerger = require('webtend').middleware.fileMerger()
 logger = require("#{appPath}/helpers/logger") __filename
 isProductionMode = config.isProductionMode()
 isMaster = config.isMaster()
@@ -21,7 +21,7 @@ run = () ->
     removeTempPathFiles()
   else
     #合并文件处理（将部分js,css文件合并）
-    fileMerger.mergeFilesBeforeRunning true
+    fileMerger.mergeFilesBeforeRunning true, config.getMergeFiles()
 
 ###*
  * [removeTempPathFiles 删除临时目录下的所有文件]

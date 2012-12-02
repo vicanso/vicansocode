@@ -6,10 +6,10 @@
 config = require "#{process._appPath}/config"
 appPath = config.getAppPath()
 session = require "#{appPath}/helpers/session"
-sessionHandler = session.handler()
+sessionParser = require('webtend').middleware.sessionParser()
 
 user =
   loader : () ->
-    return sessionHandler
+    return sessionParser
 
 module.exports[key] = func for key, func of user
