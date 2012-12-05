@@ -1,18 +1,18 @@
 [
     {
-      "path" : "/Users/vicanso/workspace/vicansocode/sources/public",
-      "targetPath" : "/Users/vicanso/workspace/vicansocode/sources/static",
+      "path" : "/Users/Tree/workspace/vicansocode/sources/public",
+      "targetPath" : "/Users/Tree/workspace/vicansocode/sources/static",
       "ext" : ".less",
       "delay" : 1000
     },
     {
-      "path" : "/Users/vicanso/workspace/vicansocode/sources/public",
-      "targetPath" : "/Users/vicanso/workspace/vicansocode/sources/static",
+      "path" : "/Users/Tree/workspace/vicansocode/sources/public",
+      "targetPath" : "/Users/Tree/workspace/vicansocode/sources/static",
       "ext" : ".coffee",
       "delay" : 1000
     },
     {
-      "path" : "/Users/vicanso/workspace/vicansocode/sources/static",
+      "path" : "/Users/Tree/workspace/vicansocode/sources/static",
       "ext" : ".js",
       "delay" : 5000
     }

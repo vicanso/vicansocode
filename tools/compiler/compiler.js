@@ -4,8 +4,7 @@ var path = require('path');
 var _ = require('underscore');
 var async = require('async');
 var less = require('less');
-var jsp = require("uglify-js").parser;
-var pro = require("uglify-js").uglify;
+var uglifyJS = require("uglify-js");
 var coffeeScript = require('coffee-script');
 var mkdirp = require('mkdirp');
 var argv = require('optimist').argv;
@@ -104,35 +103,50 @@ var compileLess = function(file, cssFile){
  * @return {[type]}           [description]
  */
 var compressJavascript = function(file, minJsFile){
-  fs.readFile(file, 'utf8', function(err, data){
-    if(err){
-      logger.error(err);
-      return ;
-    }
-    var finalCode;
-    try{
-      var ast = jsp.parse(data);
-      ast = pro.ast_lift_variables(ast);
-      ast = pro.ast_mangle(ast, {
-        mangle : true
-      });
-      ast = pro.ast_squeeze(ast, {
-        dead_code : true
-      });
-      finalCode = pro.gen_code(ast, {
-        ascii_only : true
-      });
-    }catch(err){
-      logger.error(err);
-    }
-    fs.writeFile(minJsFile, finalCode, 'utf8', function(err){
+  var result = uglifyJS.minify(file, {
+    warnings : true
+  });
+  if(result && result.code){
+    fs.writeFile(minJsFile, result.code, 'utf8', function(err){
       if(err){
         logger.error(err);
       }else{
         logger.info('compress js to file:' + minJsFile + ' successful');
       }
     });
-  });
+  }else{
+    logger.error('fail to compress js file:' + file);
+  }
+  // fs.readFile(file, 'utf8', function(err, data){
+  //   if(err){
+  //     logger.error(err);
+  //     return ;
+  //   }
+  //   var finalCode;
+  //   try{
+  //     var ast = jsp.parse(data);
+  //     ast = pro.ast_lift_variables(ast);
+  //     ast = pro.ast_mangle(ast, {
+  //       mangle : true
+  //     });
+  //     ast = pro.ast_squeeze(ast, {
+  //       dead_code : true
+  //     });
+  //     finalCode = pro.gen_code(ast, {
+  //       ascii_only : true
+  //     });
+  //   }catch(err){
+  //     logger.error(err);
+  //     return ;
+  //   }
+  //   fs.writeFile(minJsFile, finalCode, 'utf8', function(err){
+  //     if(err){
+  //       logger.error(err);
+  //     }else{
+  //       logger.info('compress js to file:' + minJsFile + ' successful');
+  //     }
+  //   });
+  // });
 };
 
 /**
